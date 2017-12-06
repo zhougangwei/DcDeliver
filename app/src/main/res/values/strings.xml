@@ -1,0 +1,59 @@
+<resources>
+    <string name="app_name">医工云服</string>
+    <string name="action_about">关于我</string>
+    <string name="title_activity_scrolling">ScrollingActivity</string>
+    <string name="large_text"></string>
+
+    <string name="action_save">save</string>
+    <string name="action_share">share</string>
+    <string name="meizhi">MeiZhi</string>
+    <string name="version_str">PrettyGirls\npleasecallmecoder</string>
+    <string name="title_activity_login">登入</string>
+
+    <!-- Strnamegs related to login -->
+    <string name="prompt_email">Email</string>
+    <string name="prompt_username">请输入您的工号</string>
+    <string name="prompt_password">请输入密码</string>
+    <string name="action_sign_in">登录</string>
+    <string name="action_sign_in_short">密码错误</string>
+    <string name="error_user">账号错误</string>
+    <string name="error_invalid_password">密码太短了</string>
+    <string name="error_incorrect_password">密码错误</string>
+    <string name="error_field_required">这是必填项</string>
+    <string name="permission_rationale">权限不够</string>
+
+    <string name="scan_text">将二维码放入框内, 即可自动扫描</string>
+    <!--主页面的name-->
+    <string name="main">主页</string>
+    <string name="down">下载</string>
+    <string name="my">我的</string>
+    <string name="title_activity_aaaa">Sign in</string>
+    <string name="error_invalid_email">This email address is invalid</string>
+    <string name="desc_check_mark">check mark</string>
+    <string name="error_gif">长宽不小于 %1$dpx，且大小不超过 %2$sM。</string>
+
+
+    <string name="permission_get_accounts_hint">没有此权限，无法开启这个功能，请开启权限。PERMISSION_GET_ACCOUNTS</string>
+    <string name="permission_read_phone_hint">没有此权限，无法开启这个功能，请开启权限。PERMISSION_READ_PHONE_STATE</string>
+    <string name="permission_call_phone_hint">没有此权限，无法开启这个功能，请开启权限。PERMISSION_CALL_PHONE</string>
+    <string name="permission_camera_hint">没有此权限，无法开启这个功能，请开启权限。PERMISSION_CAMERA</string>
+    <string name="permission_access_fine_location_hint">没有此权限，无法开启这个功能，请开启权限。PERMISSION_ACCESS_FINE_LOCATION</string>
+    <string name="permission_access_coarse_location_hint">没有此权限，无法开启这个功能，请开启权限。PERMISSION_ACCESS_COARSE_LOCATION</string>
+    <string name="permission_read_external_hint">没有此权限，无法开启这个功能，请开启权限。PERMISSION_READ_EXTERNAL_STORAGE</string>
+    <string name="permission_white_external_hint">没有此权限，无法开启这个功能，请开启权限。PERMISSION_WRITE_EXTERNAL_STORAGE</string>
+    <string name="permission_recode_audio_hint">没有此权限，无法开启这个功能，请开启权限。PERMISSION_RECODE_AUDIO_HINT</string>
+
+
+    <string name="search_newZcbh">新资产编号</string>
+    <string name="search_oldZcbh">老资产编号</string>
+    <string name="search_red">红外扫描</string>
+    <string name="search_camera">摄像头</string>
+    <string name="search_no">RFID</string>
+
+    <string name="fragment_fxxj_Rfid">RFID</string>
+    <string name="fragment_fxxj_ewm">二维码</string>
+    <string name="fragment_fxxj_zcbh">资产编号</string>
+    <string name="title_activity_login2">Sign in</string>
+
+
+</resources>

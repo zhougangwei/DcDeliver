@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="permissions">
+        <item>@string/permission_recode_audio_hint</item>
+        <item>@string/permission_get_accounts_hint</item>
+        <item>@string/permission_read_phone_hint</item>
+        <item>@string/permission_call_phone_hint</item>
+        <item>@string/permission_camera_hint</item>
+        <item>@string/permission_access_fine_location_hint</item>
+        <item>@string/permission_access_coarse_location_hint</item>
+        <item>@string/permission_read_external_hint</item>
+        <item>@string/permission_white_external_hint</item>
+    </string-array>
+
+    <string-array name="azys">
+        <item>科室</item>
+        <item>供应商名称</item>
+        <item>合同号</item>
+        <item>名称</item>
+    </string-array>
+
+    <string-array name="assetquerycheck">
+        <item>品牌|名称|规格</item>
+        <item>名称</item>
+        <item>新资产编号</item>
+        <item>老资产编号</item>
+    </string-array>
+
+    <string-array name="inspect">
+        <item>名称</item>
+        <item>新资产编号</item>
+    </string-array>
+
+
+    <string-array name="kpbh2">
+        <item>@string/search_newZcbh</item>
+        <item>@string/search_oldZcbh</item>
+    </string-array>
+
+
+    <string-array name="inspectcheck">
+        <item>品牌|名称|规格</item>
+        <item>名称</item>
+        <item>新资产编号</item>
+        <item>老资产编号</item>
+    </string-array>
+
+    <string-array name="recycleConfig">
+        <item>本期</item>
+        <item>本月</item>
+        <item>今天</item>
+        <item>本周</item>
+        <item>向前15天</item>
+        <item>向前30天</item>
+        <item>向前45天</item>
+
+    </string-array>
+
+</resources>
