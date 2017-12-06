@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-
 <LinearLayout
+    android:orientation="vertical"
+    android:id="@+id/ll_title"
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="160px"
+    android:layout_height="240px"
+    android:background="@color/appColor"
     android:layout_centerHorizontal="true"
    />

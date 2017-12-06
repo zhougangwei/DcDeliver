@@ -12,6 +12,7 @@ import android.view.WindowManager;
 import com.zhy.autolayout.AutoFrameLayout;
 import com.zhy.autolayout.AutoLinearLayout;
 import com.zhy.autolayout.AutoRelativeLayout;
+import com.zhy.autolayout.config.AutoLayoutConifg;
 
 import java.text.SimpleDateFormat;
 import java.util.List;
@@ -54,7 +55,7 @@ public abstract class AppActivity extends BaseActivity {
         }
         addColorStatus();
         ActivityManager.getInstance().addActivity(this);
-
+        AutoLayoutConifg.getInstance().useDeviceSize();
         initView();
 
 
