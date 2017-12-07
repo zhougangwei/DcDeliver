@@ -1,41 +1,49 @@
 package deliver.aihui.com.dcdeliver.activity;
 
 import android.content.Intent;
+import android.graphics.Rect;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
 import deliver.aihui.com.dcdeliver.R;
 import deliver.aihui.com.dcdeliver.base.AppActivity;
 import deliver.aihui.com.dcdeliver.base.BaseFragment;
 import deliver.aihui.com.dcdeliver.base.Content;
+import deliver.aihui.com.dcdeliver.util.Inpututils;
 import deliver.aihui.com.dcdeliver.util.SPUtil;
 import deliver.aihui.com.dcdeliver.util.ToastUtil;
 
 public class LoginActivity extends AppActivity {
 
 
-    @BindView(R.id.iv_logo)
-    ImageView mIvLogo;
-    @BindView(R.id.tv_ysd)
-    TextView  mTvYsd;
-    @BindView(R.id.tv_user)
-    TextView  mTvUser;
-    @BindView(R.id.et_user)
-    EditText  mEtUser;
-    @BindView(R.id.tv_psw)
-    TextView  mTvPsw;
-    @BindView(R.id.et_psw)
-    EditText  mEtPsw;
-    @BindView(R.id.bt_login)
-    Button    mBtLogin;
+    //@BindView(R.id.iv_logo)
+    ImageView      mIvLogo;
+    //@BindView(R.id.tv_ysd)
+    TextView       mTvYsd;
+    //@BindView(R.id.tv_user)
+    TextView       mTvUser;
+    //@BindView(R.id.et_user)
+    EditText       mEtUser;
+    //@BindView(R.id.tv_psw)
+    TextView       mTvPsw;
+    //@BindView(R.id.et_psw)
+    EditText       mEtPsw;
+    //@BindView(R.id.bt_login)
+    Button         mBtLogin;
+    //@BindView(R.id.rel_content)
+    RelativeLayout mRelContent;
+    //@BindView(R.id.ll_login_root)
+    LinearLayout   mLlLoginRoot;
     private UserLoginTask mAuthTask = null;
     private boolean       isLogin   = false;
 
@@ -44,7 +52,8 @@ public class LoginActivity extends AppActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         // TODO: add setContentView(...) invocation
-        ButterKnife.bind(this);
+
+
     }
 
     @Override
@@ -68,16 +77,37 @@ public class LoginActivity extends AppActivity {
         }
 
 
-
     }
 
-    @Override
+
     protected BaseFragment getFirstFragment() {
         return null;
     }
 
-    @Override
+
     protected void initView() {
+
+        mIvLogo = (ImageView)findViewById(R.id.iv_logo);
+        mTvYsd = (TextView)findViewById(R.id.tv_ysd);
+        mTvUser = (TextView)findViewById(R.id.tv_user);
+        mEtUser = (EditText)findViewById(R.id.et_user);
+        mTvPsw = (TextView)findViewById(R.id.tv_psw);
+        mEtPsw = (EditText)findViewById(R.id.et_psw);
+        mBtLogin = (Button)findViewById(R.id.bt_login);
+        mRelContent = (RelativeLayout)findViewById(R.id.rel_content);
+        mLlLoginRoot = (LinearLayout)findViewById(R.id.ll_login_root);
+
+
+        keepLoginBtnNotOver(mLlLoginRoot, mRelContent);
+
+        //触摸外部，键盘消失
+        mLlLoginRoot.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                Inpututils.closeKeyboard(LoginActivity.this);
+                return false;
+            }
+        });
 
         isLogin = SPUtil.getBoolean(this, "isLogin", false);
 
@@ -91,7 +121,7 @@ public class LoginActivity extends AppActivity {
 
     }
 
-    @Override
+
     protected int getContentViewId() {
         return R.layout.activity_login;
     }
@@ -157,7 +187,35 @@ public class LoginActivity extends AppActivity {
     }
 
 
-
+    /**
+     * 保持登录按钮始终不会被覆盖
+     *
+     * @param root
+     * @param subView
+     */
+    private void keepLoginBtnNotOver(final View root, final View subView) {
+        root.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                Rect rect = new Rect();
+                // 获取root在窗体的可视区域
+                root.getWindowVisibleDisplayFrame(rect);
+                // 获取root在窗体的不可视区域高度(被其他View遮挡的区域高度)
+                int rootInvisibleHeight = root.getRootView().getHeight() - rect.bottom;
+                // 若不可视区域高度大于200，则键盘显示,其实相当于键盘的高度
+                if (rootInvisibleHeight > 200) {
+                    // 显示键盘时
+                    int srollHeight = rootInvisibleHeight - (root.getHeight() - subView.getHeight()) - Inpututils.getNavigationBarHeight(root.getContext());
+                    if (srollHeight > 0) {
+                        root.scrollTo(0, srollHeight);
+                    }
+                } else {
+                    // 隐藏键盘时
+                    root.scrollTo(0, 0);
+                }
+            }
+        });
+    }
 
 
     /**

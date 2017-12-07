@@ -1,22 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<RelativeLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/ll_login_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+
+    >
+<RelativeLayout
+    android:id="@+id/rel_content"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
+
     >
 
     <ImageView
+
+        android:scaleType="centerCrop"
         android:id="@+id/iv_logo"
-        android:layout_width="394px"
-        android:layout_height="345px"
+        android:layout_width="406px"
+        android:layout_height="355px"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="345px"
         android:src="@mipmap/ic_logo"
         />
 
     <TextView
+
         android:id="@+id/tv_ysd"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -28,6 +39,7 @@
         android:textSize="80px"/>
 
     <TextView
+        android:typeface="monospace"
         android:id="@+id/tv_user"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -38,7 +50,11 @@
         android:textColor="@color/titleGrey"
         android:textSize="42px"/>
 
+
+
+
     <EditText
+
         android:id="@+id/et_user"
         android:layout_width="910px"
         android:layout_height="115px"
@@ -51,10 +67,17 @@
         android:textColorHint="@color/textGrey"
         android:textSize="42px"/>
 
-    <include layout="@layout/include_editline"/>
+    <ImageView
+        android:layout_width="910px"
+        android:layout_height="1dp"
+        android:layout_below="@+id/et_user"
+        android:layout_centerHorizontal="true"
+        android:background="@color/colorLine"
+        />
 
 
     <TextView
+
         android:id="@+id/tv_psw"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -90,6 +113,7 @@
         />
 
     <Button
+
         android:id="@+id/bt_login"
         android:layout_width="907.2px"
         android:layout_height="158.3px"
@@ -102,3 +126,4 @@
         android:textSize="50px"/>
 
 </RelativeLayout>
+</LinearLayout>
