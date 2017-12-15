@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <RelativeLayout
+            android:id="@+id/rl_daka"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true">
+
+            <ImageView
+                android:id="@+id/iv_daka"
+                android:layout_width="113dp"
+                android:layout_height="113dp"
+                android:src="@mipmap/ic_open"
+                />
+
+            <TextView
+                android:id="@+id/tv_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="60dp"
+                android:text="8:30:00"
+                android:textColor="@color/white"
+                android:textSize="15sp"/>
+
+            <TextView
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/tv_time"
+                android:layout_centerHorizontal="true"
+                android:text="上班打卡"
+                android:textColor="@color/white"
+                android:textSize="9sp"/>
+
+        </RelativeLayout>
+        <CheckBox
+            android:maxLines="1"
+            android:scaleY="0.4"
+            android:scaleX="0.4"
+            android:textSize="28sp"
+            style="@style/CustomCheckboxTheme"
+            android:text="今日不再提醒"
+            android:id="@+id/rb"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:layout_below="@+id/rl_daka"
+           android:layout_centerHorizontal="true"
+
+
+          />
+        <ImageView
+            android:scaleType="centerCrop"
+            android:paddingLeft="20dp"
+            android:paddingBottom="20dp"
+            android:id="@+id/iv_close"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_margin="13dp"
+            android:src="@mipmap/ic_delete"/>
+    </RelativeLayout>
+</RelativeLayout>

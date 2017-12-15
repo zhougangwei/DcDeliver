@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:orientation="vertical">
+
+    <com.aihui.dcdeliver.commponent.widget.AutoCardView
+        app:cardCornerRadius="3dp"
+        app:cardElevation="4dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="660px">
+
+            <RelativeLayout
+                android:id="@+id/rl_top"
+                android:layout_width="match_parent"
+                android:layout_height="112px">
+
+                <TextView
+                    android:id="@+id/tv_type"
+                    android:layout_width="192px"
+                    android:layout_height="56px"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="36px"
+                    android:background="@drawable/shape_icon_orange"
+                    android:gravity="center"
+                    android:text="病人检查"
+                    android:textColor="@color/white"
+                    android:textSize="36px"/>
+
+                <ImageView
+                    android:layout_width="14.3dp"
+                    android:layout_height="14.3dp"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="16px"
+                    android:layout_toLeftOf="@+id/tv_time"
+                    android:src="@mipmap/ic_clock"/>
+
+                <TextView
+                    android:id="@+id/tv_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="36px"
+                    android:text="10-30 11:30"
+                    android:textSize="36px"/>
+            </RelativeLayout>
+
+            <ImageView
+                android:id="@+id/iv_line"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_below="@+id/rl_top"
+                android:background="#DCDCDC"/>
+
+            <RelativeLayout
+                android:id="@+id/rl_left"
+                android:layout_width="143px"
+                android:layout_height="266px"
+                android:layout_below="@+id/iv_line">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_above="@+id/iv_down"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginBottom="27px"
+                    android:layout_marginLeft="32px"
+                    android:text="取单"
+                    android:textColor="@color/appColor"
+                    android:textSize="38px"/>
+
+                <ImageView
+                    android:id="@+id/iv_down"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="32px"
+                    android:src="@mipmap/ic_get"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_below="@+id/iv_down"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginLeft="32px"
+                    android:layout_marginTop="27px"
+                    android:text="接收"
+                    android:textColor="@color/appColor"
+                    android:textSize="38px"/>
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/rl_right"
+                android:layout_width="match_parent"
+                android:layout_height="266px"
+                android:layout_below="@+id/iv_line"
+                android:layout_toRightOf="@+id/rl_left">
+
+                <TextView
+                    android:id="@+id/tv_dlwz_before"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_above="@+id/iv_line2"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginBottom="43px"
+                    android:layout_marginLeft="32px"
+                    android:text="一号楼-三楼"
+                    android:textColor="@color/textGrey666"
+                    android:textSize="42px"/>
+
+                <ImageView
+                    android:id="@+id/iv_line2"
+                    android:layout_width="match_parent"
+                    android:layout_height="1px"
+                    android:layout_centerHorizontal="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="32px"
+                    android:background="@color/line_bg"
+                    android:src="@mipmap/ic_get"/>
+
+                <TextView
+                    android:id="@+id/tv_dlwz_after"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_below="@+id/iv_line2"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginLeft="32px"
+                    android:layout_marginTop="43px"
+                    android:text="一号楼-三楼"
+                    android:textColor="@color/textGrey666"
+                    android:textSize="42px"/>
+            </RelativeLayout>
+
+            <TextView
+                android:padding="24px"
+                android:id="@+id/tv_bz"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/rl_right"
+                android:layout_marginLeft="36px"
+                android:layout_marginRight="36px"
+                android:background="@drawable/shape_dash"
+                android:gravity="center_vertical"
+                android:paddingLeft="24px"
+                android:textColor="@color/textGrey666"
+                android:text="备注:病人GG"
+                android:textSize="32px"></TextView>
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="112px"
+                android:layout_below="@id/tv_bz"
+                android:layout_centerInParent="true"
+                android:layout_marginLeft="36px"
+                android:layout_marginRight="36px"
+                android:layout_marginTop="56px"
+                android:background="@drawable/shape_button_receive"
+                android:text="接 单"
+                android:textColor="@color/white"
+                android:textSize="48px"/>
+        </RelativeLayout>
+</com.aihui.dcdeliver.commponent.widget.AutoCardView>
+</RelativeLayout>

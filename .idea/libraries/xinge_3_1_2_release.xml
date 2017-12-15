@@ -1,0 +1,14 @@
+<component name="libraryTable">
+  <library name="xinge-3.1.2-release">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.android/build-cache/c769d3f77665db2de789b2badd92e3d6f765c443/output/jars/classes.jar!/" />
+      <root url="jar://$USER_HOME$/.android/build-cache/c769d3f77665db2de789b2badd92e3d6f765c443/output/jars/libs/Xg_sdk_v3.12_20171113_1059.jar!/" />
+      <root url="file://$USER_HOME$/.android/build-cache/c769d3f77665db2de789b2badd92e3d6f765c443/output/res" />
+      <root url="jar://$USER_HOME$/.android/build-cache/c769d3f77665db2de789b2badd92e3d6f765c443/output/jars/libs/jg_filter_sdk_1.1.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.tencent.xinge/xinge/3.1.2-release/30b9d24eb74157f6b88bef2462bb2a60518d355e/xinge-3.1.2-release-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

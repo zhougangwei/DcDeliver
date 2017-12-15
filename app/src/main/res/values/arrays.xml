@@ -56,4 +56,12 @@
 
     </string-array>
 
+
+    <integer-array name="fresh_color">
+
+            <item>@color/textOrange</item>
+            <item>@color/planBlue</item>
+            <item>@color/appColor</item>
+    </integer-array>
+
 </resources>

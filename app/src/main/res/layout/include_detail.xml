@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ImageView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="24px"
+    android:layout_height="42px"
+    android:scaleType="centerCrop"
+    android:layout_gravity="center_vertical"
+    android:layout_marginLeft="29px"
+    android:layout_marginRight="24px"
+    android:src="@mipmap/ic_show_more"/>

@@ -79,6 +79,56 @@
         <item name="android:activityCloseExitAnimation">@anim/slide_right_out</item>
     </style>
 
+    <style name="in_trans_left">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_gravity">center_vertical</item>
+        <item name="android:textColor">@color/textGrey333</item>
+        <item name="android:textSize">48px</item>
+    </style>
 
+    <style name="intrans_right">
+        <item name="android:layout_width">0px</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_gravity">center_vertical</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:gravity">end|center_vertical</item>
+        <item name="android:textColor">@color/textGrey888</item>
+        <item name="android:textSize">48px</item>
+    </style>
+
+    <style name="CustomCheckboxTheme" parent="@android:style/Widget.CompoundButton.CheckBox">
+        <item name="android:button">@drawable/checkbox_style</item>
+    </style>
+
+    <style name="tv_left22">
+        <item name="android:textSize">48px</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_gravity">center_vertical</item>
+        <item name="android:textColor">@color/textGrey333</item>
+
+
+    </style>
+
+    <style name="tv_right22">
+        <item name="android:textSize">48px</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_gravity">center_vertical</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:textColor">@color/textGrey888</item>
+
+    </style>
+
+    <style name="item_ll_r22_l22">
+        <item name="android:paddingLeft">22px</item>
+        <item name="android:paddingRight">22px</item>
+        <item name="android:background">@color/white</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:orientation">horizontal</item>
+    </style>
 
 </resources>

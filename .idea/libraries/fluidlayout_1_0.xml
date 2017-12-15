@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="fluidlayout-1.0">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.android/build-cache/d25cfe70fcbd42a2f515e450ec00d302d4f9dfdb/output/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.android/build-cache/d25cfe70fcbd42a2f515e450ec00d302d4f9dfdb/output/res" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.fynn.fluidlayout/fluidlayout/1.0/1a37fb2c84c74fbba6ae4335a6e9bb1ae144d1b7/fluidlayout-1.0-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

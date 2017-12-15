@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:color="@color/textGrey666" android:drawable="@drawable/shape_rec_grey"/>
+    <item android:color="@color/appColor"
+          android:drawable="@drawable/shape_cancel_trans"
+          android:state_enabled="true"/>
+
+</selector>

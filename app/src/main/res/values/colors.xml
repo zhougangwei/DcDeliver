@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#1a1a1a</color>
+    <color name="colorPrimary">#50D2C2</color>
     <color name="colorPrimaryDark">#1a1a1a</color>
     <color name="colorAccent">#5482EA</color>
 
@@ -78,7 +78,9 @@
 
     <color name="textOrange">#FFCA76</color>
 
-    <color name="textGrey">#666666</color>
+    <color name="textGrey666">#666666</color>
+    <color name="textGrey333">#333333</color>
+    <color name="textGrey888">#888888</color>
     <color name="greyf5">#f5f5f5</color>
 
     <color name="tv_back_blue">#F0FAFF</color>
@@ -90,5 +92,8 @@
     <color name="popup_bg">#8f000000</color>
     <color name="line_bg">#CDCDCD</color>
     <color name="divide_gray_color">#E0D9D8</color>
+
+    <color name="uncompleted_color">#A3E0D9</color>
+    <color name="uncompleted_text_color">#DCDCDC</color>
 
 </resources>

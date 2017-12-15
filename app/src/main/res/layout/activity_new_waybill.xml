@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:background="@color/greyf5"
+              android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="20dp"
+        android:background="@color/appColor"
+        android:orientation="vertical"></LinearLayout>
+
+    <RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/ll_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:background="@color/appColor"
+        android:minHeight="60dp"
+        android:orientation="vertical"
+        >
+
+        <TextView
+            android:id="@+id/tv_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerInParent="true"
+            android:text="运送单"
+            android:textColor="@color/white"
+            android:textSize="54px"/>
+
+        <TextView
+
+            android:id="@+id/tv_submit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:paddingBottom="10dp"
+            android:paddingLeft="20dp"
+            android:paddingRight="10dp"
+            android:paddingTop="10dp"
+            android:src="@mipmap/ic_clock"
+            android:text="提交"
+            android:textColor="@color/white"
+            android:textSize="48px"/>
+
+    </RelativeLayout>
+
+    <LinearLayout
+
+        style="@style/item_ll_r22_l22"
+        android:layout_marginBottom="27px">
+
+        <TextView
+            style="@style/tv_left22"
+            android:layout_weight="1"
+            android:text="运送单号"
+            />
+
+        <TextView
+            android:id="@+id/tv_waybill_num"
+            style="@style/tv_right22"
+            android:text="123412"
+            />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/ll_task_type"
+        style="@style/item_ll_r22_l22">
+
+        <TextView
+
+            style="@style/tv_left22"
+            android:layout_weight="1"
+            android:text="任务类型"
+            />
+
+        <TextView
+            android:id="@+id/tv_task_type"
+            style="@style/tv_right22"
+            android:text="123412"
+            />
+
+        <include layout="@layout/include_detail"></include>
+
+    </LinearLayout>
+
+    <include layout="@layout/line_mg24"></include>
+
+    <LinearLayout
+        android:id="@+id/ll_ysr"
+        style="@style/item_ll_r22_l22">
+
+        <TextView
+            style="@style/tv_left22"
+            android:layout_weight="1"
+            android:text="运送人"
+            />
+
+        <TextView
+            android:id="@+id/tv_ysr"
+            style="@style/tv_right22"
+            android:text="123412"
+            />
+
+        <include layout="@layout/include_detail"></include>
+
+    </LinearLayout>
+
+    <include layout="@layout/line_mg24"></include>
+
+    <LinearLayout
+        android:id="@+id/ll_ysrq"
+        style="@style/item_ll_r22_l22">
+
+        <TextView
+
+            style="@style/tv_left22"
+            android:layout_weight="1"
+            android:text="运送日期"
+            />
+
+        <TextView
+            android:id="@+id/tv_ysrq"
+            style="@style/tv_right22"
+            android:text="123412"
+            />
+
+        <include layout="@layout/include_detail"></include>
+
+    </LinearLayout>
+
+    <include layout="@layout/line_mg24"></include>
+
+    <LinearLayout
+        android:id="@+id/ll_ysqy"
+        style="@style/item_ll_r22_l22">
+
+        <TextView
+            style="@style/tv_left22"
+            android:layout_weight="1"
+            android:text="运送区域"
+            />
+
+        <TextView
+            android:id="@+id/tv_ysqy"
+            style="@style/tv_right22"
+            android:text="123412"
+            />
+
+        <include layout="@layout/include_detail"></include>
+
+    </LinearLayout>
+
+    <include layout="@layout/line_mg24"></include>
+
+    <LinearLayout
+        android:id="@+id/ll_jsqy"
+        style="@style/item_ll_r22_l22">
+
+        <TextView
+
+            style="@style/tv_left22"
+            android:layout_weight="1"
+            android:text="接收区域"
+            />
+
+        <TextView
+            android:id="@+id/tv_jsqy"
+            style="@style/tv_right22"
+            android:text="123412"
+            />
+
+        <include layout="@layout/include_detail"></include>
+
+    </LinearLayout>
+
+    <include layout="@layout/line_mg24"></include>
+
+    <LinearLayout
+        android:id="@+id/ll_ssqy"
+        style="@style/item_ll_r22_l22"
+        android:layout_marginBottom="27px">
+
+        <TextView
+
+            style="@style/tv_left22"
+            android:layout_weight="1"
+            android:text="输送区域"
+            />
+
+        <TextView
+            android:id="@+id/tv_ssqy"
+            style="@style/tv_right22"
+            android:text="123412"
+            />
+
+        <include layout="@layout/include_detail"></include>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/ll_bz"
+        style="@style/item_ll_r22_l22">
+
+        <TextView
+            style="@style/tv_left22"
+            android:layout_weight="1"
+            android:text="备注"
+            />
+
+        <TextView
+            android:id="@+id/tv_bz"
+            style="@style/tv_right22"
+            android:text="123412"
+            />
+
+        <include layout="@layout/include_detail"></include>
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="350px"
+        android:background="@color/greyf5"
+        >
+    </LinearLayout>
+
+
+</LinearLayout>
