@@ -12,7 +12,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
+import android.widget.RelativeLayout;
 
 import com.aihui.dcdeliver.R;
 import com.aihui.dcdeliver.adapter.HomeAdapter;
@@ -21,8 +21,8 @@ import com.aihui.dcdeliver.base.BaseFragment;
 import com.aihui.dcdeliver.base.BaseView;
 import com.aihui.dcdeliver.bean.CancelBottomDialog;
 import com.aihui.dcdeliver.bean.LoadingBean;
+import com.aihui.dcdeliver.ui.imp.HomeImpl;
 import com.blankj.utilcode.utils.ScreenUtils;
-import com.blankj.utilcode.utils.SizeUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.zhy.adapter.recyclerview.CommonAdapter;
 import com.zhy.adapter.recyclerview.base.ViewHolder;
@@ -32,10 +32,6 @@ import java.util.List;
 
 import butterknife.BindView;
 import in.srain.cube.views.ptr.PtrClassicFrameLayout;
-import in.srain.cube.views.ptr.PtrDefaultHandler;
-import in.srain.cube.views.ptr.PtrFrameLayout;
-import in.srain.cube.views.ptr.PtrHandler;
-import in.srain.cube.views.ptr.header.MaterialHeader;
 
 /**
  * @ 创建者   zhou
@@ -124,17 +120,17 @@ public class HomeFragment extends BaseFragment<HomeImpl> implements BaseView, Ta
     private void judgeIfAlert() {
         if (true) {
 
-            View inflate = View.inflate(getActivity(), R.layout.dialog_daka, null);
-            ImageView iv_close =  inflate.findViewById(R.id.iv_close);
+            View inflate = View.inflate(getBaseActivity(), R.layout.dialog_daka, null);
+            RelativeLayout rv_close =  inflate.findViewById(R.id.rv_close);
 
-            iv_close.setOnClickListener(new View.OnClickListener() {
+            rv_close.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     mDakaDialog.dismiss();
                 }
             });
 
-            mDakaDialog = new AlertDialog.Builder(getActivity())
+            mDakaDialog = new AlertDialog.Builder(getBaseActivity())
                     .setView(inflate)
                     .create();
 
@@ -150,62 +146,7 @@ public class HomeFragment extends BaseFragment<HomeImpl> implements BaseView, Ta
 
     }
 
-    private void initRefreshView() {
 
-        mStoreHousePtrFrame.disableWhenHorizontalMove(true);
-        mStoreHousePtrFrame.setPtrHandler(new PtrHandler() {
-            @Override
-            public void onRefreshBegin(PtrFrameLayout frame) {
-
-            }
-
-            @Override
-            public boolean checkCanDoRefresh(PtrFrameLayout frame, View content, View header) {
-                // 默认实现，根据实际情况做改动
-                return PtrDefaultHandler.checkContentCanBePulledDown(frame, content, header);
-            }
-        });
-
-
-        final MaterialHeader header = new MaterialHeader(mActivity);
-        int[] colors = getResources().getIntArray(R.array.fresh_color);
-        header.setColorSchemeColors(colors);
-        header.setLayoutParams(new PtrFrameLayout.LayoutParams(-1, -2));
-        header.setPadding(0, SizeUtils.dp2px(mActivity, 15), 0, SizeUtils.dp2px(mActivity, 10));
-        header.setPtrFrameLayout(mStoreHousePtrFrame);
-
-        mStoreHousePtrFrame.setLoadingMinTime(1000);
-        mStoreHousePtrFrame.setDurationToCloseHeader(1500);
-        mStoreHousePtrFrame.setHeaderView(header);
-        mStoreHousePtrFrame.addPtrUIHandler(header);
-        mStoreHousePtrFrame.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                mStoreHousePtrFrame.autoRefresh(false);
-            }
-        }, 100);
-
-        mStoreHousePtrFrame.setPtrHandler(new PtrHandler() {
-            @Override
-            public boolean checkCanDoRefresh(PtrFrameLayout frame, View content, View header) {
-                return true;
-            }
-
-            @Override
-            public void onRefreshBegin(final PtrFrameLayout frame) {
-
-                long delay = (long) (1000 + Math.random() * 2000);
-                delay = Math.max(0, delay);
-                delay = 0;
-                frame.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        frame.refreshComplete();
-                    }
-                }, delay);
-            }
-        });
-    }
 
     private void initRecyclView() {
         FrameLayout mWaitingFrame = (FrameLayout) View.inflate(mActivity, R.layout.frame_recycleview, null);
@@ -239,7 +180,8 @@ public class HomeFragment extends BaseFragment<HomeImpl> implements BaseView, Ta
 
         final ArrayList<String> objects = new ArrayList<>();
         objects.add("1111111111");
-
+        objects.add("222");
+        objects.add("4444");
         objects.add("woowoweoewrw");
 
         mWaitingAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {

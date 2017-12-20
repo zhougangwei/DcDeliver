@@ -37,4 +37,7 @@ public class ServiceBean {
     public void setBody(Object body) {
         this.body = body;
     }
+
+
+
 }

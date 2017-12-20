@@ -37,16 +37,16 @@
             android:value="1920"/>
 
         <activity android:name="com.aihui.dcdeliver.ui.activity.MainActivity">
+
+        </activity>
+        <activity
+            android:name="com.aihui.dcdeliver.ui.activity.LoginActivity"
+            android:label="@string/title_activity_login">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
-        </activity>
-        <activity
-            android:name="com.aihui.dcdeliver.ui.activity.LoginActivity"
-            android:label="@string/title_activity_login">
-
         </activity>
 
         <activity

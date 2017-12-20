@@ -18,6 +18,11 @@ import com.trello.rxlifecycle.components.support.RxAppCompatActivity;
 public abstract class BaseActivity extends RxAppCompatActivity implements BaseView{
 
 
+    @Override
+    public BaseActivity getBaseActivity() {
+        return this;
+    }
+
     //布局文件ID
     protected abstract int getContentViewId();
 

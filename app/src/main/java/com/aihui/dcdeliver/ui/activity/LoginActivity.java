@@ -130,11 +130,7 @@ public class LoginActivity extends AppActivity {
         } else {
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
-            if(true){
-                Intent intent = new Intent(LoginActivity.this,MainActivity.class);
-                startActivity(intent);
-                return;
-            }
+          /*  */
             RetrofitClient.getRetrofit()
                     .create(MyService.class)
                     .login(userId,password)
@@ -150,6 +146,14 @@ public class LoginActivity extends AppActivity {
                         @Override
                         public void onError(Throwable e) {
                             super.onError(e);
+                        }
+                        @Override
+                        public void onNext(ServiceBean bean){
+                            if(true){
+                                Intent intent = new Intent(LoginActivity.this,NewWayBillActivity.class);
+                                startActivity(intent);
+                                return;
+                            }
                         }
                     });
         }

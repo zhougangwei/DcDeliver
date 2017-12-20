@@ -10,9 +10,13 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 
+import com.aihui.dcdeliver.R;
+import com.aihui.dcdeliver.adapter.InspectPagerAdapter;
+import com.aihui.dcdeliver.base.AppActivity;
+import com.aihui.dcdeliver.bean.LoadingBean;
 import com.blankj.utilcode.utils.ScreenUtils;
 import com.blankj.utilcode.utils.SizeUtils;
 import com.zhy.adapter.recyclerview.CommonAdapter;
@@ -23,10 +27,6 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import com.aihui.dcdeliver.R;
-import com.aihui.dcdeliver.adapter.InspectPagerAdapter;
-import com.aihui.dcdeliver.base.AppActivity;
-import com.aihui.dcdeliver.bean.LoadingBean;
 import in.srain.cube.views.ptr.PtrClassicFrameLayout;
 import in.srain.cube.views.ptr.PtrDefaultHandler;
 import in.srain.cube.views.ptr.PtrFrameLayout;
@@ -98,8 +98,8 @@ public class WaybillReceiveActivity extends AppActivity implements TabLayout.OnT
         if (true) {
 
             View inflate = View.inflate(this, R.layout.dialog_daka, null);
-            ImageView iv_close = (ImageView) inflate.findViewById(R.id.iv_close);
-            iv_close.setOnClickListener(new View.OnClickListener() {
+            RelativeLayout rv_close =  inflate.findViewById(R.id.rv_close);
+            rv_close.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     mDakaDialog.dismiss();

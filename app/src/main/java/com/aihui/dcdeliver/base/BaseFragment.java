@@ -42,6 +42,11 @@ public abstract class BaseFragment<P extends BasePresenter> extends RxFragment i
     }
 
 
+    @Override
+    public BaseActivity getBaseActivity() {
+        return mActivity;
+    }
+
     private Unbinder mUnbinder;
 
     private ViewStub mNetworkErrorLayout;

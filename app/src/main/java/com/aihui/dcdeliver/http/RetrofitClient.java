@@ -62,4 +62,9 @@ public class RetrofitClient {
 
 
 
+    public static MyService getInstance(){
+       return getRetrofit().create(MyService.class);
+    }
+
+
 }

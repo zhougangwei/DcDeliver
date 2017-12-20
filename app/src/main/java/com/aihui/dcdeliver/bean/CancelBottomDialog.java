@@ -117,7 +117,7 @@ public class CancelBottomDialog extends Dialog {
         WindowManager.LayoutParams params = window.getAttributes();
         params.width = WindowManager.LayoutParams.MATCH_PARENT;
         params.height = WindowManager.LayoutParams.WRAP_CONTENT;
-      //  params.height = (int) (ScreenUtils.getScreenHeight(mContext) * 0.45);
+      // params.height = (int) (ScreenUtils.getScreenHeight(mContext) * 0.45);
         // params.height = (int) (ScreenUtils.getScreenHeight(mContext) *0.6);
         //params.height = WindowManager.LayoutParams.WRAP_CONTENT;
               //  (int) (ScreenUtils.getScreenHeight(mContext) *0.8);
@@ -144,7 +144,7 @@ public class CancelBottomDialog extends Dialog {
             tv.setEnabled(false);
             tv.setBackground(mContext.getResources().getDrawable(R.drawable.text_selector));
 
-            int eighteenDp = SizeUtils.dp2px(mContext, 13);
+            int eighteenDp = SizeUtils.dp2px(mContext, 7);
             tv.setTextSize(SizeUtils.sp2px(mContext,7));
             tv.setPadding(eighteenDp,eighteenDp,eighteenDp,eighteenDp);
 

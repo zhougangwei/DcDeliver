@@ -101,8 +101,8 @@ public class WaybillReceiveActivity2 extends AppActivity implements TabLayout.On
         if (true) {
 
             View inflate = View.inflate(this, R.layout.dialog_daka, null);
-            ImageView iv_close = (ImageView) inflate.findViewById(R.id.iv_close);
-            iv_close.setOnClickListener(new View.OnClickListener() {
+            RelativeLayout.rv_close = (ImageView) inflate.findViewById(R.id.rv_close);
+            rv_close.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     mDakaDialog.dismiss();
