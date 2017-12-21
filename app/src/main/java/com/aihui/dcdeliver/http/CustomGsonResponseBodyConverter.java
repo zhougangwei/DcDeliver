@@ -29,6 +29,7 @@ final class CustomGsonResponseBodyConverter<T> implements Converter<ResponseBody
     private final Gson           gson;
     private final TypeAdapter<T> adapter;
     public static final Charset UTF_8 = Charset.forName("UTF-8");
+
     CustomGsonResponseBodyConverter(Gson gson, TypeAdapter<T> adapter) {
         this.gson = gson;
         this.adapter = adapter;
@@ -42,14 +43,16 @@ final class CustomGsonResponseBodyConverter<T> implements Converter<ResponseBody
             value.close();
             throw new ApiException(httpStatus.getCode(), httpStatus.getMessage());
         }
-        MediaType contentType = value.contentType();
-        Charset charset = contentType != null ? contentType.charset(UTF_8) : UTF_8;
-        InputStream inputStream = new ByteArrayInputStream(response.getBytes());
-        Reader reader = new InputStreamReader(inputStream, charset);
-        JsonReader jsonReader = gson.newJsonReader(reader);
-
         try {
+            MediaType contentType = value.contentType();
+            Charset charset = contentType != null ? contentType.charset(UTF_8) : UTF_8;
+            InputStream inputStream = new ByteArrayInputStream(response.getBytes());
+            Reader reader = new InputStreamReader(inputStream, charset);
+            JsonReader jsonReader = gson.newJsonReader(reader);
             return adapter.read(jsonReader);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
         } finally {
             value.close();
         }

@@ -7,6 +7,9 @@ import android.os.Build;
 import android.os.Looper;
 import android.widget.Toast;
 
+import com.aihui.dcdeliver.util.FileUtil;
+import com.aihui.dcdeliver.util.LogUtil;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
@@ -16,9 +19,6 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.lang.reflect.Field;
 import java.util.Date;
-
-import com.aihui.dcdeliver.util.FileUtil;
-import com.aihui.dcdeliver.util.LogUtil;
 
 
 /**
@@ -61,7 +61,6 @@ public class LocalFileHandler extends BaseExceptionHandler {
 
         return true;
     }
-
     /**
      * 保存错误日志到本地
      *

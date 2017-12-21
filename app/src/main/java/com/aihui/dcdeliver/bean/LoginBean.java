@@ -11,9 +11,10 @@ package com.aihui.dcdeliver.bean;
 
 public class LoginBean {
 
+
     /**
      * msg : success
-     * body : {"account":"admin","deptId":1,"deptName":"顶级机构","email":"","id":1,"orgId":1,"orgName":"顶级机构","phoneNum":"12345678910","status":1,"userName":"admin","userType":null}
+     * body : {"permission":{"hasSave":true,"hasReceive":true},"user":{"account":"admin","deptId":1,"deptName":"顶级机构","email":"","id":1,"orgId":1,"orgName":"顶级机构","phoneNum":"12345678910","status":1,"userName":"admin","userType":null}}
      * code : 200
      */
 
@@ -47,117 +48,169 @@ public class LoginBean {
 
     public static class BodyBean {
         /**
-         * account : admin
-         * deptId : 1
-         * deptName : 顶级机构
-         * email :
-         * id : 1
-         * orgId : 1
-         * orgName : 顶级机构
-         * phoneNum : 12345678910
-         * status : 1
-         * userName : admin
-         * userType : null
+         * permission : {"hasSave":true,"hasReceive":true}
+         * user : {"account":"admin","deptId":1,"deptName":"顶级机构","email":"","id":1,"orgId":1,"orgName":"顶级机构","phoneNum":"12345678910","status":1,"userName":"admin","userType":null}
          */
 
-        private String account;
-        private int    deptId;
-        private String deptName;
-        private String email;
-        private int    id;
-        private int    orgId;
-        private String orgName;
-        private String phoneNum;
-        private int    status;
-        private String userName;
-        private Object userType;
+        private PermissionBean permission;
+        private UserBean user;
 
-        public String getAccount() {
-            return account;
+        public PermissionBean getPermission() {
+            return permission;
         }
 
-        public void setAccount(String account) {
-            this.account = account;
+        public void setPermission(PermissionBean permission) {
+            this.permission = permission;
         }
 
-        public int getDeptId() {
-            return deptId;
+        public UserBean getUser() {
+            return user;
         }
 
-        public void setDeptId(int deptId) {
-            this.deptId = deptId;
+        public void setUser(UserBean user) {
+            this.user = user;
         }
 
-        public String getDeptName() {
-            return deptName;
+        public static class PermissionBean {
+            /**
+             * hasSave : true
+             * hasReceive : true
+             */
+
+            private boolean hasSave;
+            private boolean hasReceive;
+
+            public boolean isHasSave() {
+                return hasSave;
+            }
+
+            public void setHasSave(boolean hasSave) {
+                this.hasSave = hasSave;
+            }
+
+            public boolean isHasReceive() {
+                return hasReceive;
+            }
+
+            public void setHasReceive(boolean hasReceive) {
+                this.hasReceive = hasReceive;
+            }
         }
 
-        public void setDeptName(String deptName) {
-            this.deptName = deptName;
-        }
+        public static class UserBean {
+            /**
+             * account : admin
+             * deptId : 1
+             * deptName : 顶级机构
+             * email :
+             * id : 1
+             * orgId : 1
+             * orgName : 顶级机构
+             * phoneNum : 12345678910
+             * status : 1
+             * userName : admin
+             * userType : null
+             */
 
-        public String getEmail() {
-            return email;
-        }
+            private String account;
+            private int    deptId;
+            private String deptName;
+            private String email;
+            private int    id;
+            private int    orgId;
+            private String orgName;
+            private String phoneNum;
+            private int    status;
+            private String userName;
+            private Object userType;
 
-        public void setEmail(String email) {
-            this.email = email;
-        }
+            public String getAccount() {
+                return account;
+            }
 
-        public int getId() {
-            return id;
-        }
+            public void setAccount(String account) {
+                this.account = account;
+            }
 
-        public void setId(int id) {
-            this.id = id;
-        }
+            public int getDeptId() {
+                return deptId;
+            }
 
-        public int getOrgId() {
-            return orgId;
-        }
+            public void setDeptId(int deptId) {
+                this.deptId = deptId;
+            }
 
-        public void setOrgId(int orgId) {
-            this.orgId = orgId;
-        }
+            public String getDeptName() {
+                return deptName;
+            }
 
-        public String getOrgName() {
-            return orgName;
-        }
+            public void setDeptName(String deptName) {
+                this.deptName = deptName;
+            }
 
-        public void setOrgName(String orgName) {
-            this.orgName = orgName;
-        }
+            public String getEmail() {
+                return email;
+            }
 
-        public String getPhoneNum() {
-            return phoneNum;
-        }
+            public void setEmail(String email) {
+                this.email = email;
+            }
 
-        public void setPhoneNum(String phoneNum) {
-            this.phoneNum = phoneNum;
-        }
+            public int getId() {
+                return id;
+            }
 
-        public int getStatus() {
-            return status;
-        }
+            public void setId(int id) {
+                this.id = id;
+            }
 
-        public void setStatus(int status) {
-            this.status = status;
-        }
+            public int getOrgId() {
+                return orgId;
+            }
 
-        public String getUserName() {
-            return userName;
-        }
+            public void setOrgId(int orgId) {
+                this.orgId = orgId;
+            }
 
-        public void setUserName(String userName) {
-            this.userName = userName;
-        }
+            public String getOrgName() {
+                return orgName;
+            }
 
-        public Object getUserType() {
-            return userType;
-        }
+            public void setOrgName(String orgName) {
+                this.orgName = orgName;
+            }
 
-        public void setUserType(Object userType) {
-            this.userType = userType;
+            public String getPhoneNum() {
+                return phoneNum;
+            }
+
+            public void setPhoneNum(String phoneNum) {
+                this.phoneNum = phoneNum;
+            }
+
+            public int getStatus() {
+                return status;
+            }
+
+            public void setStatus(int status) {
+                this.status = status;
+            }
+
+            public String getUserName() {
+                return userName;
+            }
+
+            public void setUserName(String userName) {
+                this.userName = userName;
+            }
+
+            public Object getUserType() {
+                return userType;
+            }
+
+            public void setUserType(Object userType) {
+                this.userType = userType;
+            }
         }
     }
 }

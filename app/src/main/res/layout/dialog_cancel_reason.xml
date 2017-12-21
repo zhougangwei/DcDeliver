@@ -3,12 +3,12 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-
     android:layout_height="wrap_content"
     android:background="@color/white"
     android:orientation="vertical">
 
     <TextView
+        android:textSize="48px"
         android:id="@+id/tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -18,23 +18,26 @@
 
 
     <com.fynn.fluidlayout.FluidLayout
+        android:layout_marginLeft="60px"
+        android:layout_marginRight="60px"
         android:layout_below="@+id/tv"
         android:id="@+id/fluid_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-
-        android:padding="5dp">
+       >
 
     </com.fynn.fluidlayout.FluidLayout>
     <EditText
+        android:textSize="48px"
         android:id="@+id/et_other"
         android:paddingLeft="20dp"
         android:paddingRight="20dp"
         android:paddingTop="15dp"
         android:paddingBottom="15dp"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
-        android:layout_marginBottom="20dp"
+        android:layout_marginTop="60px"
+        android:layout_marginLeft="60px"
+        android:layout_marginRight="60px"
+        android:layout_marginBottom="53px"
         android:hint="其他想说的"
         android:background="#F5F5F5"
         android:layout_below="@+id/fluid_layout"
@@ -48,8 +51,8 @@
         android:text="提 交"
         android:id="@+id/bt_submit"
         android:layout_width="match_parent"
-        android:layout_height="45dp"
+        android:layout_height="135px"
         android:background="@drawable/shape_button_receive"
-        android:layout_margin="20dp"/>
+        android:layout_margin="60px"/>
 
 </RelativeLayout>

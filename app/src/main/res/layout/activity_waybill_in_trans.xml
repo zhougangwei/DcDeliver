@@ -76,50 +76,32 @@
                 android:src="@mipmap/ic_detail_right"/>
         </RelativeLayout>
 
-        <RelativeLayout
-            android:id="@+id/rl_bt2"
+        <include
+            android:visibility="gone"
+            android:id="@+id/rl_cancel_recive"
+            layout="@layout/cancel_receive"/>
+
+        <include
+            android:visibility="gone"
+            android:layout_marginTop="56px"
             android:layout_width="match_parent"
             android:layout_height="112px"
             android:layout_below="@+id/rl_ys"
-            android:layout_marginTop="56px">
-
-            <TextView
-
-                android:layout_width="456px"
-                android:layout_height="match_parent"
-                android:layout_marginLeft="60px"
-                android:background="@drawable/shape_cancel_trans"
-                android:gravity="center"
-                android:text="取消运送"
-                android:textColor="@color/appColor"
-                android:textSize="48px"/>
-
-            <TextView
-                android:layout_width="456px"
-                android:layout_height="match_parent"
-                android:layout_alignParentRight="true"
-                android:layout_marginLeft="60px"
-                android:layout_marginRight="60px"
-                android:background="@drawable/shape_sure_trans"
-                android:gravity="center"
-                android:text="确定取单"
-                android:textColor="@color/white"
-                android:textSize="48px"/>
-
-
-        </RelativeLayout>
+            android:id="@+id/bt_receive"
+            layout="@layout/bt_receive"/>
 
         <ImageView
             android:id="@+id/iv_shadow"
             android:layout_width="match_parent"
             android:layout_height="56px"
-            android:layout_below="@+id/rl_bt2"
-            android:src="@drawable/ic_zhengfangxing"/>
+            android:layout_below="@+id/rl_ys"
+            android:layout_marginTop="168px"
+            />
 
         <android.support.v7.widget.CardView
             android:id="@+id/cv_one"
             android:layout_width="match_parent"
-            android:layout_height="684px"
+            android:layout_height="wrap_content"
             android:layout_below="@+id/iv_shadow"
             android:layout_margin="24px"
             app:cardCornerRadius="8px"
@@ -128,57 +110,49 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:padding="29px">
 
                 <TextView
                     android:layout_width="wrap_content"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"
+                    android:layout_height="142px"
+
                     android:gravity="center_vertical"
                     android:text="运送信息"
                     android:textColor="@color/black"
                     android:textSize="48px"/>
 
+
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="0px"
-                    android:layout_weight="1">
+                    android:layout_height="142px"
+                    >
 
                     <TextView
                         style="@style/in_trans_left"
                         android:text="任务类型"/>
 
                     <TextView
-                        android:id="@+id/tv_eventType"
+                        android:id="@+id/tv_taskType"
                         style="@style/intrans_right"
                         android:hint="病人检查"/>
                 </LinearLayout>
 
                 <include layout="@layout/line"></include>
 
-                <LinearLayout
+                <android.support.v7.widget.RecyclerView
                     android:layout_width="match_parent"
-                    android:layout_height="0px"
-                    android:layout_weight="1">
-
-                    <TextView
-                        style="@style/in_trans_left"
-                        android:text="护工"/>
-
-                    <TextView
-                        android:id="@+id/tv_name"
-                        style="@style/intrans_right"
-                        android:hint="工号+姓名"/>
-                </LinearLayout>
+                    android:layout_height="wrap_content"
+                    >
+                </android.support.v7.widget.RecyclerView>
 
                 <include layout="@layout/line"></include>
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="0px"
-                    android:layout_weight="1">
+                    android:layout_height="142px"
+                    >
 
                     <TextView
                         style="@style/in_trans_left"
@@ -192,95 +166,38 @@
 
                 <include layout="@layout/line"></include>
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="0px"
-                    android:layout_weight="1">
-
-                    <TextView
-                        style="@style/in_trans_left"
-                        android:text="接收区域"/>
-
-                    <TextView
-                        android:id="@+id/tv_arrive_area"
-                        style="@style/intrans_right"
-                        android:hint="一楼"/>
-                </LinearLayout>
-            </LinearLayout>
-        </android.support.v7.widget.CardView>
-
-        <android.support.v7.widget.CardView
-            android:id="@+id/cv_two"
-            android:layout_width="match_parent"
-            android:layout_height="963px"
-            android:layout_below="@+id/cv_one"
-            android:layout_margin="24px"
-            app:cardCornerRadius="8px"
-            app:cardElevation="24px"
-            >
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical"
-                android:padding="29px">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"
-                    android:gravity="center_vertical"
-                    android:text="运送单信息"
-                    android:textColor="@color/black"
-                    android:textSize="48px"/>
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="0px"
-                    android:layout_weight="1">
+                    android:layout_height="142px"
+                    >
 
                     <TextView
                         style="@style/in_trans_left"
                         android:text="运送单号"/>
 
                     <TextView
-                        android:text="6666666666666666666"
                         android:id="@+id/tv_trans_num"
                         style="@style/intrans_right"
+                        android:text="6666666666666666666"
 
                         android:textColor="@color/appColor"/>
                 </LinearLayout>
 
                 <include layout="@layout/line"></include>
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="0px"
-                    android:layout_weight="1">
-
-                    <TextView
-                        style="@style/in_trans_left"
-                        android:text="医工"/>
-
-                    <TextView
-                        android:id="@+id/tv_doctor_name"
-                        style="@style/intrans_right"
-                        android:hint="工号+姓名"/>
-                </LinearLayout>
-
-                <include layout="@layout/line"></include>
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="0px"
-                    android:layout_weight="1">
+                    android:layout_height="142px"
+                    >
 
                     <TextView
                         style="@style/in_trans_left"
-                        android:text="取单区域"/>
+                        android:text="接收区域"/>
 
                     <TextView
-                        android:id="@+id/tv_get_area"
+                        android:id="@+id/tv_start_area"
                         style="@style/intrans_right"
                         android:hint="一楼"/>
                 </LinearLayout>
@@ -289,8 +206,26 @@
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="0px"
-                    android:layout_weight="1">
+                    android:layout_height="142px"
+                    >
+
+                    <TextView
+                        style="@style/in_trans_left"
+                        android:text="取单区域"/>
+
+                    <TextView
+                        android:id="@+id/tv_end_area"
+                        style="@style/intrans_right"
+                        android:hint="一楼"/>
+                </LinearLayout>
+
+                <include layout="@layout/line"></include>
+
+                <LinearLayout
+                    android:visibility="gone"
+                    android:layout_width="match_parent"
+                    android:layout_height="142px"
+                    >
 
                     <TextView
                         style="@style/in_trans_left"
@@ -300,18 +235,20 @@
                         android:id="@+id/tv_get_way"
                         style="@style/intrans_right"
                         android:hint="轮椅"/>
-                    
+
 
                 </LinearLayout>
+
                 <include layout="@layout/line"></include>
+
                 <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="142px"
+
                     android:background="@color/white"
                     android:gravity="start"
                     android:hint="备注"
-                    android:textColorHint="@color/textGrey888"
-                    android:layout_width="match_parent"
-                    android:layout_height="0px"
-                    android:layout_weight="2"/>
+                    android:textColorHint="@color/textGrey888"/>
 
             </LinearLayout>
         </android.support.v7.widget.CardView>

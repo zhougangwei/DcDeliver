@@ -15,7 +15,8 @@ import android.widget.TextView;
 
 import com.aihui.dcdeliver.R;
 import com.aihui.dcdeliver.base.AppActivity;
-import com.aihui.dcdeliver.bean.ServiceBean;
+import com.aihui.dcdeliver.base.Content;
+import com.aihui.dcdeliver.bean.LoginBean;
 import com.aihui.dcdeliver.http.BaseSubscriber;
 import com.aihui.dcdeliver.http.MyService;
 import com.aihui.dcdeliver.http.RetrofitClient;
@@ -24,7 +25,6 @@ import com.aihui.dcdeliver.util.SPUtil;
 
 import butterknife.BindView;
 import butterknife.OnClick;
-import rx.functions.Action1;
 import rx.schedulers.Schedulers;
 
 public class LoginActivity extends AppActivity {
@@ -82,6 +82,12 @@ public class LoginActivity extends AppActivity {
             }
         });
 
+       if(SPUtil.getBoolean(LoginActivity.this,Content.IS_LOGIN,false)){
+            Intent intent = new Intent(LoginActivity.this,MainActivity.class);
+            startActivity(intent);
+            finish();
+        }
+
     }
 
     @Override
@@ -128,28 +134,45 @@ public class LoginActivity extends AppActivity {
             focusView.requestFocus();
 
         } else {
+
+
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
-            if(true){
-                Intent intent = new Intent(LoginActivity.this,MainActivity.class);
-                startActivity(intent);
-                return;
-            }
+          /*  */
             RetrofitClient.getRetrofit()
                     .create(MyService.class)
                     .login(userId,password)
                     .subscribeOn(Schedulers.io())
                     .observeOn(Schedulers.io())
-                   .doOnNext(new Action1<ServiceBean>() {
-                       @Override
-                       public void call(ServiceBean serviceBean) {
-
-                       }
-                   })
-                    .subscribe(new BaseSubscriber<ServiceBean>(LoginActivity.this){
+                    .subscribe(new BaseSubscriber<LoginBean>(LoginActivity.this){
                         @Override
                         public void onError(Throwable e) {
                             super.onError(e);
+                        }
+                        @Override
+                        public void onNext(LoginBean bean){
+                            if(true){
+                                LoginBean.BodyBean body = bean.getBody();
+                                SPUtil.saveString(LoginActivity.this,"userName",body.getUser().getUserName());
+                                SPUtil.saveString(LoginActivity.this,"deptName",body.getUser().getDeptName());
+
+                                LoginBean.BodyBean.PermissionBean permission = body.getPermission();
+
+                                boolean hasReceive = permission.isHasReceive();
+                                boolean hasSave = permission.isHasSave();
+                                Intent intent = new Intent(LoginActivity.this,MainActivity.class);
+                                intent.putExtra(Content.HAS_RECEIVE,hasReceive);
+                                intent.putExtra(Content.HAS_SAVE,hasSave);
+
+                                SPUtil.saveBoolean(LoginActivity.this,Content.HAS_RECEIVE,hasReceive);
+                                SPUtil.saveBoolean(LoginActivity.this,Content.HAS_SAVE,hasSave);
+
+                                SPUtil.saveBoolean(LoginActivity.this,Content.IS_LOGIN,true);
+
+
+                                startActivity(intent);
+                                return;
+                            }
                         }
                     });
         }

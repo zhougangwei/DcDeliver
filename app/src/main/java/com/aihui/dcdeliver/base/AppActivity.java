@@ -9,18 +9,17 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.view.WindowManager;
 
+import com.aihui.dcdeliver.R;
+import com.aihui.dcdeliver.application.ActivityManager;
 import com.zhy.autolayout.AutoFrameLayout;
 import com.zhy.autolayout.AutoLinearLayout;
 import com.zhy.autolayout.AutoRelativeLayout;
-import com.zhy.autolayout.config.AutoLayoutConifg;
 
 import java.text.SimpleDateFormat;
 import java.util.List;
 
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
-import com.aihui.dcdeliver.R;
-import com.aihui.dcdeliver.application.ActivityManager;
 
 import static com.aihui.dcdeliver.application.BaseApplication.isActive;
 
@@ -48,7 +47,7 @@ public abstract class AppActivity extends BaseActivity {
         }
         addColorStatus();
         ActivityManager.getInstance().addActivity(this);
-        AutoLayoutConifg.getInstance().useDeviceSize();
+
         initView();
         initData();
 

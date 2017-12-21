@@ -12,8 +12,16 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
+import android.widget.RelativeLayout;
 
+import com.aihui.dcdeliver.R;
+import com.aihui.dcdeliver.adapter.HomeAdapter;
+import com.aihui.dcdeliver.adapter.InspectPagerAdapter;
+import com.aihui.dcdeliver.base.BaseFragment;
+import com.aihui.dcdeliver.base.BaseView;
+import com.aihui.dcdeliver.bean.CancelBottomDialog;
+import com.aihui.dcdeliver.bean.LoadingBean;
+import com.aihui.dcdeliver.ui.imp.HomeImpl;
 import com.blankj.utilcode.utils.ScreenUtils;
 import com.blankj.utilcode.utils.SizeUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
@@ -24,13 +32,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
-import com.aihui.dcdeliver.R;
-import com.aihui.dcdeliver.adapter.HomeAdapter;
-import com.aihui.dcdeliver.adapter.InspectPagerAdapter;
-import com.aihui.dcdeliver.base.BaseFragment;
-import com.aihui.dcdeliver.base.BaseView;
-import com.aihui.dcdeliver.bean.CancelBottomDialog;
-import com.aihui.dcdeliver.bean.LoadingBean;
 import in.srain.cube.views.ptr.PtrClassicFrameLayout;
 import in.srain.cube.views.ptr.PtrDefaultHandler;
 import in.srain.cube.views.ptr.PtrFrameLayout;
@@ -125,13 +126,13 @@ public class WorkSummaryFragment extends BaseFragment<HomeImpl> implements BaseV
     private void judgeIfAlert() {
         if (true) {
 
-            View inflate = View.inflate(getActivity(), R.layout.dialog_daka, null);
-            ImageView iv_close = (ImageView) inflate.findViewById(R.id.iv_close);
+            View inflate = View.inflate(getBaseActivity(), R.layout.dialog_daka, null);
+            RelativeLayout rv_close = (RelativeLayout) inflate.findViewById(R.id.rv_close);
 
 
 
 
-            iv_close.setOnClickListener(new View.OnClickListener() {
+            rv_close.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     mDakaDialog.dismiss();
@@ -140,7 +141,7 @@ public class WorkSummaryFragment extends BaseFragment<HomeImpl> implements BaseV
                 }
             });
 
-            mDakaDialog = new AlertDialog.Builder(getActivity())
+            mDakaDialog = new AlertDialog.Builder(getBaseActivity())
                     .setView(inflate)
                     .create();
 

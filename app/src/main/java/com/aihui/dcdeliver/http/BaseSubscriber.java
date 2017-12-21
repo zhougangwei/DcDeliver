@@ -5,14 +5,15 @@ import android.content.Intent;
 import android.util.Log;
 import android.widget.Toast;
 
-import java.io.IOException;
-
 import com.aihui.dcdeliver.R;
 import com.aihui.dcdeliver.ui.activity.LoginActivity;
+
+import java.io.IOException;
+
 import retrofit2.adapter.rxjava.HttpException;
 import rx.Subscriber;
 
-public class BaseSubscriber<T> extends Subscriber<T> {
+public abstract  class BaseSubscriber<T> extends Subscriber<T> {
     protected Context mContext;
 
     public BaseSubscriber(Context context) {
@@ -45,10 +46,7 @@ public class BaseSubscriber<T> extends Subscriber<T> {
         } 
     }
 
-    @Override
-    public void onNext(T t) {
 
-    }
 
 }
 

@@ -27,4 +27,6 @@ public interface BaseView {
      */
     <T> LifecycleTransformer<T> bindToLife();
 
+
+    BaseActivity getBaseActivity();
 }

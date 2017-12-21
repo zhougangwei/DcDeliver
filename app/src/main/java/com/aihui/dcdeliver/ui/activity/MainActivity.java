@@ -14,7 +14,15 @@ import com.aihui.dcdeliver.R;
 import com.aihui.dcdeliver.adapter.MenuAdapter;
 import com.aihui.dcdeliver.base.AppActivity;
 import com.aihui.dcdeliver.base.BaseFragment;
+import com.aihui.dcdeliver.base.Content;
+import com.aihui.dcdeliver.bean.ServiceBean;
+import com.aihui.dcdeliver.http.BaseSubscriber;
+import com.aihui.dcdeliver.http.RetrofitClient;
+import com.aihui.dcdeliver.rxbus.RxBus;
+import com.aihui.dcdeliver.rxbus.event.AddEvent;
+import com.aihui.dcdeliver.rxbus.event.FraEvent;
 import com.aihui.dcdeliver.ui.FragmentFactory;
+import com.aihui.dcdeliver.util.SPUtil;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -24,6 +32,8 @@ import butterknife.OnClick;
 import nl.psdcompany.duonavigationdrawer.views.DuoDrawerLayout;
 import nl.psdcompany.duonavigationdrawer.views.DuoMenuView;
 import nl.psdcompany.duonavigationdrawer.widgets.DuoDrawerToggle;
+import rx.functions.Action1;
+import rx.schedulers.Schedulers;
 
 
 public class MainActivity extends AppActivity implements DuoMenuView.OnMenuClickListener {
@@ -32,14 +42,18 @@ public class MainActivity extends AppActivity implements DuoMenuView.OnMenuClick
     @BindView(R.id.container)
     FrameLayout mContainer;
     @BindView(R.id.tv_title)
-     TextView    mTvTitle;
+    TextView    mTvTitle;
     private MenuAdapter mMenuAdapter;
     private ViewHolder  mViewHolder;
 
-    private ArrayList<String> mTitles = new ArrayList<>();
-    private int[] mTitleDraw=new int[]{
-            R.mipmap.ic_ysd,R.mipmap.ic_gzhz,R.mipmap.ic_kqdk
+    private ArrayList<String> mTitles    = new ArrayList<>();
+    private int[]             mTitleDraw = new int[]{
+            R.mipmap.ic_ysd, R.mipmap.ic_gzhz, R.mipmap.ic_kqdk
+            , R.mipmap.ic_kqdk
+            , R.mipmap.ic_kqdk
     };
+    private boolean mHasReceive;
+    private boolean mHasSave;
 
 
     @Override
@@ -50,9 +64,22 @@ public class MainActivity extends AppActivity implements DuoMenuView.OnMenuClick
 
     @Override
     protected void initData() {
-
+        initEventBus();
     }
 
+    private void initEventBus() {
+        RxBus.getInstance().toObservable(AddEvent.class)
+                .subscribe(new Action1<AddEvent>() {
+                    @Override
+                    public void call(AddEvent fraEvent) {
+                        if (fraEvent.showAdd) {
+                            mIvAdd.setVisibility(View.VISIBLE);
+                        } else {
+                            mIvAdd.setVisibility(View.GONE);
+                        }
+                    }
+                });
+    }
 
 
     @Override
@@ -69,6 +96,11 @@ public class MainActivity extends AppActivity implements DuoMenuView.OnMenuClick
         goToFragment(0, false);
         mMenuAdapter.setViewSelected(0, true);
         setTitle(mTitles.get(0));
+
+        Intent intent = getIntent();
+        mHasReceive = intent.getBooleanExtra(Content.HAS_RECEIVE, false);
+        mHasSave = intent.getBooleanExtra(Content.HAS_SAVE, false);
+        RxBus.getInstance().post(new FraEvent(mHasSave, mHasReceive));
 
     }
 
@@ -96,7 +128,7 @@ public class MainActivity extends AppActivity implements DuoMenuView.OnMenuClick
     }
 
     private void handleMenu() {
-        mMenuAdapter = new MenuAdapter(mTitles,mTitleDraw);
+        mMenuAdapter = new MenuAdapter(mTitles, mTitleDraw);
 
         mViewHolder.mDuoMenuView.setOnMenuClickListener(this);
         mViewHolder.mDuoMenuView.setAdapter(mMenuAdapter);
@@ -136,14 +168,45 @@ public class MainActivity extends AppActivity implements DuoMenuView.OnMenuClick
         mMenuAdapter.setViewSelected(position, true);
         // Navigate to the right fragment
         switch (position) {
+            case 3:
+                if (mHasSave&&mHasSave){
+                    RxBus.getInstance().post(new FraEvent(mHasSave,mHasReceive));
+                }else{
+                    /*
+                    无法转换
+                    * */
+                }
+
+                break;
+            case 4:
+                gotoOut();
             default:
                 goToFragment(position, false);
                 break;
+
+
         }
         // Close the drawer
         mViewHolder.mDuoDrawerLayout.closeDrawer();
     }
 
+    private void gotoOut() {
+
+        RetrofitClient.getInstance().logout()
+                .observeOn(Schedulers.io())
+                .subscribe(new BaseSubscriber<ServiceBean>(MainActivity.this) {
+                    @Override
+                    public void onNext(ServiceBean loginBean) {
+
+                /*
+                * 清除本地缓存
+                * */
+                        SPUtil.clear(MainActivity.this);
+                    }
+                })
+        ;
+
+    }
 
 
     @OnClick({R.id.iv_add})

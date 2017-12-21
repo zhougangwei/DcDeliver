@@ -125,10 +125,22 @@
         <item name="android:paddingLeft">22px</item>
         <item name="android:paddingRight">22px</item>
         <item name="android:background">@color/white</item>
-        <item name="android:layout_weight">1</item>
+
         <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_height">159px</item>
         <item name="android:orientation">horizontal</item>
+    </style>
+
+    <style name="tab">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:padding">10dp</item>
+        <item name="android:text">请选择</item>
+        <item name="android:textColor">@color/appColor</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:visibility">gone</item>
     </style>
 
 </resources>

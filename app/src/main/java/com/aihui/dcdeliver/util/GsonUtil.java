@@ -9,6 +9,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonPrimitive;
@@ -34,6 +35,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 
 public class GsonUtil {
@@ -50,7 +52,24 @@ public class GsonUtil {
                .registerTypeAdapter(double.class, new DoubleDefault0Adapter())
                .registerTypeAdapter(Long.class, new LongDefault0Adapter())
                .registerTypeAdapter(long.class, new LongDefault0Adapter())
-
+               .registerTypeAdapter(float.class,new FloatDefault0Adapter())
+               .registerTypeAdapter(Float.class,new FloatDefault0Adapter())
+               .registerTypeAdapter(
+                       new TypeToken<HashMap<String, Object>>(){}.getType(),
+                       new JsonDeserializer<HashMap<String, Object>>() {
+                           @Override
+                           public HashMap<String, Object> deserialize(
+                                   JsonElement json, Type typeOfT,
+                                   JsonDeserializationContext context) throws JsonParseException {
+                               HashMap<String, Object> treeMap = new HashMap<>();
+                               JsonObject jsonObject = json.getAsJsonObject();
+                               Set<Map.Entry<String, JsonElement>> entrySet = jsonObject.entrySet();
+                               for (Map.Entry<String, JsonElement> entry : entrySet) {
+                                   treeMap.put(entry.getKey(), entry.getValue());
+                               }
+                               return treeMap;
+                           }
+                       })
                .setDateFormat("yyyy-MM-dd HH:mm:ss").create();
        return  gson;
    };
@@ -339,6 +358,9 @@ public class GsonUtil {
 
         @Override
         public JsonElement serialize(Double src, Type typeOfSrc, JsonSerializationContext context) {
+            if (src == src.longValue()){
+                return new JsonPrimitive(src.longValue());
+            }
             return new JsonPrimitive(src);
         }
     }
@@ -348,7 +370,7 @@ public class GsonUtil {
                 throws JsonParseException {
             try {
                 if (json.getAsString().equals("") || json.getAsString().equals("null")) {//定义为long类型,如果后台返回""或者null,则返回0
-                    return 0l;
+                    return 0L;
                 }
             } catch (Exception ignore) {
             }
@@ -364,6 +386,41 @@ public class GsonUtil {
             return new JsonPrimitive(src);
         }
     }
+
+
+
+    public static class FloatDefault0Adapter implements JsonSerializer<Float>, JsonDeserializer<Float> {
+        @Override
+        public Float deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
+                throws JsonParseException {
+            try {
+                if (json.getAsString().equals("") || json.getAsString().equals("null")) {//定义为Float类型,如果后台返回""或者null,则返回0
+                    return 0.0F;
+                }
+            } catch (Exception ignore) {
+            }
+            try {
+                return json.getAsFloat();
+            } catch (NumberFormatException e) {
+                throw new JsonSyntaxException(e);
+            }
+        }
+
+        @Override
+        public JsonElement serialize(Float src, Type typeOfSrc, JsonSerializationContext context) {
+            if (src == src.longValue()){
+                return new JsonPrimitive(src.longValue());
+            }
+            return new JsonPrimitive(src);
+        }
+    }
+
+
+
+
+
+
+
     final static class Default2DateTypeAdapter implements JsonSerializer<Date>, JsonDeserializer<Date> {
 
         // TODO: migrate to streaming adapter
