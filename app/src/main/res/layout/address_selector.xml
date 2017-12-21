@@ -26,6 +26,7 @@
         </HorizontalScrollView>
 
         <TextView
+            android:visibility="gone"
             android:paddingTop="10px"
             android:paddingBottom="10px"
             android:paddingLeft="15px"

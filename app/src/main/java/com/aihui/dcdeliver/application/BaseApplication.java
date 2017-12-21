@@ -5,7 +5,6 @@ import android.content.Context;
 
 import com.aihui.dcdeliver.cachemanager.AddCookiesInterceptor;
 import com.aihui.dcdeliver.cachemanager.ReceivedCookiesInterceptor;
-import com.aihui.dcdeliver.exception.LocalFileHandler;
 import com.aihui.dcdeliver.util.LogUtil;
 import com.zhy.autolayout.config.AutoLayoutConifg;
 
@@ -29,7 +28,7 @@ public class BaseApplication extends Application {
 
 
         //配置程序异常退出处理
-        Thread.setDefaultUncaughtExceptionHandler(new LocalFileHandler(this));
+      //  Thread.setDefaultUncaughtExceptionHandler(new LocalFileHandler(this));
 
         //配置自适应
         AutoLayoutConifg.getInstance().useDeviceSize().init(this);

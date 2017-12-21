@@ -13,7 +13,7 @@ import java.util.ArrayList;
  * @ 更新描述  ${TODO}
  */
 
-public class selectAbleDataManager {
+public class SelectAbleDataHelper {
 
 
     public ArrayList<ISelectAble> selectAbles;
@@ -25,7 +25,7 @@ public class selectAbleDataManager {
 
 
     //数据转化分析
-    public selectAbleDataManager() {
+    public SelectAbleDataHelper() {
     }
 
     public void solveDatas(ArrayList<ISelectAble> selectAbles) {

@@ -7,9 +7,6 @@ import com.aihui.dcdeliver.base.BaseActivity;
 import com.aihui.dcdeliver.base.BaseView;
 import com.aihui.dcdeliver.bean.SelectBean;
 import com.aihui.dcdeliver.ui.presenter.SelectPresenter;
-import com.aihui.dcdeliver.util.GsonUtil;
-import com.aihui.dcdeliver.util.ToastUtil;
-import com.google.gson.internal.LinkedTreeMap;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,11 +31,11 @@ public class SelectDecotor implements SelectedListener ,SelectPresenter {
 
     private BottomDialog mDeptDialog;           //底部弹窗 科室或者地理位子的
     private BaseActivity mBaseActivity;
-    private SelectBean   mCity;
-    //要转成的数据类型
-    private  Class mClass;
 
-    private Object mDatas;
+    //要转成的数据类型
+
+
+    private ISelectAbleList mDatas;
 
     private OnBackSelectListener mOnBackSelectListener;
 
@@ -49,58 +46,62 @@ public class SelectDecotor implements SelectedListener ,SelectPresenter {
     }
 
 
-    public SelectDecotor(BaseView baseView, Object datas,Class clazz) {
+    public SelectDecotor(BaseView baseView, ISelectAbleList datas) {
         this.mBaseActivity = baseView.getBaseActivity();
         this.mDatas = datas;
-        mClass = clazz;
+
     }
 
     @Override
     public void showDialog() {
-            mDeptDialog = new BottomDialog(mBaseActivity);
-            Selector selector = new Selector(mBaseActivity, 3);
-            //输入自己的数据
-            selector.setDataProvider(new DataProvider() {
-                @Override
-                public void provideData(int currentDeep, int preId, final DataReceiver receiver) {
-                    if (currentDeep == 0) {
-                        List<ISelectAble> objects = sortDatas("0");
-                        receiver.send(objects);
-                    } else if (currentDeep >1) {
-                        Observable.just(preId)
-                                .subscribeOn(Schedulers.io())
-                                .map(new Func1<Integer, List<ISelectAble> >() {
-                                    @Override
-                                    public List<ISelectAble> call(Integer integer) {
-                                        List<ISelectAble> objects = sortDatas(integer + "");
-                                        return objects;
-                                    }
-                                })
-                                .observeOn(AndroidSchedulers.mainThread())
-                             .subscribe(new Action1<List<ISelectAble>>() {
-                                    @Override
-                                    public void call(List<ISelectAble> counties) {
-                                        receiver.send(counties);
-                                    }
-                                }, new Action1<Throwable>() {
-                                    @Override
-                                    public void call(Throwable throwable) {
-                                        //给一个空值 进去 触发提前结束
-                                        receiver.send(new ArrayList<ISelectAble>());
-                                    }
-                                });
+
+            if(mDeptDialog==null){
+                mDeptDialog = new BottomDialog(mBaseActivity);
+                Selector selector = new Selector(mBaseActivity, 3);
+                //输入自己的数据
+                selector.setDataProvider(new DataProvider() {
+                    @Override
+                    public void provideData(int currentDeep, int preId, final DataReceiver receiver) {
+                        if (currentDeep == 0) {
+                            List<ISelectAble> list0 = mDatas.getList0();
+                            receiver.send(list0);
+                        } else if (currentDeep >0) {
+                            Observable.just(preId)
+                                    .subscribeOn(Schedulers.io())
+                                    .map(new Func1<Integer, List<ISelectAble> >() {
+                                        @Override
+                                        public List<ISelectAble> call(Integer integer) {
+                                            List<ISelectAble> objects = sortDatas(integer );
+                                            return objects;
+                                        }
+                                    })
+                                    .observeOn(AndroidSchedulers.mainThread())
+                                    .subscribe(new Action1<List<ISelectAble>>() {
+                                        @Override
+                                        public void call(List<ISelectAble> counties) {
+                                            receiver.send(counties);
+                                        }
+                                    }, new Action1<Throwable>() {
+                                        @Override
+                                        public void call(Throwable throwable) {
+                                            //给一个空值 进去 触发提前结束
+                                            receiver.send(new ArrayList<ISelectAble>());
+                                        }
+                                    });
+                        }
                     }
-                }
-            });
-            selector.setSelectedListener(this);
-            mDeptDialog.init(mBaseActivity, selector);
-            mDeptDialog.setOnAddressSelectedListener(this);
-            mDeptDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
-                @Override
-                public void onCancel(DialogInterface dialog) {
-                    ToastUtil.showToast("111");
-                }
-            });
+                });
+                selector.setSelectedListener(this);
+                mDeptDialog.init(mBaseActivity, selector);
+                mDeptDialog.setOnAddressSelectedListener(this);
+                mDeptDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                    @Override
+                    public void onCancel(DialogInterface dialog) {
+
+                    }
+                });
+            }
+
         mDeptDialog.show();
     }
 
@@ -110,13 +111,8 @@ public class SelectDecotor implements SelectedListener ,SelectPresenter {
      * @return
      */
     @NonNull
-    private List<ISelectAble> sortDatas(String key) {
-        List<LinkedTreeMap> o = (List<LinkedTreeMap>) ((LinkedTreeMap) mDatas).get(key);
-        List<ISelectAble> objects = new ArrayList<>();
-        String s1 = GsonUtil.parseListToJson(o);
-        List<ISelectAble> objects1 = GsonUtil.parseJsonToList(s1, mClass);
-        objects.addAll(objects1);
-        return objects;
+    private List<ISelectAble> sortDatas(Integer key) {
+        return mDatas.getList(key);
     }
 
     @Override

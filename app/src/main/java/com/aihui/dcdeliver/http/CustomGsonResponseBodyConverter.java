@@ -4,8 +4,6 @@ import com.google.gson.Gson;
 import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;
 
-import org.json.JSONObject;
-
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -46,11 +44,9 @@ final class CustomGsonResponseBodyConverter<T> implements Converter<ResponseBody
             throw new ApiException(httpStatus.getCode(), httpStatus.getMessage());
         }
         try {
-            JSONObject jsonObject = new JSONObject(response);
-            String bodyString = jsonObject.get("body").toString();
             MediaType contentType = value.contentType();
             Charset charset = contentType != null ? contentType.charset(UTF_8) : UTF_8;
-            InputStream inputStream = new ByteArrayInputStream(bodyString.getBytes());
+            InputStream inputStream = new ByteArrayInputStream(response.getBytes());
             Reader reader = new InputStreamReader(inputStream, charset);
             JsonReader jsonReader = gson.newJsonReader(reader);
             return adapter.read(jsonReader);

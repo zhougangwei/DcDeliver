@@ -78,5 +78,5 @@ dependencies {
 
 //mid包
     compile 'com.tencent.mid:mid:3.9.0-release'
-
+    compile 'com.jzxiang.pickerview:TimePickerDialog:1.0.1'
 }

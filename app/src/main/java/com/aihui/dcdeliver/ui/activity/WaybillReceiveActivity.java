@@ -1,3 +1,4 @@
+/*
 package com.aihui.dcdeliver.ui.activity;
 
 import android.os.Bundle;
@@ -14,13 +15,15 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 import com.aihui.dcdeliver.R;
+import com.aihui.dcdeliver.adapter.HomeAdapter;
 import com.aihui.dcdeliver.adapter.InspectPagerAdapter;
 import com.aihui.dcdeliver.base.AppActivity;
 import com.aihui.dcdeliver.bean.LoadingBean;
+import com.aihui.dcdeliver.bean.RecordBean;
+import com.aihui.dcdeliver.http.BaseSubscriber;
+import com.aihui.dcdeliver.http.RetrofitClient;
 import com.blankj.utilcode.utils.ScreenUtils;
 import com.blankj.utilcode.utils.SizeUtils;
-import com.zhy.adapter.recyclerview.CommonAdapter;
-import com.zhy.adapter.recyclerview.base.ViewHolder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,6 +35,8 @@ import in.srain.cube.views.ptr.PtrDefaultHandler;
 import in.srain.cube.views.ptr.PtrFrameLayout;
 import in.srain.cube.views.ptr.PtrHandler;
 import in.srain.cube.views.ptr.header.MaterialHeader;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 
 public class WaybillReceiveActivity extends AppActivity implements TabLayout.OnTabSelectedListener {
@@ -50,21 +55,30 @@ public class WaybillReceiveActivity extends AppActivity implements TabLayout.OnT
 
     String[] mTitleStrings = {
             "待接单"
-            , "已结单"
+            , "已借单"
     };
 
-    private List<String> mWaitingBillList   = new ArrayList<>();
-    private List<String> mReceivingBillList = new ArrayList<>();
+    private List<RecordBean.BodyBean.ListBean> mWaitingBillList   = new ArrayList<>();
+    private List<RecordBean.BodyBean.ListBean> mReceivingBillList = new ArrayList<>();
 
 
     //存放列表的
     private List<FrameLayout> mViewList = new ArrayList<>();
     private List<LoadingBean> mDataList = new ArrayList<>();
 
-    private CommonAdapter mWaitingAdapter;
-    private CommonAdapter mReceiAdapter;
+    private HomeAdapter mWaitingAdapter;
+    private HomeAdapter mReceiAdapter;
     private AlertDialog   mDakaDialog;
 
+    //自己发送的单子
+    private final int MY_SEND_RECORD =1;
+    //可接受的单子
+    private final int CAN_RECEIVE_RECORD =2;
+    //自己处理的单子
+    private final int MY_ACCET_RECORD =3;
+
+    //单页数目
+    private final int PAGE_NUM =10;
 
 
     @Override
@@ -75,22 +89,32 @@ public class WaybillReceiveActivity extends AppActivity implements TabLayout.OnT
 
     @Override
     protected void initData() {
-        mWaitingBillList.add("222222");
-        mWaitingBillList.add("33333");
-        mWaitingBillList.add("11111");
-        mWaitingBillList.add("44444");
+        RetrofitClient.getInstance().getRecordList(CAN_RECEIVE_RECORD,1,PAGE_NUM)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new BaseSubscriber<RecordBean>(this) {
+                    @Override
+                    public void onNext(RecordBean recordBean) {
+                        List<RecordBean.BodyBean.ListBean> list = recordBean.getBody().getList();
+                        mWaitingBillList.clear();
+                        mWaitingBillList.addAll(list);
+                        mWaitingAdapter.notifyDataSetChanged();
+                    }
+                });
 
-        mReceivingBillList.add("222222");
-        mReceivingBillList.add("33333");
-        mReceivingBillList.add("11111");
-        mReceivingBillList.add("44444");
-
-
-        mWaitingAdapter.notifyDataSetChanged();
-        mReceiAdapter.notifyDataSetChanged();
-
+        RetrofitClient.getInstance().getRecordList(CAN_RECEIVE_RECORD,2,PAGE_NUM)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new BaseSubscriber<RecordBean>(this) {
+                    @Override
+                    public void onNext(RecordBean recordBean) {
+                        List<RecordBean.BodyBean.ListBean> list = recordBean.getBody().getList();
+                        mReceivingBillList.clear();
+                        mReceivingBillList.addAll(list);
+                        mReceiAdapter.notifyDataSetChanged();
+                    }
+                });
         judgeIfAlert();
-
 
     }
 
@@ -215,30 +239,19 @@ public class WaybillReceiveActivity extends AppActivity implements TabLayout.OnT
     private void initRecyclView() {
         RecyclerView waitingBill = (RecyclerView) View.inflate(this, R.layout.frame_recycleview, null);
         RecyclerView receivingBill = (RecyclerView) View.inflate(this, R.layout.frame_recycleview, null);
-       /* mViewList.add(waitingBill);
-        mViewList.add(receivingBill);*/
+       */
+/* mViewList.add(waitingBill);
+        mViewList.add(receivingBill);*//*
+
         mPagerAdapter.notifyDataSetChanged();
 
-        mWaitingAdapter = new CommonAdapter<String>(this, R.layout.item_rv_watingbill, mWaitingBillList) {
-            @Override
-            protected void convert(ViewHolder holder, String o, int position) {
-                holder.setText(R.id.tv_dlwz_before, o);
-            }
-        };
-
-        mReceiAdapter = new CommonAdapter<String>(this, R.layout.item_rv_watingbill, mReceivingBillList) {
-            @Override
-            protected void convert(ViewHolder holder, String o, int position) {
-                holder.setText(R.id.tv_dlwz_before, o);
-            }
-        };
-
-
+        mWaitingAdapter  = new HomeAdapter(R.layout.item_rv_watingbill, mWaitingBillList);
+        mReceiAdapter  = new HomeAdapter(R.layout.item_rv_watingbill, mReceivingBillList);
         waitingBill.setAdapter(mWaitingAdapter);
         receivingBill.setAdapter(mReceiAdapter);
+        */
+/*setScrollListener(mViewList, mDataList);*//*
 
-
-        /*setScrollListener(mViewList, mDataList);*/
 
 
     }
@@ -254,10 +267,12 @@ public class WaybillReceiveActivity extends AppActivity implements TabLayout.OnT
     }
 
 
-    /**
+    */
+/**
      * @param viewList 图的列表
      * @param dataList 数据的列表
-     */
+     *//*
+
     private void setScrollListener(List<RecyclerView> viewList, final List<LoadingBean> dataList) {
         for (int i = 0; i < viewList.size(); i++) {
             RecyclerView recyclerView = viewList.get(i);
@@ -307,3 +322,4 @@ public class WaybillReceiveActivity extends AppActivity implements TabLayout.OnT
         ButterKnife.bind(this);
     }
 }
+*/

@@ -16,7 +16,6 @@ import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 import com.google.gson.JsonSyntaxException;
-import com.google.gson.internal.LinkedTreeMap;
 import com.google.gson.internal.bind.util.ISO8601Utils;
 import com.google.gson.reflect.TypeToken;
 
@@ -56,13 +55,13 @@ public class GsonUtil {
                .registerTypeAdapter(float.class,new FloatDefault0Adapter())
                .registerTypeAdapter(Float.class,new FloatDefault0Adapter())
                .registerTypeAdapter(
-                       new TypeToken<LinkedTreeMap<String, Object>>(){}.getType(),
-                       new JsonDeserializer<LinkedTreeMap<String, Object>>() {
+                       new TypeToken<HashMap<String, Object>>(){}.getType(),
+                       new JsonDeserializer<HashMap<String, Object>>() {
                            @Override
-                           public LinkedTreeMap<String, Object> deserialize(
+                           public HashMap<String, Object> deserialize(
                                    JsonElement json, Type typeOfT,
                                    JsonDeserializationContext context) throws JsonParseException {
-                               LinkedTreeMap<String, Object> treeMap = new LinkedTreeMap<>();
+                               HashMap<String, Object> treeMap = new HashMap<>();
                                JsonObject jsonObject = json.getAsJsonObject();
                                Set<Map.Entry<String, JsonElement>> entrySet = jsonObject.entrySet();
                                for (Map.Entry<String, JsonElement> entry : entrySet) {
