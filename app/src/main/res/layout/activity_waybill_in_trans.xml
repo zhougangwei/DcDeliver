@@ -52,6 +52,8 @@
 
         <RelativeLayout
             android:id="@+id/rl_ys"
+            android:paddingLeft="40px"
+            android:paddingRight="40px"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/iv_cycle"
@@ -77,18 +79,25 @@
         </RelativeLayout>
 
         <include
-            android:visibility="gone"
             android:id="@+id/rl_cancel_recive"
             layout="@layout/cancel_receive"/>
 
-        <include
-            android:visibility="gone"
+        <Button
             android:layout_marginTop="56px"
             android:layout_width="match_parent"
             android:layout_height="112px"
             android:layout_below="@+id/rl_ys"
             android:id="@+id/bt_receive"
-            layout="@layout/bt_receive"/>
+            android:layout_centerInParent="true"
+            android:layout_marginLeft="36px"
+            android:layout_marginRight="36px"
+            android:layout_marginBottom="36px"
+            android:background="@drawable/shape_button_receive"
+            android:text="接 单"
+            android:textColor="@color/white"
+            android:textSize="48px"
+           />
+
 
         <ImageView
             android:id="@+id/iv_shadow"
@@ -142,6 +151,7 @@
                 <include layout="@layout/line"></include>
 
                 <android.support.v7.widget.RecyclerView
+                    android:id="@+id/rv_task"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     >

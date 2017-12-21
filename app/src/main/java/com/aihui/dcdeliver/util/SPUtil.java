@@ -319,9 +319,13 @@ public class SPUtil {
         return getString(context,"wsAddress","");
     }
 
-    public static String getHospitalName(Context context) {
-        return getString(context,"hospitalName","");
+    public static boolean getHasReceive(Context context) {
+        return getBoolean(context,Content.HAS_RECEIVE,false);
     }
+    public static boolean getHasSave(Context context) {
+        return getBoolean(context,Content.HAS_SAVE,false);
+    }
+
 
     public static String getPassWord(Context context) {
         return getString(context, Content.PASSWORD,"");

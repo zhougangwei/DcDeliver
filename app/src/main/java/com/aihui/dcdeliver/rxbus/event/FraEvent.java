@@ -11,11 +11,12 @@ package com.aihui.dcdeliver.rxbus.event;
 
 public class FraEvent {
 
-    public boolean hasSave;
-    public boolean hasReceive;
+    public static final int HASSAVE    = 1;
+    public static final int HASRECEIVE = 2;
 
-    public FraEvent(boolean hasSave, boolean hasReceive) {
-        this.hasSave = hasSave;
-        this.hasReceive = hasReceive;
+
+
+    public FraEvent() {
+
     }
 }

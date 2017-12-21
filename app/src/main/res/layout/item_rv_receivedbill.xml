@@ -168,12 +168,39 @@
                 android:text="备注:病人GG"
                 android:textSize="32px"></TextView>
 
-            <include
-                android:layout_marginTop="56px"
-                android:layout_below="@+id/tv_bz"
-                android:layout_width="match_parent"
-                android:layout_height="112px"
-                layout="@layout/cancel_receive"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="112px"
+            android:layout_below="@+id/tv_bz"
+            android:layout_marginTop="56px"
+            >
+            <TextView
+                android:id="@+id/tv_cancel"
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="36px"
+                android:layout_marginRight="24px"
+                android:background="@drawable/shape_cancel_trans"
+                android:gravity="center"
+                android:text="取消运送"
+                android:textColor="@color/appColor"
+                android:textSize="48px"/>
+
+            <TextView
+                android:id="@+id/tv_sure"
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_alignParentRight="true"
+                android:layout_marginLeft="24px"
+                android:layout_marginRight="36px"
+                android:background="@drawable/shape_sure_trans"
+                android:gravity="center"
+                android:text="确定取单"
+                android:textColor="@color/white"
+                android:textSize="48px"/>
+        </LinearLayout>
         </RelativeLayout>
 </com.aihui.dcdeliver.commponent.widget.AutoCardView>
 </RelativeLayout>

@@ -32,6 +32,7 @@ import com.aihui.dcdeliver.rxbus.event.FraEvent;
 import com.aihui.dcdeliver.rxbus.event.ReceiveEvent;
 import com.aihui.dcdeliver.ui.activity.WaybillInTransActivity;
 import com.aihui.dcdeliver.ui.imp.HomeImpl;
+import com.aihui.dcdeliver.util.SPUtil;
 import com.blankj.utilcode.utils.ScreenUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 
@@ -92,7 +93,7 @@ public class HomeFragment extends BaseFragment<HomeImpl> implements BaseView, Ta
 
 
     //自己发送的所有单子
-    private final String MY_SEND_RECORD = "1";
+    private final       String MY_SEND_RECORD = "1";
     //可接受的单子
     public static final String WAIT_RECORD    = "2";
     //自己处理的单子
@@ -101,37 +102,44 @@ public class HomeFragment extends BaseFragment<HomeImpl> implements BaseView, Ta
     //自己发送的正在进行的单子
     private static final String MY_SENDING_RECORD = "4";
     //自己发送的已完成的单子
-    public static final String MY_FINISH_RECORED    = "5";
+    public static final  String MY_FINISH_RECORED = "5";
 
 
-    public   String local_record_first    ="4" ;
-    public   String local_record_two    ="5" ;
-
+    public String mLocalRecordFirst = "4";
+    public String mLocalRecordTwo   = "5";
 
 
     //单页数目
     private final int PAGE_NUM = 10;
     private Map<String, DataMessage> mLocalData;
+    /*
+    * 当前是哪个
+    * */
+    private int mCurrentType;
 
-
-
-    private boolean isReceice= false;
 
     @Override
     protected void initView() {
         //初始化两组数据的状态总数
         mLocalData = new HashMap<>();
-        mLocalData.put(local_record_first, new DataMessage());
-        mLocalData.put(local_record_two, new DataMessage());
+        mLocalData.put(mLocalRecordFirst, new DataMessage());
+        mLocalData.put(mLocalRecordTwo, new DataMessage());
         initTabLayout();
         initRecyclView();
         //initRefreshView();
-       /* boolean aBoolean = SPUtil.getBoolean(mActivity, Content.HAS_SAVE, false);
-        //说明是有开单权限的
-        if(aBoolean){
-            isReceice  = aBoolean;
-        }*/
+        boolean hasReceive = SPUtil.getHasReceive(mActivity);
+        boolean hasSave = SPUtil.getHasSave(mActivity);
 
+
+        if (hasReceive&&hasSave){
+            mCurrentType=FraEvent.HASSAVE;
+        }else if(hasReceive){
+            mCurrentType=FraEvent.HASRECEIVE;
+        }else if(hasSave){
+            mCurrentType=FraEvent.HASSAVE;
+        }
+
+        changeFragment(mCurrentType);
     }
 
 
@@ -142,12 +150,8 @@ public class HomeFragment extends BaseFragment<HomeImpl> implements BaseView, Ta
 
     @Override
     protected void initData() {
-
-
-
         judgeIfAlert();
         initEvent();
-
     }
 
     private void initEvent() {
@@ -155,52 +159,43 @@ public class HomeFragment extends BaseFragment<HomeImpl> implements BaseView, Ta
                 .subscribe(new Action1<ReceiveEvent>() {
                     @Override
                     public void call(ReceiveEvent downEvent) {
-                       refresh();
+                        refresh();
                     }
                 });
-
         RxBus.getInstance().toObservable(FraEvent.class)
                 .subscribe(new Action1<FraEvent>() {
                     @Override
                     public void call(FraEvent fraEvent) {
-                             changeFragment();
+                        if (mCurrentType==FraEvent.HASSAVE ){
+                            mCurrentType=FraEvent.HASRECEIVE;
+                        }else{
+                            mCurrentType=FraEvent.HASSAVE;
+                        }
+                        changeFragment(mCurrentType);
                     }
                 });
     }
 
-    private void changeFragment() {
-        isReceice=!isReceice;
-        if (isReceice){
-            mTitleStrings[0]="正在进行";
-            mTitleStrings[1]="已完成";
-        }else{
-            mTitleStrings[0]="待接单";
-            mTitleStrings[1]="正在进行";
-        }
-        if(isReceice){
-            local_record_first = MY_SENDING_RECORD;
-            local_record_two = MY_FINISH_RECORED;
+    private void changeFragment(int whichType) {
 
-        }else{
-            local_record_first = WAIT_RECORD;
-            local_record_two = RECEIVE_RECORD;
+        if (FraEvent.HASSAVE == whichType) {
+            mTitleStrings[0] = "正在进行";
+            mTitleStrings[1] = "已完成";
+            mLocalRecordFirst = MY_SENDING_RECORD;
+            mLocalRecordTwo = MY_FINISH_RECORED;
+        } else if (FraEvent.HASRECEIVE == whichType) {
+            mTitleStrings[0] = "待接单";
+            mTitleStrings[1] = "正在进行";
+            mLocalRecordFirst = WAIT_RECORD;
+            mLocalRecordTwo = RECEIVE_RECORD;
         }
 
-
-
-
-
-
-
-        mLocalData.put(local_record_first, new DataMessage());
-        mLocalData.put(local_record_two, new DataMessage());
-
+        mLocalData.put(mLocalRecordFirst, new DataMessage());
+        mLocalData.put(mLocalRecordTwo, new DataMessage());
 
         mPagerAdapter.notifyDataSetChanged();
         refresh();
     }
-
-
 
 
     /**
@@ -290,14 +285,14 @@ public class HomeFragment extends BaseFragment<HomeImpl> implements BaseView, Ta
             @Override
             public void onRefresh() {
                 //下拉刷新
-                refresh(local_record_first, mWaitingBillList, mWaitSpr, mWaitingAdapter);
+                refresh(mLocalRecordFirst, mWaitingBillList, mWaitSpr, mWaitingAdapter);
             }
         });
         mReceiveSpr.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 //下拉刷新
-                refresh(local_record_two, mReceivingBillList, mReceiveSpr, mReceiAdapter);
+                refresh(mLocalRecordTwo, mReceivingBillList, mReceiveSpr, mReceiAdapter);
 
             }
         });
@@ -316,25 +311,25 @@ public class HomeFragment extends BaseFragment<HomeImpl> implements BaseView, Ta
         /*
         * 适配器
         * */
-        mWaitingAdapter = new WaitAdapter(R.layout.item_rv_watingbill, mWaitingBillList);
+        mWaitingAdapter = new WaitAdapter(R.layout.item_rv_watingbill, mWaitingBillList,mCurrentType==FraEvent.HASRECEIVE);
         mWaitingAdapter.openLoadAnimation();
 
-        mReceiAdapter = new ReceivedAdapter(R.layout.item_rv_receivedbill, mReceivingBillList);
+        mReceiAdapter = new ReceivedAdapter(R.layout.item_rv_receivedbill, mReceivingBillList,mCurrentType==FraEvent.HASRECEIVE);
         mReceiAdapter.openLoadAnimation();
         mReceivingBillRecycleView.setAdapter(mReceiAdapter);
 
         /*
         * 设置刷新数据
         * */
-        setLoadMore(mReceiAdapter, mReceivingBillList, mReceivingBillRecycleView, local_record_two);
-        setLoadMore(mWaitingAdapter, mWaitingBillList, mWaitingBillRecycleView, local_record_first);
+        setLoadMore(mReceiAdapter, mReceivingBillList, mReceivingBillRecycleView, mLocalRecordTwo);
+        setLoadMore(mWaitingAdapter, mWaitingBillList, mWaitingBillRecycleView, mLocalRecordFirst);
 
         mWaitingAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
                 Intent intent = new Intent(mActivity, WaybillInTransActivity.class);
                 intent.putExtra("recordId", mWaitingBillList.get(position).getId());
-                intent.putExtra("type", local_record_first);
+                intent.putExtra("type", mLocalRecordFirst);
                 startActivity(intent);
             }
         });
@@ -344,7 +339,7 @@ public class HomeFragment extends BaseFragment<HomeImpl> implements BaseView, Ta
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
                 Intent intent = new Intent(mActivity, WaybillInTransActivity.class);
                 intent.putExtra("recordId", mReceivingBillList.get(position).getId());
-                intent.putExtra("type", local_record_two);
+                intent.putExtra("type", mLocalRecordTwo);
                 startActivity(intent);
             }
         });
@@ -354,8 +349,8 @@ public class HomeFragment extends BaseFragment<HomeImpl> implements BaseView, Ta
         mReceivingBillRecycleView.setAdapter(mReceiAdapter);
 
         setScrollListener(mViewList, mDataList);
-        refresh(local_record_two, mReceivingBillList, mReceiveSpr, mReceiAdapter);
-        refresh(local_record_first, mWaitingBillList, mWaitSpr, mWaitingAdapter);
+        refresh(mLocalRecordTwo, mReceivingBillList, mReceiveSpr, mReceiAdapter);
+        refresh(mLocalRecordFirst, mWaitingBillList, mWaitSpr, mWaitingAdapter);
 
 
     }
@@ -394,6 +389,7 @@ public class HomeFragment extends BaseFragment<HomeImpl> implements BaseView, Ta
 
     /**
      * 刷新数据
+     *
      * @param dataType
      * @param dataList
      * @param waitSpr
@@ -417,8 +413,8 @@ public class HomeFragment extends BaseFragment<HomeImpl> implements BaseView, Ta
      */
     private void refresh() {
 
-        getData(true, local_record_first, mWaitingBillList, mWaitingAdapter);
-        getData(true, local_record_two, mReceivingBillList, mReceiAdapter);
+        getData(true, mLocalRecordFirst, mWaitingBillList, mWaitingAdapter);
+        getData(true, mLocalRecordTwo, mReceivingBillList, mReceiAdapter);
 
 
     }

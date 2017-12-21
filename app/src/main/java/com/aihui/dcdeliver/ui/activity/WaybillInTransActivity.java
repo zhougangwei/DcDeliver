@@ -3,6 +3,9 @@ package com.aihui.dcdeliver.ui.activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.CardView;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -19,6 +22,10 @@ import com.aihui.dcdeliver.http.BaseSubscriber;
 import com.aihui.dcdeliver.http.RetrofitClient;
 import com.aihui.dcdeliver.util.SPUtil;
 import com.aihui.dcdeliver.util.ToastUtil;
+import com.zhy.adapter.recyclerview.CommonAdapter;
+import com.zhy.adapter.recyclerview.base.ViewHolder;
+
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -67,6 +74,9 @@ public class WaybillInTransActivity extends AppActivity {
     @BindView(R.id.cv_one)
     CardView        mCvOne;
 
+    @BindView(R.id.rv_task)
+    RecyclerView mRvTask;
+
 
     @BindView(R.id.rl_cancel_recive)
     RelativeLayout        mRlCancel;
@@ -99,15 +109,41 @@ public class WaybillInTransActivity extends AppActivity {
                     @Override
                     public void onNext(RecordInfoBean recordInfoBean) {
                         RecordInfoBean.BodyBean.TaskRecordBean taskRecord = recordInfoBean.getBody().getTaskRecord();
-
-
                         String[] split = taskRecord.getDeadline().split(" ")[1].split(":");
                         mTvTime.setText(split[0] + ":" + split[1]);
                         mTvTaskType.setText(taskRecord.getTaskClassName());
                         mTvStartArea.setText(taskRecord.getStartPlaceName());
                         mTvEndArea.setText(taskRecord.getEndPlaceName());
                         mTvArriveTime.setText(taskRecord.getDeadline());
-                        mTvState.setText(SPUtil.getUserName(WaybillInTransActivity.this) + " " + taskRecord.getStatus());
+                        mTvState.setText(SPUtil.getUserName(WaybillInTransActivity.this) + " " + taskRecord.getStatusText());
+
+                        List<RecordInfoBean.BodyBean.ExtListBean> extList = recordInfoBean.getBody().getExtList();
+                        if (extList.size() != 0) {
+                            mRvTask.setVisibility(View.VISIBLE);
+                            mRvTask.setLayoutManager(new LinearLayoutManager(WaybillInTransActivity.this));
+                            mRvTask.setAdapter(new CommonAdapter<RecordInfoBean.BodyBean.ExtListBean>(WaybillInTransActivity.this, R.layout.item_text_edit, extList) {
+                                @Override
+                                protected void convert(final ViewHolder holder, final RecordInfoBean.BodyBean.ExtListBean bean, int position) {
+                                    holder.setText(R.id.tv_name, bean.getColName());
+                                    final TextView tvValue = (TextView) holder.getView(R.id.tv_value);
+                                    if (!TextUtils.isEmpty(bean.getColValue())) {
+                                        tvValue.setText(bean.getColValue());
+                                    } else {
+                                        tvValue.setText("");
+                                    }
+                                }
+                            });
+                        } else {
+                            mRvTask.setVisibility(View.GONE);
+                        }
+
+                        if (taskRecord.getStatus()>=3){         //可点击看详情
+                            mRlYs.setClickable(true);
+                            mRlYs.setEnabled(true);
+                        }else{
+                            mRlYs.setClickable(false);
+                            mRlYs.setEnabled(false);
+                        }
                     }
                 });
 
@@ -119,10 +155,13 @@ public class WaybillInTransActivity extends AppActivity {
     }
 
 
-    @OnClick({R.id.tv_cancel, R.id.tv_sure})
+    @OnClick({R.id.tv_cancel, R.id.tv_sure ,R.id.rl_ys})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.tv_cancel:
+
+                break;
+            case R.id.tv_sure:
                 if (mRecordId != -1) {
                     RetrofitClient.getInstance().startRecord(mRecordId)
                             .subscribeOn(Schedulers.io())
@@ -135,7 +174,9 @@ public class WaybillInTransActivity extends AppActivity {
                             });
                 }
                 break;
-            case R.id.tv_sure:
+            case R.id.rl_ys:
+                Intent intent = new Intent(this,TransStateActivity.class);
+                startActivity(intent);
                 break;
         }
     }

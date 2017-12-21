@@ -153,6 +153,23 @@ public class GsonUtil {
                 .registerTypeAdapter(double.class, new DoubleDefault0Adapter())
                 .registerTypeAdapter(Long.class, new LongDefault0Adapter())
                 .registerTypeAdapter(long.class, new LongDefault0Adapter())
+                .registerTypeAdapter(
+                        new TypeToken<HashMap<String, Object>>(){}.getType(),
+                        new JsonDeserializer<HashMap<String, Object>>() {
+                            @Override
+                            public HashMap<String, Object> deserialize(
+                                    JsonElement json, Type typeOfT,
+                                    JsonDeserializationContext context) throws JsonParseException {
+
+                                HashMap<String, Object> treeMap = new HashMap<>();
+                                JsonObject jsonObject = json.getAsJsonObject();
+                                Set<Map.Entry<String, JsonElement>> entrySet = jsonObject.entrySet();
+                                for (Map.Entry<String, JsonElement> entry : entrySet) {
+                                    treeMap.put(entry.getKey(), entry.getValue());
+                                }
+                                return treeMap;
+                            }
+                        })
                 .setDateFormat("yyyy-MM-dd HH:mm:ss").create();
         Type type = new TypeToken<HashMap<String, Object>>() {
         }.getType();

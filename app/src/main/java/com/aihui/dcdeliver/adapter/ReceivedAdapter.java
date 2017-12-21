@@ -21,8 +21,11 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
 public class ReceivedAdapter extends BaseQuickAdapter<RecordListBean.BodyBean.ListBean, BaseViewHolder> {
-    public ReceivedAdapter(int layoutResId, List data) {
+
+    public boolean mIsShowRecieve;
+    public ReceivedAdapter(int layoutResId, List data, boolean isShowReceive) {
         super(layoutResId, data);
+        mIsShowRecieve = isShowReceive;
     }
 
     @Override
@@ -41,6 +44,17 @@ public class ReceivedAdapter extends BaseQuickAdapter<RecordListBean.BodyBean.Li
         }else{
             helper.setText(R.id.tv_bz, remark);
         }
+         /*
+        *
+        * 是否显示接受按钮
+        * */
+        if (mIsShowRecieve){
+            helper.setVisible(R.id.bt_receive,true);
+        }else{
+            helper.setVisible(R.id.bt_receive,false);
+        }
+
+
         helper.setOnClickListener(R.id.tv_cancel, new View.OnClickListener() {
             @Override
             public void onClick(View v) {

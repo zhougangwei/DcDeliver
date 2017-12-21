@@ -56,6 +56,7 @@ public class MainActivity extends AppActivity implements DuoMenuView.OnMenuClick
     private boolean mHasSave;
 
 
+
     @Override
     protected int getContentViewId() {
         return R.layout.activity_main;
@@ -96,11 +97,11 @@ public class MainActivity extends AppActivity implements DuoMenuView.OnMenuClick
         goToFragment(0, false);
         mMenuAdapter.setViewSelected(0, true);
         setTitle(mTitles.get(0));
-
         Intent intent = getIntent();
         mHasReceive = intent.getBooleanExtra(Content.HAS_RECEIVE, false);
         mHasSave = intent.getBooleanExtra(Content.HAS_SAVE, false);
-        RxBus.getInstance().post(new FraEvent(mHasSave, mHasReceive));
+
+
 
     }
 
@@ -169,14 +170,7 @@ public class MainActivity extends AppActivity implements DuoMenuView.OnMenuClick
         // Navigate to the right fragment
         switch (position) {
             case 3:
-                if (mHasSave&&mHasSave){
-                    RxBus.getInstance().post(new FraEvent(mHasSave,mHasReceive));
-                }else{
-                    /*
-                    无法转换
-                    * */
-                }
-
+                    RxBus.getInstance().post(new FraEvent());
                 break;
             case 4:
                 gotoOut();

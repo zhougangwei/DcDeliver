@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:orientation="horizontal">
+    <TextView
+        android:layout_height="wrap_content"
+        android:id="@+id/tv_name"
+        android:padding="25px"
+        android:layout_width="wrap_content"
+        android:gravity="center"
+        android:text="来一个"
+        android:textSize="16sp"
+    />
+    <TextView
+        android:layout_margin="15px"
+        android:paddingLeft="23px"
+        android:gravity="center_vertical"
+        android:id="@+id/tv_value"
+        android:background="@drawable/btn_normal"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+</LinearLayout>
