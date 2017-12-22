@@ -25,6 +25,7 @@ import com.aihui.dcdeliver.util.SPUtil;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
 public class LoginActivity extends AppActivity {
@@ -143,7 +144,7 @@ public class LoginActivity extends AppActivity {
                     .create(MyService.class)
                     .login(userId,password)
                     .subscribeOn(Schedulers.io())
-                    .observeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(new BaseSubscriber<LoginBean>(LoginActivity.this){
                         @Override
                         public void onError(Throwable e) {
@@ -161,16 +162,13 @@ public class LoginActivity extends AppActivity {
                                 boolean hasReceive = permission.isHasReceive();
                                 boolean hasSave = permission.isHasSave();
                                 Intent intent = new Intent(LoginActivity.this,MainActivity.class);
-                                intent.putExtra(Content.HAS_RECEIVE,hasReceive);
-                                intent.putExtra(Content.HAS_SAVE,hasSave);
 
                                 SPUtil.saveBoolean(LoginActivity.this,Content.HAS_RECEIVE,hasReceive);
                                 SPUtil.saveBoolean(LoginActivity.this,Content.HAS_SAVE,hasSave);
-
+                                SPUtil.saveBoolean(LoginActivity.this,Content.HAS_SIGN,hasSave);
                                 SPUtil.saveBoolean(LoginActivity.this,Content.IS_LOGIN,true);
-
-
                                 startActivity(intent);
+                                finish();
                                 return;
                             }
                         }

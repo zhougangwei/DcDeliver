@@ -33,7 +33,7 @@ public interface MyService {
 
 
 
-    @GET("/applogout?")
+    @GET("/applogout")
     Observable<ServiceBean> logout();
 
 
@@ -99,10 +99,20 @@ public interface MyService {
 
 
     /*
+    * 取消接单
+    * */
+    @GET("/app/task/record/cancelReceive?")
+    Observable<ServiceBean> cancelReceive(@Query("recordId") int recordId);
+
+
+    /*
     * 接收工单
     * */
     @GET ("/app/task/record/receiveRecord?")
     Observable<ServiceBean> receiveRecord(@Query("recordId") int recordId);
 
 
+
+    @GET("/app/user/signIn")
+    Observable<ServiceBean> signIn(@Query("way") int recordId);
 }

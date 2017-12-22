@@ -28,7 +28,7 @@ public class SPUtil {
     /**
      * 保存在手机里面的文件名
      */
-    public static final  String FILE_NAME = "share_data";
+
 
     /**
      * 保存数据的方法，我们需要拿到保存数据的具体类型，然后根据类型调用不同的保存方法
@@ -39,7 +39,7 @@ public class SPUtil {
      */
     public static void put(Context context, String key, Object object) {
 
-        SharedPreferences sp = context.getSharedPreferences(FILE_NAME,
+        SharedPreferences sp = context.getSharedPreferences(SP_NAME,
                 Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sp.edit();
 
@@ -69,7 +69,7 @@ public class SPUtil {
      * @return
      */
     public static Object get(Context context, String key, Object defaultObject) {
-        SharedPreferences sp = context.getSharedPreferences(FILE_NAME,
+        SharedPreferences sp = context.getSharedPreferences(SP_NAME,
                 Context.MODE_PRIVATE);
 
         if (defaultObject instanceof String) {
@@ -93,7 +93,7 @@ public class SPUtil {
      * @param key
      */
     public static void remove(Context context, String key) {
-        SharedPreferences sp = context.getSharedPreferences(FILE_NAME,
+        SharedPreferences sp = context.getSharedPreferences(SP_NAME,
                 Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sp.edit();
         editor.remove(key);
@@ -106,7 +106,7 @@ public class SPUtil {
      * @param context
      */
     public static void clear(Context context) {
-        SharedPreferences sp = context.getSharedPreferences(FILE_NAME,
+        SharedPreferences sp = context.getSharedPreferences(SP_NAME,
                 Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sp.edit();
         editor.clear();
@@ -121,7 +121,7 @@ public class SPUtil {
      * @return
      */
     public static boolean contains(Context context, String key) {
-        SharedPreferences sp = context.getSharedPreferences(FILE_NAME,
+        SharedPreferences sp = context.getSharedPreferences(SP_NAME,
                 Context.MODE_PRIVATE);
         return sp.contains(key);
     }
@@ -133,7 +133,7 @@ public class SPUtil {
      * @return
      */
     public static Map<String, ?> getAll(Context context) {
-        SharedPreferences sp = context.getSharedPreferences(FILE_NAME,
+        SharedPreferences sp = context.getSharedPreferences(SP_NAME,
                 Context.MODE_PRIVATE);
         return sp.getAll();
     }
@@ -319,13 +319,32 @@ public class SPUtil {
         return getString(context,"wsAddress","");
     }
 
+    /**
+     * 是否有接收权限
+     * @param context
+     * @return
+     */
     public static boolean getHasReceive(Context context) {
         return getBoolean(context,Content.HAS_RECEIVE,false);
     }
+
+    /**
+     * 是否有新建权限
+     * @param context
+     * @return
+     */
     public static boolean getHasSave(Context context) {
         return getBoolean(context,Content.HAS_SAVE,false);
     }
 
+    /**
+     * 是否登录
+     * @param context
+     * @return
+     */
+    public static boolean getHasSign(Context context) {
+        return getBoolean(context,Content.HAS_SIGN,false);
+    }
 
     public static String getPassWord(Context context) {
         return getString(context, Content.PASSWORD,"");

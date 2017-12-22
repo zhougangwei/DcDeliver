@@ -20,6 +20,11 @@ public class ApiException extends RuntimeException {
         mErrorCode = errorCode;
     }
 
+    @Override
+    public String getMessage() {
+        return super.getMessage();
+    }
+
     /**
      * 判断是否是token失效
      *

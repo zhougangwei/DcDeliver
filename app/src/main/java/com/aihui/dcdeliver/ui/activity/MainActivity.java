@@ -1,6 +1,9 @@
 package com.aihui.dcdeliver.ui.activity;
 
+import android.content.ComponentName;
 import android.content.Intent;
+import android.content.ServiceConnection;
+import android.os.IBinder;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
@@ -20,7 +23,10 @@ import com.aihui.dcdeliver.http.BaseSubscriber;
 import com.aihui.dcdeliver.http.RetrofitClient;
 import com.aihui.dcdeliver.rxbus.RxBus;
 import com.aihui.dcdeliver.rxbus.event.AddEvent;
+import com.aihui.dcdeliver.rxbus.event.AlertEvent;
 import com.aihui.dcdeliver.rxbus.event.FraEvent;
+import com.aihui.dcdeliver.rxbus.event.ReceiveEvent;
+import com.aihui.dcdeliver.service.BlueService;
 import com.aihui.dcdeliver.ui.FragmentFactory;
 import com.aihui.dcdeliver.util.SPUtil;
 
@@ -52,10 +58,6 @@ public class MainActivity extends AppActivity implements DuoMenuView.OnMenuClick
             , R.mipmap.ic_kqdk
             , R.mipmap.ic_kqdk
     };
-    private boolean mHasReceive;
-    private boolean mHasSave;
-
-
 
     @Override
     protected int getContentViewId() {
@@ -73,10 +75,13 @@ public class MainActivity extends AppActivity implements DuoMenuView.OnMenuClick
                 .subscribe(new Action1<AddEvent>() {
                     @Override
                     public void call(AddEvent fraEvent) {
-                        if (fraEvent.showAdd) {
-                            mIvAdd.setVisibility(View.VISIBLE);
-                        } else {
-                            mIvAdd.setVisibility(View.GONE);
+                        //背压
+                        if (mIvAdd!=null){
+                            if (fraEvent.showAdd) {
+                                mIvAdd.setVisibility(View.VISIBLE);
+                            } else {
+                                mIvAdd.setVisibility(View.GONE);
+                            }
                         }
                     }
                 });
@@ -97,13 +102,36 @@ public class MainActivity extends AppActivity implements DuoMenuView.OnMenuClick
         goToFragment(0, false);
         mMenuAdapter.setViewSelected(0, true);
         setTitle(mTitles.get(0));
-        Intent intent = getIntent();
-        mHasReceive = intent.getBooleanExtra(Content.HAS_RECEIVE, false);
-        mHasSave = intent.getBooleanExtra(Content.HAS_SAVE, false);
+            startService();
+    }
 
+    private void startService() {
 
+        Intent it = new Intent().setClass(this, BlueService.class);
+        startService(it);
+        bindService(it,mConnection,BIND_AUTO_CREATE);
 
     }
+
+
+    private BlueService.MyBinder myBinder;
+    private BlueService mService;
+    private ServiceConnection mConnection = new ServiceConnection() {
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+        }
+
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            myBinder = (BlueService.MyBinder) service;
+            mService = myBinder.GetService();
+            myBinder.startSendLocation();
+        }
+    };
+
+
+
 
     private void handleToolbar() {
         mTvTitle.setText(mTitles.get(0));
@@ -161,6 +189,20 @@ public class MainActivity extends AppActivity implements DuoMenuView.OnMenuClick
 
     }
 
+
+    @Override
+    protected void onDestroy() {
+        if (mService != null) {
+            unbindService(mConnection);
+            //stopService(intent);
+        }
+        /*
+        * 注销rxbus
+        * */
+
+        super.onDestroy();
+    }
+
     @Override
     public void onOptionClicked(int position, Object objectClicked) {
         // Set the toolbar title
@@ -170,10 +212,12 @@ public class MainActivity extends AppActivity implements DuoMenuView.OnMenuClick
         // Navigate to the right fragment
         switch (position) {
             case 3:
-                    RxBus.getInstance().post(new FraEvent());
+                mTvTitle.setText(mTitles.get(0));
+                RxBus.getInstance().post(new FraEvent());
                 break;
             case 4:
                 gotoOut();
+                break;
             default:
                 goToFragment(position, false);
                 break;
@@ -187,15 +231,31 @@ public class MainActivity extends AppActivity implements DuoMenuView.OnMenuClick
     private void gotoOut() {
 
         RetrofitClient.getInstance().logout()
-                .observeOn(Schedulers.io())
+                .subscribeOn(Schedulers.io())
                 .subscribe(new BaseSubscriber<ServiceBean>(MainActivity.this) {
                     @Override
                     public void onNext(ServiceBean loginBean) {
-
                 /*
                 * 清除本地缓存
                 * */
+                        if(RxBus.getInstance().hasObservers()){
+                            RxBus.getInstance().unSubscribe(new FraEvent());
+                            RxBus.getInstance().unSubscribe(new AddEvent(true));
+                            RxBus.getInstance().unSubscribe(new ReceiveEvent());
+                            RxBus.getInstance().unSubscribe(new AlertEvent(false));
+                        }
+                        for (int i = 0; i < mTitles.size(); i++) {
+                            BaseFragment fragment = FragmentFactory.getFragment(i);
+                            if (fragment!=null){
+                                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+                                transaction.remove(fragment).commit();
+                            }
+                        }
+                        FragmentFactory.clearAllFragment();
+                        SPUtil.saveBoolean(MainActivity.this, Content.IS_LOGIN, false);
                         SPUtil.clear(MainActivity.this);
+                        startActivity(new Intent(MainActivity.this, LoginActivity.class));
+                        finish();
                     }
                 })
         ;

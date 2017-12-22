@@ -10,8 +10,10 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.CheckBox;
 import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
@@ -20,20 +22,27 @@ import com.aihui.dcdeliver.R;
 import com.aihui.dcdeliver.adapter.InspectPagerAdapter;
 import com.aihui.dcdeliver.adapter.ReceivedAdapter;
 import com.aihui.dcdeliver.adapter.WaitAdapter;
+import com.aihui.dcdeliver.application.BaseApplication;
 import com.aihui.dcdeliver.base.BaseFragment;
 import com.aihui.dcdeliver.base.BaseView;
+import com.aihui.dcdeliver.base.Content;
 import com.aihui.dcdeliver.bean.DataMessage;
 import com.aihui.dcdeliver.bean.LoadingBean;
 import com.aihui.dcdeliver.bean.RecordListBean;
+import com.aihui.dcdeliver.bean.ServiceBean;
 import com.aihui.dcdeliver.http.BaseSubscriber;
 import com.aihui.dcdeliver.http.RetrofitClient;
 import com.aihui.dcdeliver.rxbus.RxBus;
+import com.aihui.dcdeliver.rxbus.event.AddEvent;
 import com.aihui.dcdeliver.rxbus.event.FraEvent;
 import com.aihui.dcdeliver.rxbus.event.ReceiveEvent;
 import com.aihui.dcdeliver.ui.activity.WaybillInTransActivity;
 import com.aihui.dcdeliver.ui.imp.HomeImpl;
+import com.aihui.dcdeliver.util.GsonUtil;
 import com.aihui.dcdeliver.util.SPUtil;
+import com.aihui.dcdeliver.util.ToastUtil;
 import com.blankj.utilcode.utils.ScreenUtils;
+import com.blankj.utilcode.utils.TimeUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 
 import java.util.ArrayList;
@@ -46,6 +55,8 @@ import in.srain.cube.views.ptr.PtrClassicFrameLayout;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 import rx.schedulers.Schedulers;
+
+import static com.aihui.dcdeliver.base.AppActivity.mFormat;
 
 /**
  * @ 创建者   zhou
@@ -115,7 +126,12 @@ public class HomeFragment extends BaseFragment<HomeImpl> implements BaseView, Ta
     /*
     * 当前是哪个
     * */
-    private int mCurrentType;
+    private int                      mCurrentType;
+
+    /*
+    是否打卡
+    * */
+    private boolean isAlertDk=true;
 
 
     @Override
@@ -129,14 +145,28 @@ public class HomeFragment extends BaseFragment<HomeImpl> implements BaseView, Ta
         //initRefreshView();
         boolean hasReceive = SPUtil.getHasReceive(mActivity);
         boolean hasSave = SPUtil.getHasSave(mActivity);
-
-
-        if (hasReceive&&hasSave){
-            mCurrentType=FraEvent.HASSAVE;
-        }else if(hasReceive){
-            mCurrentType=FraEvent.HASRECEIVE;
-        }else if(hasSave){
-            mCurrentType=FraEvent.HASSAVE;
+        //是否登录了
+        boolean hasSign = SPUtil.getHasSign(mActivity);
+        //默认需要打卡
+        String string = SPUtil.getString(mActivity, Content.CANCEL_ALERT_TIME, "");
+        if (!TextUtils.isEmpty(string)){
+            HashMap<String, Object> cancelMap = GsonUtil.parseJsonToMap(string);
+            String quitTime = (String) cancelMap.get(SPUtil.getUserId(mActivity));
+            //如果当前用户今天选了不打卡 那么就是不打卡
+            if (quitTime.equals(TimeUtils.getCurTimeString(mFormat))){
+                isAlertDk=false;
+            }
+        }
+        //服务端显示已登录的 不打卡
+        if(hasSign){
+            isAlertDk =false;
+        }
+        if (hasReceive && hasSave) {
+            mCurrentType = FraEvent.HASSAVE;
+        } else if (hasReceive) {
+            mCurrentType = FraEvent.HASRECEIVE;
+        } else if (hasSave) {
+            mCurrentType = FraEvent.HASSAVE;
         }
 
         changeFragment(mCurrentType);
@@ -166,14 +196,22 @@ public class HomeFragment extends BaseFragment<HomeImpl> implements BaseView, Ta
                 .subscribe(new Action1<FraEvent>() {
                     @Override
                     public void call(FraEvent fraEvent) {
-                        if (mCurrentType==FraEvent.HASSAVE ){
-                            mCurrentType=FraEvent.HASRECEIVE;
-                        }else{
-                            mCurrentType=FraEvent.HASSAVE;
+                        if (mCurrentType == FraEvent.HASSAVE) {
+                            mCurrentType = FraEvent.HASRECEIVE;
+                        } else {
+                            mCurrentType = FraEvent.HASSAVE;
                         }
                         changeFragment(mCurrentType);
                     }
                 });
+        RxBus.getInstance().toObservable(ReceiveEvent.class)
+                .subscribe(new Action1<ReceiveEvent>() {
+                    @Override
+                    public void call(ReceiveEvent downEvent) {
+                        refresh();
+                    }
+                });
+
     }
 
     private void changeFragment(int whichType) {
@@ -183,15 +221,20 @@ public class HomeFragment extends BaseFragment<HomeImpl> implements BaseView, Ta
             mTitleStrings[1] = "已完成";
             mLocalRecordFirst = MY_SENDING_RECORD;
             mLocalRecordTwo = MY_FINISH_RECORED;
+
+            RxBus.getInstance().post(new AddEvent(true));
+
         } else if (FraEvent.HASRECEIVE == whichType) {
             mTitleStrings[0] = "待接单";
             mTitleStrings[1] = "正在进行";
             mLocalRecordFirst = WAIT_RECORD;
             mLocalRecordTwo = RECEIVE_RECORD;
+            RxBus.getInstance().post(new AddEvent(false));
         }
 
         mLocalData.put(mLocalRecordFirst, new DataMessage());
         mLocalData.put(mLocalRecordTwo, new DataMessage());
+
 
         mPagerAdapter.notifyDataSetChanged();
         refresh();
@@ -223,6 +266,12 @@ public class HomeFragment extends BaseFragment<HomeImpl> implements BaseView, Ta
                         dataList.addAll(list);
                         //设置当前数目
                         mLocalData.get(dataType).setCurrentNum(dataList.size());
+                        if (dataAdapter instanceof WaitAdapter) {
+                            ((WaitAdapter) dataAdapter).setIsShowRecieve(mCurrentType == FraEvent.HASRECEIVE);
+                        } else if (dataAdapter instanceof ReceivedAdapter) {
+                            ((ReceivedAdapter) dataAdapter).setIsShowRecieve(mCurrentType == FraEvent.HASRECEIVE);
+                        }
+
                         dataAdapter.notifyDataSetChanged();
                     }
 
@@ -238,18 +287,50 @@ public class HomeFragment extends BaseFragment<HomeImpl> implements BaseView, Ta
      * 判断是否弹窗打卡
      */
     private void judgeIfAlert() {
-        if (true) {
 
+
+        if (isAlertDk) {
             View inflate = View.inflate(getBaseActivity(), R.layout.dialog_daka, null);
             RelativeLayout rv_close = inflate.findViewById(R.id.rv_close);
-
+            View dakaView = inflate.findViewById(R.id.iv_daka);
+            final CheckBox cb = (CheckBox) inflate.findViewById(R.id.cb);
+            //打卡
+            dakaView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    RetrofitClient.getInstance()
+                            .signIn(1)
+                            .subscribeOn(Schedulers.io())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe(new BaseSubscriber<ServiceBean>(mActivity) {
+                                @Override
+                                public void onNext(ServiceBean bean) {
+                                    ToastUtil.showToast("打卡成功");
+                                }
+                            });
+                }
+            });
             rv_close.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    //如果是打钩的那么今天就不弹了
+                    if (cb.isChecked()) {
+                        isAlertDk = false;
+                       // SPUtil.saveBoolean(mActivity, Content.IS_ALERT_DAKA,isAlertDk);
+                        String string = SPUtil.getString(mActivity, Content.CANCEL_ALERT_TIME, "");
+                        HashMap<String, Object> cancelMap;
+                        if (TextUtils.isEmpty(string)){
+                            cancelMap= new HashMap<>();
+                        }else{
+                           cancelMap = GsonUtil.parseJsonToMap(string);
+                        }
+                        cancelMap.put(SPUtil.getUserId(mActivity),TimeUtils.getCurTimeString(mFormat));
+                        SPUtil.saveString(mActivity,Content.CANCEL_ALERT_TIME, GsonUtil.parseMapToJson(cancelMap));
+
+                    }
                     mDakaDialog.dismiss();
                 }
             });
-
             mDakaDialog = new AlertDialog.Builder(getBaseActivity())
                     .setView(inflate)
                     .create();
@@ -311,12 +392,14 @@ public class HomeFragment extends BaseFragment<HomeImpl> implements BaseView, Ta
         /*
         * 适配器
         * */
-        mWaitingAdapter = new WaitAdapter(R.layout.item_rv_watingbill, mWaitingBillList,mCurrentType==FraEvent.HASRECEIVE);
+        mWaitingAdapter = new WaitAdapter(R.layout.item_rv_watingbill, mWaitingBillList, mCurrentType == FraEvent.HASRECEIVE);
         mWaitingAdapter.openLoadAnimation();
 
-        mReceiAdapter = new ReceivedAdapter(R.layout.item_rv_receivedbill, mReceivingBillList,mCurrentType==FraEvent.HASRECEIVE);
+        mReceiAdapter = new ReceivedAdapter(R.layout.item_rv_receivedbill, mReceivingBillList, mCurrentType == FraEvent.HASRECEIVE);
         mReceiAdapter.openLoadAnimation();
         mReceivingBillRecycleView.setAdapter(mReceiAdapter);
+
+
 
         /*
         * 设置刷新数据
@@ -334,6 +417,28 @@ public class HomeFragment extends BaseFragment<HomeImpl> implements BaseView, Ta
             }
         });
 
+        mWaitingAdapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
+
+            @Override
+            public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
+                switch (view.getId()) {
+                    case R.id.bt_receive:
+                        RetrofitClient.getInstance().receiveRecord(mWaitingBillList.get(position).getId())
+                                .subscribeOn(Schedulers.io())
+                                .observeOn(AndroidSchedulers.mainThread()).
+                                subscribe(new BaseSubscriber<ServiceBean>(BaseApplication.sContext) {
+                                    @Override
+                                    public void onNext(ServiceBean bean) {
+                                        ToastUtil.showToast("接收成功");
+                                        RxBus.getInstance().post(new ReceiveEvent());
+                                    }
+                                });
+                        break;
+                }
+
+            }
+        });
+
         mReceiAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
@@ -341,6 +446,41 @@ public class HomeFragment extends BaseFragment<HomeImpl> implements BaseView, Ta
                 intent.putExtra("recordId", mReceivingBillList.get(position).getId());
                 intent.putExtra("type", mLocalRecordTwo);
                 startActivity(intent);
+            }
+        });
+
+
+        mReceiAdapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
+
+            @Override
+            public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
+                switch (view.getId()) {
+                    case R.id.tv_cancel:
+                        RetrofitClient.getInstance().cancelReceive(mWaitingBillList.get(position).getId())
+                                .subscribeOn(Schedulers.io())
+                                .observeOn(AndroidSchedulers.mainThread()).
+                                subscribe(new BaseSubscriber<ServiceBean>(BaseApplication.sContext) {
+                                              @Override
+                                              public void onNext(ServiceBean bean) {
+                                                  ToastUtil.showToast("接收成功");
+                                                  RxBus.getInstance().post(new ReceiveEvent());
+                                              }
+                                          }
+                                );
+                        break;
+                    case R.id.tv_sure:
+                        RetrofitClient.getInstance().startRecord(mWaitingBillList.get(position).getId())
+                                .subscribeOn(Schedulers.io())
+                                .observeOn(AndroidSchedulers.mainThread()).
+                                subscribe(new BaseSubscriber<ServiceBean>(BaseApplication.sContext) {
+                                    @Override
+                                    public void onNext(ServiceBean bean) {
+                                        ToastUtil.showToast("接收成功");
+                                        RxBus.getInstance().post(new ReceiveEvent());
+                                    }
+                                });
+                        break;
+                }
             }
         });
 

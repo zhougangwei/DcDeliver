@@ -36,12 +36,13 @@ public class ReceivedAdapter extends BaseQuickAdapter<RecordListBean.BodyBean.Li
         helper.setText(R.id.tv_dlwz_before, item.getEndPlaceName());
         helper.setText(R.id.tv_dlwz_after, item.getStartPlaceName());
 
-        helper.setTag(R.id.tv_task_class,item.getTaskClassName());
+        helper.setText(R.id.tv_task_class,item.getTaskClassName());
 
         String remark = item.getRemark();
         if (TextUtils.isEmpty(remark)){
-            helper.setVisible(R.id.tv_bz,false);
+            helper.getView(R.id.tv_bz).setVisibility(View.GONE);
         }else{
+            helper.getView(R.id.tv_bz).setVisibility(View.VISIBLE);
             helper.setText(R.id.tv_bz, remark);
         }
          /*
@@ -49,9 +50,9 @@ public class ReceivedAdapter extends BaseQuickAdapter<RecordListBean.BodyBean.Li
         * 是否显示接受按钮
         * */
         if (mIsShowRecieve){
-            helper.setVisible(R.id.bt_receive,true);
+            helper.getView(R.id.bt_receive).setVisibility(View.VISIBLE);
         }else{
-            helper.setVisible(R.id.bt_receive,false);
+            helper.getView(R.id.bt_receive).setVisibility(View.GONE);
         }
 
 
@@ -79,6 +80,10 @@ public class ReceivedAdapter extends BaseQuickAdapter<RecordListBean.BodyBean.Li
        // helper.setImageResource(R.id.icon, item.getImageResource());
         // 加载网络图片
 
+    }
+
+    public void setIsShowRecieve (boolean isShowRecieve){
+        this.mIsShowRecieve  = isShowRecieve;
     }
 
     @Override

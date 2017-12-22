@@ -10,14 +10,37 @@
     <include
         android:id="@+id/ll_title"
         layout="@layout/include_small_title"/>
+    <include layout="@layout/icon_back"></include>
+    <TextView
 
-    <com.aihui.dcdeliver.commponent.stepview.VerticalStepView
-        android:id="@+id/step_view"
+        android:layout_alignTop="@+id/ll_title"
+        android:textColor="@color/white"
+        android:textSize="54px"
+        android:layout_marginTop="110px"
+        android:layout_centerHorizontal="true"
+        android:text="运送状态"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/ll_title"
-        android:layout_centerInParent="true"
-        />
-
-
+        android:layout_below="@+id/ll_title">
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <ImageView
+                android:id="@+id/iv_line"
+                android:layout_width="match_parent"
+                android:layout_height="300px"/>
+            <com.aihui.dcdeliver.commponent.stepview.VerticalStepView
+                android:layout_marginLeft="15px"
+                android:id="@+id/step_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_centerInParent="true"
+                />
+        </LinearLayout>
+    </ScrollView>
 </RelativeLayout>

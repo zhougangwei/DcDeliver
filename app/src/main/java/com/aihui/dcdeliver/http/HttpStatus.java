@@ -17,7 +17,7 @@ import com.aihui.dcdeliver.base.Content;
 public class HttpStatus {
     @SerializedName("code")
     private int    mCode;
-    @SerializedName("message")
+    @SerializedName("msg")
     private String mMessage;
 
     public int getCode() {

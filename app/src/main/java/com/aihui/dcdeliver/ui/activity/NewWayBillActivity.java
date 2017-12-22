@@ -20,19 +20,17 @@ import com.aihui.dcdeliver.bean.ServiceBean;
 import com.aihui.dcdeliver.bean.TaskDetailBean;
 import com.aihui.dcdeliver.bean.TaskTypeBeanList;
 import com.aihui.dcdeliver.commponent.jdaddressselector.ISelectAble;
+import com.aihui.dcdeliver.commponent.jdaddressselector.SelectAbleDataHelper;
 import com.aihui.dcdeliver.commponent.jdaddressselector.SelectDecotor;
 import com.aihui.dcdeliver.commponent.jdaddressselector.SelectDecotorDl;
-import com.aihui.dcdeliver.commponent.jdaddressselector.SelectAbleDataHelper;
 import com.aihui.dcdeliver.http.BaseSubscriber;
 import com.aihui.dcdeliver.http.MyService;
 import com.aihui.dcdeliver.http.RetrofitClient;
 import com.aihui.dcdeliver.util.GsonUtil;
 import com.aihui.dcdeliver.util.ToastUtil;
+import com.bigkoo.pickerview.OptionsPickerView;
 import com.blankj.utilcode.utils.TimeUtils;
 import com.google.gson.JsonObject;
-import com.jzxiang.pickerview.TimePickerDialog;
-import com.jzxiang.pickerview.data.Type;
-import com.jzxiang.pickerview.listener.OnDateSetListener;
 import com.zhy.adapter.recyclerview.CommonAdapter;
 import com.zhy.adapter.recyclerview.base.ViewHolder;
 
@@ -331,7 +329,7 @@ public class NewWayBillActivity extends AppActivity {
     private void gotoYsrq() {
 
         final SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-        TimePickerDialog build = new TimePickerDialog.Builder()
+       /* TimePickerDialog build = new TimePickerDialog.Builder()
                 .setCurrentMillseconds(TimeUtils.string2Milliseconds(mTvYsrq.getText().toString() == null ? TimeUtils.getCurTimeString(format) : mTvYsrq.getText().toString(), format))
                 .setThemeColor(getResources().getColor(R.color.timepicker_dialog_bg))
                 .setType(Type.YEAR_MONTH_DAY)
@@ -352,6 +350,59 @@ public class NewWayBillActivity extends AppActivity {
                     }
                 })
                 .build();
-        build.show(getSupportFragmentManager(), "1");
+        build.show(getSupportFragmentManager(), "1");*/
+
+
+        getNoLinkData();
+
+        OptionsPickerView pvOptions = new  OptionsPickerView.Builder(this, new OptionsPickerView.OnOptionsSelectListener() {
+            @Override
+            public void onOptionsSelect(int options1, int option2, int options3 ,View v) {
+                //返回的分别是三个级别的选中位置
+                String tx = day.get(options1) +" "
+                        + hours.get(option2)+":"
+                        + minutes.get(options3);
+                mTvYsrq.setText(tx);
+            }
+        }).build();
+        pvOptions.setNPicker(day, hours, minutes);
+        pvOptions.show();
+
+
+    }
+    private ArrayList<String> day     = new ArrayList<>();
+    private ArrayList<String> hours   = new ArrayList<>();
+    private ArrayList<String> minutes = new ArrayList<>();
+
+    private void getNoLinkData() {
+        day.add("今天");
+        day.add("明天");
+        day.add("后天");
+        day.add("三天后");
+        day.add("四天后");
+        day.add("五天后");
+
+
+
+        hours.add("01");
+        hours.add("02");
+        hours.add("03");
+        hours.add("04");
+        hours.add("05");
+        hours.add("06");
+        hours.add("07");
+        hours.add("08");
+        hours.add("09");
+        hours.add("10");
+        hours.add("11");
+        hours.add("12");
+
+        for (int i = 0; i <60 ; i++) {
+            if (i<10){
+                minutes.add("0"+i);
+            }else{
+                minutes.add(i+"");
+            }
+        }
     }
 }

@@ -26,9 +26,6 @@ public class RxBus {
     }
 
 
-
-
-
     public static RxBus getInstance() {
         if (mInstance == null) {
             synchronized (RxBus.class) {

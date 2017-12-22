@@ -1,46 +1,63 @@
 package com.aihui.dcdeliver.ui.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
+import android.widget.ImageView;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import butterknife.ButterKnife;
 import com.aihui.dcdeliver.R;
+import com.aihui.dcdeliver.base.AppActivity;
+import com.aihui.dcdeliver.bean.RecordInfoBean;
 import com.aihui.dcdeliver.commponent.stepview.VerticalStepView;
 import com.aihui.dcdeliver.commponent.stepview.bean.StepBean;
 
-public class TransStateActivity extends AppCompatActivity {
+import java.util.List;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
+public class TransStateActivity extends AppActivity {
 
 
-    private VerticalStepView mStepView;
+    @BindView(R.id.iv_back)
+    ImageView        mIvBack;
+    @BindView(R.id.step_view)
+     VerticalStepView mStepView;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_trans_state);
-        ButterKnife.bind(this);
-        mStepView = (VerticalStepView) findViewById(R.id.step_view);
-
-        List<StepBean> list0 = new ArrayList<>();
+    protected int getContentViewId() {
+        return R.layout.activity_trans_state;
+    }
 
 
-        list0.add(new StepBean("接已提交定案，等待系统确认", "1999-08-09"));
-        list0.add(new StepBean("您的商品需要从外地调拨，我们会尽快处理，请耐心等待", "1999-08-09"));
-        list0.add(new StepBean("您的订单已经进入亚洲第一仓储中心1号库准备出库", "1999-08-09"));
-        list0.add(new StepBean("打包成功", "1999-08-09"));
-        list0.add(new StepBean("配送员【包牙齿】已出发，好多礼物哦", "1999-08-09"));
-        list0.add(new StepBean("感谢你在京东购物，欢迎你下次光临！", "1999-08-09"));
-        mStepView.setStepsViewIndicatorComplectingPosition(list0.size() - 2)//设置完成的步数
+    @Override
+    protected void initData() {
+
+    }
+
+    @Override
+    protected void initView() {
+        Intent intent = getIntent();
+        List<StepBean> detailList = (List<StepBean>) intent.getSerializableExtra("detailList");
+        RecordInfoBean.BodyBean.TaskRecordBean taskRecordBean = (RecordInfoBean.BodyBean.TaskRecordBean) intent.getSerializableExtra("taskFirst");
+        detailList.set(0, taskRecordBean);
+
+
+        mStepView.setStepsViewIndicatorComplectingPosition(detailList.size() - 1)//设置完成的步数
                 .reverseDraw(true)//default is true
-                .setStepViewTexts(list0)//总步骤
+                .setStepViewTexts(detailList)//总步骤
                 .setLinePaddingProportion(0.85f)//设置indicator线与线间距的比例系数
                 .setStepsViewIndicatorCompletedLineColor(ContextCompat.getColor(this, R.color.appColor))//设置StepsViewIndicator完成线的颜色
                 .setStepsViewIndicatorUnCompletedLineColor(ContextCompat.getColor(this, R.color.uncompleted_text_color))//设置StepsViewIndicator未完成线的颜色
                 .setStepViewComplectedTextColor(ContextCompat.getColor(this, R.color.textGrey666))//设置StepsView text完成字体的颜色
                 .setStepViewUnComplectedTextColor(ContextCompat.getColor(this, R.color.uncompleted_text_color));//设置StepsView text未完成字体的颜色
 
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        // TODO: add setContentView(...) invocation
+        ButterKnife.bind(this);
     }
 }

@@ -5,57 +5,23 @@ package com.aihui.dcdeliver.commponent.stepview.bean;
  * <p/>
  * 描述：
  */
-public class StepBean
+public interface  StepBean
 {
-    public static final int STEP_UNDO = -1;//未完成  undo step
-    public static final int STEP_CURRENT = 0;//正在进行 current step
-    public static final int STEP_COMPLETED = 1;//已完成 completed step
-
-    private String name;
-    private int state;
-    private String time;
+    public static final int STEP_UNDO = 1;//未完成  undo step
+    public static final int STEP_CURRENT = 3;//正在进行 current step
+    public static final int STEP_COMPLETED = 4;//已完成 completed step
 
 
-    public String getName()
-    {
-        return name;
-    }
+    public String getName();
 
-    public void setName(String name)
-    {
-        this.name = name;
-    }
 
-    public int getState()
-    {
-        return state;
-    }
 
-    public void setState(int state)
-    {
-        this.state = state;
-    }
+    public int getState();
 
-    public String getTime() {
-        return time;
-    }
 
-    public void setTime(String time) {
-        this.time = time;
-    }
 
-    public StepBean()
-    {
-    }
+    public String getTime();
 
-    public StepBean(String name, int state)
-    {
-        this.name = name;
-        this.state = state;
-    }
 
-    public StepBean(String name, String time) {
-        this.name = name;
-        this.time = time;
-    }
+
 }

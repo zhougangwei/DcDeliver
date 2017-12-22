@@ -16,8 +16,9 @@
         android:layout_height="wrap_content">
 
         <RelativeLayout
+            android:layout_marginBottom="35px"
             android:layout_width="match_parent"
-            android:layout_height="660px">
+            android:layout_height="wrap_content">
 
             <RelativeLayout
                 android:id="@+id/rl_top"
@@ -169,6 +170,7 @@
                 android:textSize="32px"></TextView>
 
         <LinearLayout
+            android:id="@+id/bt_receive"
             android:layout_width="match_parent"
             android:layout_height="112px"
             android:layout_below="@+id/tv_bz"

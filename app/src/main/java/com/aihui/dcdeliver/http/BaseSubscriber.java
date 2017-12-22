@@ -6,7 +6,12 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.aihui.dcdeliver.R;
+import com.aihui.dcdeliver.application.ActivityManager;
+import com.aihui.dcdeliver.base.Content;
 import com.aihui.dcdeliver.ui.activity.LoginActivity;
+import com.aihui.dcdeliver.ui.activity.MainActivity;
+import com.aihui.dcdeliver.util.LogUtil;
+import com.aihui.dcdeliver.util.SPUtil;
 
 import java.io.IOException;
 
@@ -27,6 +32,7 @@ public abstract  class BaseSubscriber<T> extends Subscriber<T> {
 
     @Override
     public void onError(final Throwable e) {
+        LogUtil.e(Thread.currentThread().getName());
         Log.w("Subscriber onError", e);
         if (e instanceof HttpException) {
             // We had non-2XX http error
@@ -38,10 +44,13 @@ public abstract  class BaseSubscriber<T> extends Subscriber<T> {
             ApiException exception = (ApiException) e;
             if (exception.isCookieExpried()) {
                 //处理token失效对应的逻辑 重新登录 重新登录后 还是在原来的页面 然后重新提交下数据就好了
+                SPUtil.saveBoolean(mContext, Content.IS_LOGIN,false);
                 Intent intent = new Intent(mContext, LoginActivity.class);
                 mContext.startActivity(intent);
+                    ActivityManager.getInstance().finishActivity(MainActivity.class);
+
             } else {
-                Toast.makeText(mContext, e.getMessage(), Toast.LENGTH_SHORT).show();
+               Toast.makeText(mContext,"失败"+ e.getMessage(), Toast.LENGTH_SHORT).show();
             }
         } 
     }

@@ -88,6 +88,7 @@ public abstract class AppActivity extends BaseActivity {
         mUnbinder.unbind();
         mUnbinder = null;
 
+
         ActivityManager.getInstance().finishActivity(this);
         overridePendingTransition(R.anim.slide_left_in, R.anim.slide_right_out);
 
