@@ -9,8 +9,11 @@ import android.os.Binder;
 import android.os.IBinder;
 
 import com.aihui.dcdeliver.R;
+import com.aihui.dcdeliver.rxbus.RxBus;
+import com.aihui.dcdeliver.rxbus.event.BlueEvent;
 import com.aihui.dcdeliver.ui.activity.MainActivity;
 import com.aihui.dcdeliver.util.LogUtil;
+import com.blankj.utilcode.utils.TimeUtils;
 
 import java.util.concurrent.TimeUnit;
 
@@ -60,7 +63,8 @@ public class BlueService extends Service {
             return BlueService.this;
         }
         public void startSendLocation() {
-            Observable.interval(2, 2, TimeUnit.SECONDS).subscribe(new Subscriber<Long>() {
+            Observable.interval(2, 2, TimeUnit.SECONDS)
+                    .subscribe(new Subscriber<Long>() {
                 @Override
                 public void onCompleted() {
                     LogUtil.e("Sequence complete.");
@@ -69,10 +73,10 @@ public class BlueService extends Service {
                 public void onError(Throwable e) {
                     LogUtil.e("error.");
                 }
-
                 @Override
                 public void onNext(Long aLong) {
-                    LogUtil.e("Next.");
+                    //两秒发送一次
+                    RxBus.getInstance().post(new BlueEvent(TimeUtils.getCurTimeString()));
                 }
             });
             // 执行具体的下载任务

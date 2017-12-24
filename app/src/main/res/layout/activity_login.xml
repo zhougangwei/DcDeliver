@@ -1,127 +1,138 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/ll_login_root"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/rl_login_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-
     >
-<RelativeLayout
-    android:id="@+id/rel_content"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/white"
-    >
-    <ImageView
 
-        android:scaleType="centerCrop"
-        android:id="@+id/iv_logo"
-        android:layout_width="132dp"
-        android:layout_height="115dp"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="345px"
-        android:src="@mipmap/ic_logo"
-        />
-
-    <TextView
-
-        android:id="@+id/tv_ysd"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/iv_logo"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="56px"
-        android:text="运送单（护工）"
-        android:textColor="@color/appColor"
-        android:textSize="80px"/>
-
-    <TextView
-        android:typeface="monospace"
-        android:id="@+id/tv_user"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/tv_ysd"
-        android:layout_marginLeft="87px"
-        android:layout_marginTop="248px"
-        android:text="用户名"
-        android:textColor="@color/titleGrey"
-        android:textSize="42px"/>
-
-
-
-
-    <EditText
-
-        android:id="@+id/et_user"
-        android:layout_width="910px"
-        android:layout_height="115px"
-        android:layout_below="@+id/tv_user"
-        android:layout_marginLeft="87px"
+    <RelativeLayout
+        android:id="@+id/rel_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:background="@color/white"
-        android:hint="@string/prompt_username"
-        android:maxLines="1"
-        android:singleLine="true"
-        android:textColorHint="@color/textGrey666"
-        android:textSize="42px"/>
+        >
 
-    <ImageView
-        android:layout_width="910px"
-        android:layout_height="1dp"
-        android:layout_below="@+id/et_user"
-        android:layout_centerHorizontal="true"
-        android:background="@color/colorLine"
-        />
+        <ImageView
+
+            android:id="@+id/iv_logo"
+            android:layout_width="132dp"
+            android:layout_height="115dp"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="345px"
+            android:scaleType="centerCrop"
+            android:src="@mipmap/ic_logo"
+            />
+
+        <TextView
+
+            android:id="@+id/tv_ysd"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/iv_logo"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="56px"
+            android:text="运送单（护工）"
+            android:textColor="@color/appColor"
+            android:textSize="80px"/>
+
+        <TextView
+            android:id="@+id/tv_user"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tv_ysd"
+            android:layout_marginLeft="87px"
+            android:layout_marginTop="248px"
+            android:text="用户名"
+            android:textColor="@color/titleGrey"
+            android:textSize="42px"
+            android:typeface="monospace"/>
 
 
-    <TextView
+        <EditText
 
-        android:id="@+id/tv_psw"
+            android:id="@+id/et_user"
+            android:layout_width="910px"
+            android:layout_height="115px"
+            android:layout_below="@+id/tv_user"
+            android:layout_marginLeft="87px"
+            android:background="@color/white"
+            android:hint="@string/prompt_username"
+            android:maxLines="1"
+            android:singleLine="true"
+            android:textColorHint="@color/textGrey666"
+            android:textSize="42px"/>
+
+        <ImageView
+            android:layout_width="910px"
+            android:layout_height="1dp"
+            android:layout_below="@+id/et_user"
+            android:layout_centerHorizontal="true"
+            android:background="@color/colorLine"
+            />
+
+
+        <TextView
+
+            android:id="@+id/tv_psw"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/et_user"
+            android:layout_marginLeft="87px"
+            android:layout_marginTop="56px"
+            android:text="密码"
+            android:textColor="@color/titleGrey"
+            android:textSize="42px"/>
+
+        <EditText
+            android:id="@+id/et_psw"
+            android:layout_width="910px"
+            android:layout_height="115px"
+            android:layout_below="@+id/tv_psw"
+            android:layout_marginLeft="87px"
+            android:background="@color/white"
+            android:hint="@string/prompt_password"
+            android:imeActionLabel="@string/action_sign_in_short"
+            android:imeOptions="actionDone"
+            android:inputType="textPassword"
+            android:maxLines="1"
+            android:singleLine="true"
+            android:textColorHint="@color/textGrey666"
+            android:textSize="42px"/>
+
+        <ImageView
+            android:layout_width="910px"
+            android:layout_height="1dp"
+            android:layout_below="@+id/et_psw"
+            android:layout_centerHorizontal="true"
+            android:background="@color/colorLine"
+            />
+
+        <Button
+
+            android:id="@+id/bt_login"
+            android:layout_width="907.2px"
+            android:layout_height="158.3px"
+            android:layout_below="@+id/et_psw"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="130.4px"
+            android:background="@color/appColor"
+            android:text="登 录"
+            android:textColor="@color/white"
+            android:textSize="50px"/>
+
+    </RelativeLayout>
+
+    <com.wang.avi.AVLoadingIndicatorView
+        android:layout_centerInParent="true"
+        android:id="@+id/avi"
+        style="@style/AVLoadingIndicatorView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/et_user"
-        android:layout_marginLeft="87px"
-        android:layout_marginTop="56px"
-        android:text="密码"
-        android:textColor="@color/titleGrey"
-        android:textSize="42px"/>
-
-    <EditText
-        android:id="@+id/et_psw"
-        android:layout_width="910px"
-        android:layout_height="115px"
-        android:layout_below="@+id/tv_psw"
-        android:layout_marginLeft="87px"
-        android:background="@color/white"
-        android:hint="@string/prompt_password"
-        android:imeActionLabel="@string/action_sign_in_short"
-        android:imeOptions="actionDone"
-        android:inputType="textPassword"
-        android:maxLines="1"
-        android:singleLine="true"
-        android:textColorHint="@color/textGrey666"
-        android:textSize="42px"/>
-
-    <ImageView
-        android:layout_width="910px"
-        android:layout_height="1dp"
-        android:layout_below="@+id/et_psw"
-        android:layout_centerHorizontal="true"
-        android:background="@color/colorLine"
+        android:visibility="gone"
+        app:indicatorColor="@color/appColor"
+        app:indicatorName="BallSpinFadeLoaderIndicator"
         />
-
-    <Button
-
-        android:id="@+id/bt_login"
-        android:layout_width="907.2px"
-        android:layout_height="158.3px"
-        android:layout_below="@+id/et_psw"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="130.4px"
-        android:background="@color/appColor"
-        android:text="登 录"
-        android:textColor="@color/white"
-        android:textSize="50px"/>
-
 </RelativeLayout>
-</LinearLayout>

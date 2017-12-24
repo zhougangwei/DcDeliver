@@ -11,6 +11,7 @@ import android.view.WindowManager;
 
 import com.aihui.dcdeliver.R;
 import com.aihui.dcdeliver.application.ActivityManager;
+import com.aihui.dcdeliver.rxbus.RxBus;
 import com.zhy.autolayout.AutoFrameLayout;
 import com.zhy.autolayout.AutoLinearLayout;
 import com.zhy.autolayout.AutoRelativeLayout;
@@ -88,6 +89,8 @@ public abstract class AppActivity extends BaseActivity {
         mUnbinder.unbind();
         mUnbinder = null;
 
+
+        RxBus.getInstance().unSubscribe(this);
 
         ActivityManager.getInstance().finishActivity(this);
         overridePendingTransition(R.anim.slide_left_in, R.anim.slide_right_out);

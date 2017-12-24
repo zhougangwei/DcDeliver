@@ -9,7 +9,6 @@ import android.view.ViewTreeObserver;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -22,10 +21,12 @@ import com.aihui.dcdeliver.http.MyService;
 import com.aihui.dcdeliver.http.RetrofitClient;
 import com.aihui.dcdeliver.util.Inpututils;
 import com.aihui.dcdeliver.util.SPUtil;
+import com.wang.avi.AVLoadingIndicatorView;
 
 import butterknife.BindView;
 import butterknife.OnClick;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action0;
 import rx.schedulers.Schedulers;
 
 public class LoginActivity extends AppActivity {
@@ -47,9 +48,12 @@ public class LoginActivity extends AppActivity {
     Button         mBtLogin;
     @BindView(R.id.rel_content)
     RelativeLayout mRelContent;
-    @BindView(R.id.ll_login_root)
-    LinearLayout   mLlLoginRoot;
+    @BindView(R.id.rl_login_root)
+    RelativeLayout mRlLoginRoot;
 
+    @BindView(R.id.avi)
+    AVLoadingIndicatorView mAvi;
+    private boolean isLogin = false;
 
     @Override
     protected void onStart() {
@@ -72,10 +76,10 @@ public class LoginActivity extends AppActivity {
     @Override
     protected void initView() {
 
-        keepLoginBtnNotOver(mLlLoginRoot, mRelContent);
+        keepLoginBtnNotOver(mRlLoginRoot, mRelContent);
 
         //触摸外部，键盘消失
-        mLlLoginRoot.setOnTouchListener(new View.OnTouchListener() {
+        mRlLoginRoot.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 Inpututils.closeKeyboard(LoginActivity.this);
@@ -83,8 +87,8 @@ public class LoginActivity extends AppActivity {
             }
         });
 
-       if(SPUtil.getBoolean(LoginActivity.this,Content.IS_LOGIN,false)){
-            Intent intent = new Intent(LoginActivity.this,MainActivity.class);
+        if (SPUtil.getBoolean(LoginActivity.this, Content.IS_LOGIN, false)) {
+            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
             startActivity(intent);
             finish();
         }
@@ -135,47 +139,64 @@ public class LoginActivity extends AppActivity {
             focusView.requestFocus();
 
         } else {
-
-
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
           /*  */
+
+
+
+            if (isLogin){
+                return;
+            }
             RetrofitClient.getRetrofit()
                     .create(MyService.class)
-                    .login(userId,password)
+                    .login(userId, password)
                     .subscribeOn(Schedulers.io())
+                    .doOnSubscribe(new Action0() {
+                        @Override
+                        public void call() {
+                            isLogin = true;
+                            //开始加载动画
+                            mAvi.setVisibility(View.VISIBLE);
+                            mAvi.show();
+                        }
+                    })
+                    .subscribeOn(AndroidSchedulers.mainThread()) // 指定主线程
                     .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(new BaseSubscriber<LoginBean>(LoginActivity.this){
+                    .subscribe(new BaseSubscriber<LoginBean>(LoginActivity.this) {
                         @Override
                         public void onError(Throwable e) {
+                            mAvi.hide();
                             super.onError(e);
                         }
                         @Override
-                        public void onNext(LoginBean bean){
-                            if(true){
-                                LoginBean.BodyBean body = bean.getBody();
-                                SPUtil.saveString(LoginActivity.this,"userName",body.getUser().getUserName());
-                                SPUtil.saveString(LoginActivity.this,"deptName",body.getUser().getDeptName());
+                        public void onNext(LoginBean bean) {
 
-                                LoginBean.BodyBean.PermissionBean permission = body.getPermission();
+                            LoginBean.BodyBean body = bean.getBody();
+                            SPUtil.saveString(LoginActivity.this, "userName", body.getUser().getUserName());
+                            SPUtil.saveString(LoginActivity.this, "deptName", body.getUser().getDeptName());
 
-                                boolean hasReceive = permission.isHasReceive();
-                                boolean hasSave = permission.isHasSave();
-                                Intent intent = new Intent(LoginActivity.this,MainActivity.class);
+                            LoginBean.BodyBean.PermissionBean permission = body.getPermission();
 
-                                SPUtil.saveBoolean(LoginActivity.this,Content.HAS_RECEIVE,hasReceive);
-                                SPUtil.saveBoolean(LoginActivity.this,Content.HAS_SAVE,hasSave);
-                                SPUtil.saveBoolean(LoginActivity.this,Content.HAS_SIGN,hasSave);
-                                SPUtil.saveBoolean(LoginActivity.this,Content.IS_LOGIN,true);
-                                startActivity(intent);
-                                finish();
-                                return;
-                            }
-                        }
-                    });
-        }
+                            boolean hasReceive = permission.isHasReceive();
+                            boolean hasSave = permission.isHasSave();
+                            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
 
+                            SPUtil.saveBoolean(LoginActivity.this, Content.HAS_RECEIVE, hasReceive);
+                            SPUtil.saveBoolean(LoginActivity.this, Content.HAS_SAVE, hasSave);
+                            SPUtil.saveBoolean(LoginActivity.this, Content.HAS_SIGN, hasSave);
+                            SPUtil.saveBoolean(LoginActivity.this, Content.IS_LOGIN, true);
+                            //关闭加载动画
+                            mAvi.hide();
+                            startActivity(intent);
+                            finish();
+
+
+                    }
+        });
     }
+
+}
 
     //可以写入密码的规范  比如说 几位数 只能是数字等的正则
     private boolean isPasswordValid(String password) {
@@ -224,9 +245,6 @@ public class LoginActivity extends AppActivity {
     public void onViewClicked() {
         attemptLogin();
     }
-
-
-
 
 
 }

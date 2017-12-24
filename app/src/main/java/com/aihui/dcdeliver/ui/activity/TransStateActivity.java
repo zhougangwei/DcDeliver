@@ -10,11 +10,17 @@ import com.aihui.dcdeliver.base.AppActivity;
 import com.aihui.dcdeliver.bean.RecordInfoBean;
 import com.aihui.dcdeliver.commponent.stepview.VerticalStepView;
 import com.aihui.dcdeliver.commponent.stepview.bean.StepBean;
+import com.aihui.dcdeliver.rxbus.RxBus;
+import com.aihui.dcdeliver.rxbus.event.BlueEvent;
+import com.aihui.dcdeliver.util.ToastUtil;
 
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import rx.Subscription;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
 
 public class TransStateActivity extends AppActivity {
 
@@ -22,7 +28,7 @@ public class TransStateActivity extends AppActivity {
     @BindView(R.id.iv_back)
     ImageView        mIvBack;
     @BindView(R.id.step_view)
-     VerticalStepView mStepView;
+    VerticalStepView mStepView;
 
     @Override
     protected int getContentViewId() {
@@ -32,6 +38,22 @@ public class TransStateActivity extends AppActivity {
 
     @Override
     protected void initData() {
+        Subscription subscribe = RxBus.getInstance()
+                .toObservable(BlueEvent.class)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Action1<BlueEvent>() {
+                    @Override
+                    public void call(BlueEvent blueEvent) {
+                        ToastUtil.showToast(blueEvent.getLocation());
+                    }
+                }, new Action1<Throwable>() {
+                    @Override
+                    public void call(Throwable throwable) {
+
+                    }
+                });
+
+        RxBus.getInstance().addSubscription(this, subscribe);
 
     }
 
@@ -41,8 +63,6 @@ public class TransStateActivity extends AppActivity {
         List<StepBean> detailList = (List<StepBean>) intent.getSerializableExtra("detailList");
         RecordInfoBean.BodyBean.TaskRecordBean taskRecordBean = (RecordInfoBean.BodyBean.TaskRecordBean) intent.getSerializableExtra("taskFirst");
         detailList.set(0, taskRecordBean);
-
-
         mStepView.setStepsViewIndicatorComplectingPosition(detailList.size() - 1)//设置完成的步数
                 .reverseDraw(true)//default is true
                 .setStepViewTexts(detailList)//总步骤
@@ -59,5 +79,13 @@ public class TransStateActivity extends AppActivity {
         super.onCreate(savedInstanceState);
         // TODO: add setContentView(...) invocation
         ButterKnife.bind(this);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        RxBus.getInstance().unSubscribe(this);
+
     }
 }

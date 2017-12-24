@@ -52,6 +52,7 @@ import java.util.Map;
 
 import butterknife.BindView;
 import in.srain.cube.views.ptr.PtrClassicFrameLayout;
+import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 import rx.schedulers.Schedulers;
@@ -185,14 +186,15 @@ public class HomeFragment extends BaseFragment<HomeImpl> implements BaseView, Ta
     }
 
     private void initEvent() {
-        RxBus.getInstance().toObservable(ReceiveEvent.class)
+
+        Subscription subscribe = RxBus.getInstance().toObservable(ReceiveEvent.class)
                 .subscribe(new Action1<ReceiveEvent>() {
                     @Override
                     public void call(ReceiveEvent downEvent) {
                         refresh();
                     }
                 });
-        RxBus.getInstance().toObservable(FraEvent.class)
+        Subscription subscribe1 = RxBus.getInstance().toObservable(FraEvent.class)
                 .subscribe(new Action1<FraEvent>() {
                     @Override
                     public void call(FraEvent fraEvent) {
@@ -204,7 +206,7 @@ public class HomeFragment extends BaseFragment<HomeImpl> implements BaseView, Ta
                         changeFragment(mCurrentType);
                     }
                 });
-        RxBus.getInstance().toObservable(ReceiveEvent.class)
+        Subscription subscribe2 = RxBus.getInstance().toObservable(ReceiveEvent.class)
                 .subscribe(new Action1<ReceiveEvent>() {
                     @Override
                     public void call(ReceiveEvent downEvent) {
@@ -212,6 +214,16 @@ public class HomeFragment extends BaseFragment<HomeImpl> implements BaseView, Ta
                     }
                 });
 
+        RxBus.getInstance().addSubscription(this,subscribe);
+        RxBus.getInstance().addSubscription(this,subscribe1);
+        RxBus.getInstance().addSubscription(this,subscribe2);
+
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        RxBus.getInstance().unSubscribe(this);
     }
 
     private void changeFragment(int whichType) {
@@ -278,6 +290,15 @@ public class HomeFragment extends BaseFragment<HomeImpl> implements BaseView, Ta
                     @Override
                     public void onError(Throwable e) {
                         mLocalData.get(dataType).setErr(true);
+                        /*
+                        * 接收数据失败的话 显示失败页面
+                        *
+                        * */
+                        mViewList.clear();
+                        FrameLayout inflate = (FrameLayout)View.inflate(mActivity, R.layout.page_error, null);
+                        for (int i = 0; i <mTitleStrings.length ; i++) {
+                            mViewList.add(inflate);
+                        }
                         super.onError(e);
                     }
                 });
@@ -400,7 +421,6 @@ public class HomeFragment extends BaseFragment<HomeImpl> implements BaseView, Ta
         mReceivingBillRecycleView.setAdapter(mReceiAdapter);
 
 
-
         /*
         * 设置刷新数据
         * */
@@ -489,6 +509,12 @@ public class HomeFragment extends BaseFragment<HomeImpl> implements BaseView, Ta
         mReceivingBillRecycleView.setAdapter(mReceiAdapter);
 
         setScrollListener(mViewList, mDataList);
+
+
+        /*
+        * 在这里获取数据的
+        *
+        * */
         refresh(mLocalRecordTwo, mReceivingBillList, mReceiveSpr, mReceiAdapter);
         refresh(mLocalRecordFirst, mWaitingBillList, mWaitSpr, mWaitingAdapter);
 
@@ -508,13 +534,13 @@ public class HomeFragment extends BaseFragment<HomeImpl> implements BaseView, Ta
                             //数据全部加载完毕
                             dataAdapter.loadMoreEnd();
                         } else {
-                            if (isErr) {
+                            if (mLocalData.get(dataType).isErr()) {
                                 //成功获取更多数据
                                 getData(false, dataType, dataList, dataAdapter);
                                 dataAdapter.loadMoreComplete();
                             } else {
                                 //获取更多数据失败
-                                isErr = true;
+                                mLocalData.get(dataType).setErr(true);
                                 Toast.makeText(mActivity, R.string.network_err, Toast.LENGTH_LONG).show();
                                 dataAdapter.loadMoreFail();
                             }

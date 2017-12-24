@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewStub;
 
+import com.aihui.dcdeliver.rxbus.RxBus;
 import com.trello.rxlifecycle.LifecycleTransformer;
 import com.trello.rxlifecycle.components.support.RxFragment;
 
@@ -111,8 +112,6 @@ public abstract class BaseFragment<P extends BasePresenter> extends RxFragment i
         if (mUnbinder != Unbinder.EMPTY){
             mUnbinder.unbind();
         }
-
-
         if (mPresenter != null)
             mPresenter.onDestroy();//释放资源
         this.mPresenter = null;
@@ -122,6 +121,11 @@ public abstract class BaseFragment<P extends BasePresenter> extends RxFragment i
 
 
     }
+
+    public void unSubsrcibe(){
+        RxBus.getInstance().unSubscribe(this);
+    }
+
 
     //生命周期
     @Override

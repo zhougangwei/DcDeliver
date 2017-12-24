@@ -23,9 +23,7 @@ import com.aihui.dcdeliver.http.BaseSubscriber;
 import com.aihui.dcdeliver.http.RetrofitClient;
 import com.aihui.dcdeliver.rxbus.RxBus;
 import com.aihui.dcdeliver.rxbus.event.AddEvent;
-import com.aihui.dcdeliver.rxbus.event.AlertEvent;
 import com.aihui.dcdeliver.rxbus.event.FraEvent;
-import com.aihui.dcdeliver.rxbus.event.ReceiveEvent;
 import com.aihui.dcdeliver.service.BlueService;
 import com.aihui.dcdeliver.ui.FragmentFactory;
 import com.aihui.dcdeliver.util.SPUtil;
@@ -38,6 +36,7 @@ import butterknife.OnClick;
 import nl.psdcompany.duonavigationdrawer.views.DuoDrawerLayout;
 import nl.psdcompany.duonavigationdrawer.views.DuoMenuView;
 import nl.psdcompany.duonavigationdrawer.widgets.DuoDrawerToggle;
+import rx.Subscription;
 import rx.functions.Action1;
 import rx.schedulers.Schedulers;
 
@@ -71,12 +70,12 @@ public class MainActivity extends AppActivity implements DuoMenuView.OnMenuClick
     }
 
     private void initEventBus() {
-        RxBus.getInstance().toObservable(AddEvent.class)
+        Subscription subscribe = RxBus.getInstance().toObservable(AddEvent.class)
                 .subscribe(new Action1<AddEvent>() {
                     @Override
                     public void call(AddEvent fraEvent) {
                         //背压
-                        if (mIvAdd!=null){
+                        if (mIvAdd != null) {
                             if (fraEvent.showAdd) {
                                 mIvAdd.setVisibility(View.VISIBLE);
                             } else {
@@ -85,6 +84,8 @@ public class MainActivity extends AppActivity implements DuoMenuView.OnMenuClick
                         }
                     }
                 });
+        RxBus.getInstance().addSubscription(this,subscribe);
+
     }
 
 
@@ -239,13 +240,15 @@ public class MainActivity extends AppActivity implements DuoMenuView.OnMenuClick
                 * 清除本地缓存
                 * */
                         if(RxBus.getInstance().hasObservers()){
-                            RxBus.getInstance().unSubscribe(new FraEvent());
-                            RxBus.getInstance().unSubscribe(new AddEvent(true));
-                            RxBus.getInstance().unSubscribe(new ReceiveEvent());
-                            RxBus.getInstance().unSubscribe(new AlertEvent(false));
+                            RxBus.getInstance().unSubscribe(this);
                         }
+
                         for (int i = 0; i < mTitles.size(); i++) {
                             BaseFragment fragment = FragmentFactory.getFragment(i);
+                            /*
+                            * 注销
+                            * */
+                            fragment.unSubsrcibe();
                             if (fragment!=null){
                                 FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
                                 transaction.remove(fragment).commit();
