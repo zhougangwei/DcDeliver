@@ -46,10 +46,6 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ui.activity.LoginActivity2"
-            android:windowSoftInputMode="stateHidden">
-        </activity>
-        <activity
             android:name=".ui.activity.WaybillInTransActivity"
             android:windowSoftInputMode="stateHidden">
         </activity>
@@ -70,6 +66,14 @@
                 <action android:name="com.aihui.dcdeliver" />
             </intent-filter>
         </service>
+
+        <!--信鸽-->
+
+
+
+
+
+
     </application>
 
 </manifest>

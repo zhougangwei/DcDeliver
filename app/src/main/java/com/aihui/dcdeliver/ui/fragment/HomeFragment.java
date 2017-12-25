@@ -39,11 +39,13 @@ import com.aihui.dcdeliver.rxbus.event.ReceiveEvent;
 import com.aihui.dcdeliver.ui.activity.WaybillInTransActivity;
 import com.aihui.dcdeliver.ui.imp.HomeImpl;
 import com.aihui.dcdeliver.util.GsonUtil;
+import com.aihui.dcdeliver.util.LogUtil;
 import com.aihui.dcdeliver.util.SPUtil;
 import com.aihui.dcdeliver.util.ToastUtil;
 import com.blankj.utilcode.utils.ScreenUtils;
 import com.blankj.utilcode.utils.TimeUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.wang.avi.AVLoadingIndicatorView;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -54,6 +56,7 @@ import butterknife.BindView;
 import in.srain.cube.views.ptr.PtrClassicFrameLayout;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action0;
 import rx.functions.Action1;
 import rx.schedulers.Schedulers;
 
@@ -76,6 +79,9 @@ public class HomeFragment extends BaseFragment<HomeImpl> implements BaseView, Ta
     ViewPager mVp;
     @BindView(R.id.cv)
     CardView  mCv;
+
+    @BindView(R.id.avi)
+    AVLoadingIndicatorView mAvi;
 
     PtrClassicFrameLayout mStoreHousePtrFrame;
     private InspectPagerAdapter mPagerAdapter;
@@ -120,7 +126,6 @@ public class HomeFragment extends BaseFragment<HomeImpl> implements BaseView, Ta
     public String mLocalRecordFirst = "4";
     public String mLocalRecordTwo   = "5";
 
-
     //单页数目
     private final int PAGE_NUM = 10;
     private Map<String, DataMessage> mLocalData;
@@ -128,7 +133,6 @@ public class HomeFragment extends BaseFragment<HomeImpl> implements BaseView, Ta
     * 当前是哪个
     * */
     private int                      mCurrentType;
-
     /*
     是否打卡
     * */
@@ -181,7 +185,7 @@ public class HomeFragment extends BaseFragment<HomeImpl> implements BaseView, Ta
 
     @Override
     protected void initData() {
-        judgeIfAlert();
+        //judgeIfAlert();
         initEvent();
     }
 
@@ -206,17 +210,11 @@ public class HomeFragment extends BaseFragment<HomeImpl> implements BaseView, Ta
                         changeFragment(mCurrentType);
                     }
                 });
-        Subscription subscribe2 = RxBus.getInstance().toObservable(ReceiveEvent.class)
-                .subscribe(new Action1<ReceiveEvent>() {
-                    @Override
-                    public void call(ReceiveEvent downEvent) {
-                        refresh();
-                    }
-                });
+
 
         RxBus.getInstance().addSubscription(this,subscribe);
         RxBus.getInstance().addSubscription(this,subscribe1);
-        RxBus.getInstance().addSubscription(this,subscribe2);
+
 
     }
 
@@ -263,6 +261,14 @@ public class HomeFragment extends BaseFragment<HomeImpl> implements BaseView, Ta
     private void getData(final boolean ifDel, final String dataType, final List<RecordListBean.BodyBean.ListBean> dataList, final BaseQuickAdapter dataAdapter) {
         RetrofitClient.getInstance().getRecordList(dataType, 1, PAGE_NUM)
                 .subscribeOn(Schedulers.io())
+                .doOnSubscribe(new Action0() {
+                    @Override
+                    public void call() {
+                        mAvi.setVisibility(View.VISIBLE);
+                        mAvi.show();
+                    }
+                })
+                .subscribeOn(AndroidSchedulers.mainThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new BaseSubscriber<RecordListBean>(mActivity) {
                     @Override
@@ -283,8 +289,8 @@ public class HomeFragment extends BaseFragment<HomeImpl> implements BaseView, Ta
                         } else if (dataAdapter instanceof ReceivedAdapter) {
                             ((ReceivedAdapter) dataAdapter).setIsShowRecieve(mCurrentType == FraEvent.HASRECEIVE);
                         }
-
                         dataAdapter.notifyDataSetChanged();
+                        mAvi.hide();
                     }
 
                     @Override
@@ -299,6 +305,8 @@ public class HomeFragment extends BaseFragment<HomeImpl> implements BaseView, Ta
                         for (int i = 0; i <mTitleStrings.length ; i++) {
                             mViewList.add(inflate);
                         }
+                        mPagerAdapter.notifyDataSetChanged();
+                        mAvi.hide();
                         super.onError(e);
                     }
                 });
@@ -401,7 +409,7 @@ public class HomeFragment extends BaseFragment<HomeImpl> implements BaseView, Ta
 
         mReceiveSpr.setRefreshing(true);
         mWaitSpr.setRefreshing(true);
-
+        mViewList.clear();
         mViewList.add(mWaitingFrame);
         mViewList.add(mReceivingFrame);
 
@@ -443,6 +451,9 @@ public class HomeFragment extends BaseFragment<HomeImpl> implements BaseView, Ta
             public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
                 switch (view.getId()) {
                     case R.id.bt_receive:
+                        final AVLoadingIndicatorView mavi = (AVLoadingIndicatorView)adapter.getViewByPosition(position, R.id.avi);
+                        mavi.setVisibility(View.VISIBLE);
+                        mavi.show();
                         RetrofitClient.getInstance().receiveRecord(mWaitingBillList.get(position).getId())
                                 .subscribeOn(Schedulers.io())
                                 .observeOn(AndroidSchedulers.mainThread()).
@@ -450,6 +461,7 @@ public class HomeFragment extends BaseFragment<HomeImpl> implements BaseView, Ta
                                     @Override
                                     public void onNext(ServiceBean bean) {
                                         ToastUtil.showToast("接收成功");
+                                        mavi.hide();
                                         RxBus.getInstance().post(new ReceiveEvent());
                                     }
                                 });
@@ -586,10 +598,13 @@ public class HomeFragment extends BaseFragment<HomeImpl> implements BaseView, Ta
     }
 
     private void initTabLayout() {
+        LogUtil.e("11111111111111111111111111");
+        mPagerAdapter=null;
         mPagerAdapter = new InspectPagerAdapter(mTitleStrings, mViewList, mActivity);
         mVp.setAdapter(mPagerAdapter);
         mTb.setupWithViewPager(mVp);
         mTb.addOnTabSelectedListener(this);
+        mDataList.clear();
         mDataList.add(new LoadingBean(mWaitingBillList, false));
         mDataList.add(new LoadingBean(mReceivingBillList, false));
 

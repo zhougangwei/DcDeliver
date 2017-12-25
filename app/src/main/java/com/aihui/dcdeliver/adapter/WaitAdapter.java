@@ -24,6 +24,14 @@ public class WaitAdapter extends BaseQuickAdapter<RecordListBean.BodyBean.ListBe
     protected void convert(BaseViewHolder helper, final RecordListBean.BodyBean.ListBean item) {
 
         helper.setText(R.id.tv_type, item.getStatusText());
+        if(item.getStatus()==1){
+            helper.setBackgroundRes(R.id.tv_type,R.drawable.shape_icon_sqz);
+        }else if(item.getStatus()>=2&&item.getStatus()<=3){
+            helper.setBackgroundRes(R.id.tv_type,R.drawable.shape_icon_zzjx);
+        }
+
+        helper.addOnClickListener(R.id.bt_receive);
+
         helper.setText(R.id.tv_time, item.getDeadline());
         helper.setText(R.id.tv_dlwz_before, item.getEndPlaceName());
         helper.setText(R.id.tv_dlwz_after, item.getStartPlaceName());

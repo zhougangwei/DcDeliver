@@ -8,6 +8,7 @@ import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -20,7 +21,6 @@ import com.aihui.dcdeliver.bean.ServiceBean;
 import com.aihui.dcdeliver.commponent.CircleImageView;
 import com.aihui.dcdeliver.http.BaseSubscriber;
 import com.aihui.dcdeliver.http.RetrofitClient;
-import com.aihui.dcdeliver.util.GsonUtil;
 import com.aihui.dcdeliver.util.SPUtil;
 import com.aihui.dcdeliver.util.ToastUtil;
 import com.zhy.adapter.recyclerview.CommonAdapter;
@@ -81,6 +81,11 @@ public class WaybillInTransActivity extends AppActivity {
     @BindView(R.id.rv_task)
     RecyclerView mRvTask;
 
+    @BindView(R.id.fl)
+    FrameLayout mFl;
+
+    @BindView( R.id.ll_remark)
+    LinearLayout mLlRemark;
 
     @BindView(R.id.rl_cancel_recive)
     RelativeLayout mRlCancel;
@@ -106,6 +111,8 @@ public class WaybillInTransActivity extends AppActivity {
         } else if (RECEIVE_RECORD.equals(type)) {
             mRlCancel.setVisibility(View.VISIBLE);
             mBtReceive.setVisibility(View.GONE);
+        }else{
+            mFl.setVisibility(View.GONE);
         }
         RetrofitClient.getInstance().getRecordInfo(mRecordId)
                 .subscribeOn(Schedulers.io())
@@ -113,102 +120,7 @@ public class WaybillInTransActivity extends AppActivity {
                 .subscribe(new BaseSubscriber<RecordInfoBean>(this) {
                     @Override
                     public void onNext(RecordInfoBean recordInfoBean) {
-                        String data =
-                        "{\n" +
-                                "    \"body\": {\n" +
-                                "        \"detailList\": [\n" +
-                                "            {\n" +
-                                "                \"detailTime\": \"2017-12-21 16:22:00\",\n" +
-                                "                \"id\": 1,\n" +
-                                "                \"isDel\": 0,\n" +
-                                "                \"placeCode\": \"\",\n" +
-                                "                \"placeName\": \"第一站\",\n" +
-                                "                \"recordId\": 5,\n" +
-                                "                \"type\": 1,\n" +
-                                "                \"userId\": 1,\n" +
-                                "                \"userName\": \"admin\"\n" +
-                                "            },\n" +
-                                "            {\n" +
-                                "                \"detailTime\": \"2017-12-21 14:22:00\",\n" +
-                                "                \"id\": 1,\n" +
-                                "                \"isDel\": 0,\n" +
-                                "                \"placeCode\": \"\",\n" +
-                                "                \"placeName\": \"第2站\",\n" +
-                                "                \"recordId\": 5,\n" +
-                                "                \"type\": 3,\n" +
-                                "                \"userId\": 1,\n" +
-                                "                \"userName\": \"admin\"\n" +
-                                "            },\n" +
-                                "            {\n" +
-                                "                \"detailTime\": \"2017-12-21 13:22:00\",\n" +
-                                "                \"id\": 1,\n" +
-                                "                \"isDel\": 0,\n" +
-                                "                \"placeCode\": \"\",\n" +
-                                "                \"placeName\": \"第3站\",\n" +
-                                "                \"recordId\": 5,\n" +
-                                "                \"type\": 3,\n" +
-                                "                \"userId\": 1,\n" +
-                                "                \"userName\": \"admin\"\n" +
-                                "            },\n" +
-                                "            {\n" +
-                                "                \"detailTime\": \"2017-12-21 12:22:00\",\n" +
-                                "                \"id\": 1,\n" +
-                                "                \"isDel\": 0,\n" +
-                                "                \"placeCode\": \"\",\n" +
-                                "                \"placeName\": \"第4站\",\n" +
-                                "                \"placeName\": \"第4站\",\n" +
-                                "                \"recordId\": 5,\n" +
-                                "                \"type\": 4,\n" +
-                                "                \"userId\": 1,\n" +
-                                "                \"userName\": \"admin\"\n" +
-                                "            }\n" +
-                                "        ],\n" +
-                                "        \"extList\": [\n" +
-                                "            {\n" +
-                                "                \"colName\": \"病人姓名\",\n" +
-                                "                \"colType\": \"string\",\n" +
-                                "                \"colValue\": \"333\",\n" +
-                                "                \"id\": 4,\n" +
-                                "                \"recordId\": 5,\n" +
-                                "                \"required\": 1,\n" +
-                                "                \"taskId\": 3\n" +
-                                "            }\n" +
-                                "        ],\n" +
-                                "        \"taskRecord\": {\n" +
-                                "            \"createUser\": 1,\n" +
-                                "            \"createUserName\": \"admin\",\n" +
-                                "            \"deadline\": \"2017-12-20 17:50:47\",\n" +
-                                "            \"endPlaceId\": 12,\n" +
-                                "            \"endPlaceName\": \"门诊楼4-一楼\",\n" +
-                                "            \"gmtCreate\": \"2017-12-20 17:50:51\",\n" +
-                                "            \"gmtModified\": \"2017-12-20 17:50:51\",\n" +
-                                "            \"id\": 5,\n" +
-                                "            \"modifiedUser\": 1,\n" +
-                                "            \"receiveUser\": 1,\n" +
-                                "            \"receiveUserName\": \"admin\",\n" +
-                                "            \"recordFrom\": 1,\n" +
-                                "            \"recordNum\": \"1712201750430001\",\n" +
-                                "            \"remark\": \"3333\",\n" +
-                                "            \"startPlaceId\": 20,\n" +
-                                "            \"startPlaceName\": \"测试位置\",\n" +
-                                "            \"status\": 2,\n" +
-                                "            \"statusText\": \"已接单\",\n" +
-                                "            \"taskClassId\": 3,\n" +
-                                "            \"taskClassName\": \"CT检查\",\n" +
-                                "            \"toolName\": \"\"\n" +
-                                "        },\n" +
-                                "        \"taskRecordTime\": {\n" +
-                                "            \"receiveTime\": \"2017-12-21 16:22:00\",\n" +
-                                "            \"receiveUser\": 1,\n" +
-                                "            \"receiveUserName\": \"admin\",\n" +
-                                "            \"recordId\": 5\n" +
-                                "        }\n" +
-                                "    },\n" +
-                                "    \"code\": 200,\n" +
-                                "    \"msg\": \"success\"\n" +
-                                "}";
 
-                        recordInfoBean = GsonUtil.parseJsonToBean(data,RecordInfoBean.class);
                         mBodyBean = recordInfoBean.getBody();
 
 
@@ -221,8 +133,14 @@ public class WaybillInTransActivity extends AppActivity {
                         mTvArriveTime.setText(taskRecord.getDeadline());
                         mTvState.setText(SPUtil.getUserName(WaybillInTransActivity.this) + " " + taskRecord.getStatusText());
 
-                        mTvRemark.setText(taskRecord.getRemark());
+                        mTvTransNum.setText(taskRecord.getRecordNum());
 
+                        if(TextUtils.isEmpty(taskRecord.getRemark())){
+                            mLlRemark.setVisibility(View.GONE);
+                            mTvRemark.setVisibility(View.GONE);
+                        }else{
+                            mTvRemark.setText(taskRecord.getRemark());
+                        }
                         List<RecordInfoBean.BodyBean.ExtListBean> extList = mBodyBean.getExtList();
                         if (extList.size() != 0) {
                             mRvTask.setVisibility(View.VISIBLE);
@@ -242,13 +160,13 @@ public class WaybillInTransActivity extends AppActivity {
                         } else {
                             mRvTask.setVisibility(View.GONE);
                         }
-                      /*  if (taskRecord.getStatus() >= 3) {         //可点击看详情
+                       if (taskRecord.getStatus() >= 3) {         //可点击看详情
                             mRlYs.setClickable(true);
                             mRlYs.setEnabled(true);
                         } else {
                             mRlYs.setClickable(false);
                             mRlYs.setEnabled(false);
-                        }*/
+                        }
                     }
                 });
 
@@ -291,6 +209,12 @@ public class WaybillInTransActivity extends AppActivity {
             case R.id.rl_ys:
                 Intent intent = new Intent(this, TransStateActivity.class);
                 ArrayList<RecordInfoBean.BodyBean.DetailListBean> detailList = (ArrayList<RecordInfoBean.BodyBean.DetailListBean>) mBodyBean.getDetailList();
+                RecordInfoBean.BodyBean.DetailListBean detailListBean = detailList.get(0);
+                detailListBean.setPlaceName("护工接单("+detailListBean.getUserName()+")");
+
+                RecordInfoBean.BodyBean.DetailListBean detailListBean1 = detailList.get(1);
+                detailListBean1.setPlaceName("护工取单("+detailListBean1.getUserName()+")");
+
                 intent.putExtra("detailList",detailList);
                 intent.putExtra("taskFirst",mBodyBean.getTaskRecord());
                 startActivity(intent);

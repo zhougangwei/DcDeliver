@@ -17,7 +17,7 @@
         android:paddingLeft="23px"
         android:gravity="center_vertical"
         android:id="@+id/tv_value"
-        android:background="@drawable/btn_normal"
+
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 </LinearLayout>

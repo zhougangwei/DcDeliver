@@ -2,6 +2,7 @@ package com.aihui.dcdeliver.http;
 
 
 import com.aihui.dcdeliver.bean.LoginBean;
+import com.aihui.dcdeliver.bean.PlaceBackBean;
 import com.aihui.dcdeliver.bean.RecordInfoBean;
 import com.aihui.dcdeliver.bean.RecordListBean;
 import com.aihui.dcdeliver.bean.ServiceBean;
@@ -31,7 +32,8 @@ public interface MyService {
     @GET("/applogin?")
     Observable<LoginBean> login(@Query("userName") String userName, @Query("password") String passWord);
 
-
+    @GET("/applogin?")
+    Observable<LoginBean> login();
 
     @GET("/applogout")
     Observable<ServiceBean> logout();
@@ -112,7 +114,16 @@ public interface MyService {
     Observable<ServiceBean> receiveRecord(@Query("recordId") int recordId);
 
 
-
+    /**
+     * 打卡
+     * @param recordId
+     * @return
+     */
     @GET("/app/user/signIn")
     Observable<ServiceBean> signIn(@Query("way") int recordId);
+
+
+    @GET("/app/task/record/transporting?")
+    Observable<PlaceBackBean> transporting(@Query("placeCode") String placeCode);
+
 }

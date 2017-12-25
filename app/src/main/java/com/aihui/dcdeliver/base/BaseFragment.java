@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.view.ViewStub;
 
 import com.aihui.dcdeliver.rxbus.RxBus;
+import com.github.ikidou.fragmentBackHandler.FragmentBackHandler;
 import com.trello.rxlifecycle.LifecycleTransformer;
 import com.trello.rxlifecycle.components.support.RxFragment;
 
@@ -19,7 +20,7 @@ import butterknife.Unbinder;
 /**
  * Created by renlei on 2016/5/23.
  */
-public abstract class BaseFragment<P extends BasePresenter> extends RxFragment implements BaseView {
+public abstract class BaseFragment<P extends BasePresenter> extends RxFragment implements BaseView,FragmentBackHandler {
 
     private static final String  LAYOUT_LINEARLAYOUT   = "LinearLayout";
     private static final String  LAYOUT_FRAMELAYOUT    = "FrameLayout";
@@ -134,4 +135,8 @@ public abstract class BaseFragment<P extends BasePresenter> extends RxFragment i
     }
 
 
+    @Override
+    public boolean onBackPressed() {
+        return false;
+    }
 }

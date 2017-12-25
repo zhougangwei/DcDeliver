@@ -67,15 +67,47 @@
             android:src="@mipmap/ic_detail_right"/>
     </RelativeLayout>
 
-    <include
-        android:id="@+id/rl_cancel_recive"
-        layout="@layout/cancel_receive"/>
+    <FrameLayout
+        android:id="@+id/fl"
+        android:layout_below="@+id/rl_ys"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <RelativeLayout
+            android:id="@+id/rl_cancel_recive"
+            android:layout_width="match_parent"
+            android:layout_height="112px"
+            android:layout_marginTop="56px"
+           >
+            <TextView
+                android:id="@+id/tv_cancel"
+                android:layout_width="456px"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="60px"
+                android:background="@drawable/shape_cancel_trans"
+                android:gravity="center"
+                android:text="取消运送"
+                android:textColor="@color/appColor"
+                android:textSize="48px"/>
+
+            <TextView
+                android:id="@+id/tv_sure"
+                android:layout_width="456px"
+                android:layout_height="match_parent"
+                android:layout_alignParentRight="true"
+                android:layout_marginLeft="60px"
+                android:layout_marginRight="60px"
+                android:background="@drawable/shape_sure_trans"
+                android:gravity="center"
+                android:text="确定取单"
+                android:textColor="@color/white"
+                android:textSize="48px"/>
+        </RelativeLayout>
 
     <Button
+        android:visibility="gone"
         android:id="@+id/bt_receive"
         android:layout_width="match_parent"
         android:layout_height="112px"
-        android:layout_below="@+id/rl_ys"
         android:layout_centerInParent="true"
         android:layout_marginBottom="36px"
         android:layout_marginLeft="36px"
@@ -86,14 +118,14 @@
         android:textColor="@color/white"
         android:textSize="48px"
         />
-
+    </FrameLayout>
 
     <ImageView
         android:id="@+id/iv_shadow"
         android:layout_width="match_parent"
         android:layout_height="56px"
-        android:layout_below="@+id/rl_ys"
-        android:layout_marginTop="168px"
+        android:layout_below="@+id/fl"
+
         />
     <ScrollView
         android:layout_below="@+id/iv_shadow"
@@ -169,7 +201,7 @@
                         <TextView
                             android:id="@+id/tv_arrive_time"
                             style="@style/intrans_right"
-                            android:hint="10.00到"/>
+                            />
                     </LinearLayout>
 
                     <include layout="@layout/line"></include>
@@ -187,7 +219,7 @@
                         <TextView
                             android:id="@+id/tv_trans_num"
                             style="@style/intrans_right"
-                            android:text="6666666666666666666"
+
 
                             android:textColor="@color/appColor"/>
                     </LinearLayout>
@@ -246,8 +278,15 @@
 
 
                     </LinearLayout>
-
-
+                    <LinearLayout
+                        android:id="@+id/ll_remark"
+                        android:layout_width="match_parent"
+                        android:layout_height="142px"
+                        >
+                        <TextView
+                            style="@style/in_trans_left"
+                            android:text="备注"/>
+                    </LinearLayout>
 
                     <TextView
                         style="@style/intrans_right"
@@ -256,7 +295,6 @@
                         android:layout_height="142px"
                         android:background="@color/white"
                         android:gravity="start"
-                        android:hint="备注"
                         android:textColorHint="@color/textGrey888"/>
 
                 </LinearLayout>

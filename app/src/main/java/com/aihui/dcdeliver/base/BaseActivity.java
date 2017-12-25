@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 
+import com.github.ikidou.fragmentBackHandler.BackHandlerHelper;
 import com.trello.rxlifecycle.LifecycleTransformer;
 import com.trello.rxlifecycle.components.support.RxAppCompatActivity;
 
@@ -124,6 +125,12 @@ public abstract class BaseActivity extends RxAppCompatActivity implements BaseVi
             ViewCompat.setFitsSystemWindows(mChildView, false);
         }
 
+    }
+    @Override
+    public void onBackPressed() {
+        if (!BackHandlerHelper.handleBackPress(this)) {
+            super.onBackPressed();
+        }
     }
 
 }

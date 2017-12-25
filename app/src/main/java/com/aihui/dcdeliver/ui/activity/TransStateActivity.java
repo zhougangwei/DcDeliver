@@ -62,7 +62,7 @@ public class TransStateActivity extends AppActivity {
         Intent intent = getIntent();
         List<StepBean> detailList = (List<StepBean>) intent.getSerializableExtra("detailList");
         RecordInfoBean.BodyBean.TaskRecordBean taskRecordBean = (RecordInfoBean.BodyBean.TaskRecordBean) intent.getSerializableExtra("taskFirst");
-        detailList.set(0, taskRecordBean);
+        detailList.add(0, taskRecordBean);
         mStepView.setStepsViewIndicatorComplectingPosition(detailList.size() - 1)//设置完成的步数
                 .reverseDraw(true)//default is true
                 .setStepViewTexts(detailList)//总步骤

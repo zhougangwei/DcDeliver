@@ -79,6 +79,7 @@ public class LoginBean {
 
             private boolean hasSave;
             private boolean hasReceive;
+            private boolean hasNextRecord;
 
             public boolean isHasSave() {
                 return hasSave;
@@ -94,6 +95,14 @@ public class LoginBean {
 
             public void setHasReceive(boolean hasReceive) {
                 this.hasReceive = hasReceive;
+            }
+
+            public boolean isHasNextRecord() {
+                return hasNextRecord;
+            }
+
+            public void setHasNextRecord(boolean hasNextRecord) {
+                this.hasNextRecord = hasNextRecord;
             }
         }
 

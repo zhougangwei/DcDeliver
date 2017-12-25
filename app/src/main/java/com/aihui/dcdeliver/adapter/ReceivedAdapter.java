@@ -5,24 +5,17 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.aihui.dcdeliver.R;
-import com.aihui.dcdeliver.application.BaseApplication;
 import com.aihui.dcdeliver.bean.RecordListBean;
-import com.aihui.dcdeliver.bean.ServiceBean;
-import com.aihui.dcdeliver.http.BaseSubscriber;
-import com.aihui.dcdeliver.http.RetrofitClient;
-import com.aihui.dcdeliver.util.ToastUtil;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.zhy.autolayout.utils.AutoUtils;
 
 import java.util.List;
 
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
-
 public class ReceivedAdapter extends BaseQuickAdapter<RecordListBean.BodyBean.ListBean, BaseViewHolder> {
 
     public boolean mIsShowRecieve;
+
     public ReceivedAdapter(int layoutResId, List data, boolean isShowReceive) {
         super(layoutResId, data);
         mIsShowRecieve = isShowReceive;
@@ -36,12 +29,23 @@ public class ReceivedAdapter extends BaseQuickAdapter<RecordListBean.BodyBean.Li
         helper.setText(R.id.tv_dlwz_before, item.getEndPlaceName());
         helper.setText(R.id.tv_dlwz_after, item.getStartPlaceName());
 
-        helper.setText(R.id.tv_task_class,item.getTaskClassName());
+        if (item.getStatus() == 4) {
+            helper.setBackgroundRes(R.id.tv_type, R.drawable.shape_icon_ywc);
+        } else if (item.getStatus() < 4) {
+            helper.setBackgroundRes(R.id.tv_type, R.drawable.shape_icon_yjs);
+        }
+        if (item.getStatus()==2||item.getStatus()==3){
+            helper.getView(R.id.bt_receive).setVisibility(View.GONE);
+        }else{
+            helper.getView(R.id.bt_receive).setVisibility(View.VISIBLE);
+        }
+
+        helper.setText(R.id.tv_task_class, item.getTaskClassName());
 
         String remark = item.getRemark();
-        if (TextUtils.isEmpty(remark)){
+        if (TextUtils.isEmpty(remark)) {
             helper.getView(R.id.tv_bz).setVisibility(View.GONE);
-        }else{
+        } else {
             helper.getView(R.id.tv_bz).setVisibility(View.VISIBLE);
             helper.setText(R.id.tv_bz, remark);
         }
@@ -49,41 +53,24 @@ public class ReceivedAdapter extends BaseQuickAdapter<RecordListBean.BodyBean.Li
         *
         * 是否显示接受按钮
         * */
-        if (mIsShowRecieve){
+        if (mIsShowRecieve) {
             helper.getView(R.id.bt_receive).setVisibility(View.VISIBLE);
-        }else{
+        } else {
             helper.getView(R.id.bt_receive).setVisibility(View.GONE);
         }
 
+        helper.addOnClickListener(R.id.tv_cancel);
+        helper.addOnClickListener(R.id.tv_sure);
 
-        helper.setOnClickListener(R.id.tv_cancel, new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
 
-            }
-        });
-        helper.setOnClickListener(R.id.tv_sure, new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                RetrofitClient.getInstance().startRecord(item.getId())
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread()).
-                        subscribe(new BaseSubscriber<ServiceBean>(BaseApplication.sContext) {
-                            @Override
-                            public void onNext(ServiceBean bean) {
-                                ToastUtil.showToast("接收成功");
-                            }
-                        });
-            }
-        });
 
-       // helper.setImageResource(R.id.icon, item.getImageResource());
+        // helper.setImageResource(R.id.icon, item.getImageResource());
         // 加载网络图片
 
     }
 
-    public void setIsShowRecieve (boolean isShowRecieve){
-        this.mIsShowRecieve  = isShowRecieve;
+    public void setIsShowRecieve(boolean isShowRecieve) {
+        this.mIsShowRecieve = isShowRecieve;
     }
 
     @Override

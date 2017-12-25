@@ -43,10 +43,15 @@ public class FragmentFactory {
 
     public static void clearAllFragment() {
 
+        if (mDownFragment != null) {
+            mDownFragment = null;
+        } if (sMHomeFragment != null) {
+            sMHomeFragment = null;
+        }
+        if (sMMyFragment != null) {
+            sMMyFragment = null;
+        }
 
-        mDownFragment = null;
-        sMHomeFragment = null;
-        sMMyFragment = null;
     }
 
 

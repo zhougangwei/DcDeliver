@@ -61,6 +61,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
+
             <LinearLayout
                 style="@style/item_ll_r22_l22"
                 android:layout_marginBottom="27px">
@@ -73,9 +74,9 @@
                     />
 
                 <TextView
-                    android:text="1111"
                     android:id="@+id/tv_waybill_num"
                     style="@style/tv_right22"
+                    android:text="1111"
 
                     />
             </LinearLayout>
@@ -110,12 +111,10 @@
                 android:visibility="gone"></android.support.v7.widget.RecyclerView>
 
 
-            <include layout="@layout/line_mg24"></include>
-
             <LinearLayout
-                android:visibility="gone"
                 android:id="@+id/ll_ysr"
-                style="@style/item_ll_r22_l22">
+                style="@style/item_ll_r22_l22"
+                android:visibility="gone">
 
                 <TextView
                     style="@style/tv_left22"
@@ -228,21 +227,31 @@
 
             <LinearLayout
                 android:id="@+id/ll_bz"
-                style="@style/item_ll_r22_l22">
+                style="@style/item_ll_r22_l22"
+                android:layout_height="318px"
+                android:orientation="horizontal">
 
                 <TextView
-                    style="@style/tv_left22"
-                    android:layout_weight="1"
+
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="60px"
                     android:text="备注"
+                    android:textColor="@color/textGrey333"
+                    android:textSize="48px"
                     />
 
-                <TextView
+                <EditText
                     android:id="@+id/tv_bz"
-                    style="@style/tv_right22"
-
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="60px"
+                    android:layout_weight="1"
+                    android:background="@color/white"
+                    android:gravity="start"
+                    android:paddingLeft="40px"
                     />
 
-                <include layout="@layout/include_detail"></include>
 
             </LinearLayout>
         </LinearLayout>

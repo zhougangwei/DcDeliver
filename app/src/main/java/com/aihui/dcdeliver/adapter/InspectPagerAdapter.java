@@ -6,6 +6,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
+import com.aihui.dcdeliver.util.GsonUtil;
+import com.aihui.dcdeliver.util.LogUtil;
+
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -25,6 +29,7 @@ public class InspectPagerAdapter extends PagerAdapter {
 
 
     public InspectPagerAdapter( String[] titleStrings, List<FrameLayout> datas, Context context) {
+
         mViewList = datas;
         this.mTitleStrings = titleStrings;
         mContext = context;
@@ -53,7 +58,15 @@ public class InspectPagerAdapter extends PagerAdapter {
 
     @Override
     public CharSequence getPageTitle(int position) {
-        return mTitleStrings[position];//页卡标题
+
+        try{
+            return mTitleStrings[position];//页卡标题
+        }catch (Exception e){
+            LogUtil.d("InspectPagerAdapter",position+"");
+            LogUtil.d("InspectPagerAdapter", GsonUtil.parseListToJson(Arrays.asList(mTitleStrings)));
+            return mTitleStrings[position%2];//页卡标题
+        }
+
     }
 
 }

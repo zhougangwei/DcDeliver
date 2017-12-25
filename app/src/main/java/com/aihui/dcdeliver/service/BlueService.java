@@ -9,18 +9,28 @@ import android.os.Binder;
 import android.os.IBinder;
 
 import com.aihui.dcdeliver.R;
+import com.aihui.dcdeliver.bean.PlaceBackBean;
+import com.aihui.dcdeliver.http.BaseSubscriber;
+import com.aihui.dcdeliver.http.RetrofitClient;
 import com.aihui.dcdeliver.rxbus.RxBus;
 import com.aihui.dcdeliver.rxbus.event.BlueEvent;
 import com.aihui.dcdeliver.ui.activity.MainActivity;
+import com.aihui.dcdeliver.util.GsonUtil;
 import com.aihui.dcdeliver.util.LogUtil;
 import com.blankj.utilcode.utils.TimeUtils;
 
+import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 import rx.Observable;
-import rx.Subscriber;
+import rx.Subscription;
+import rx.functions.Action1;
+import rx.schedulers.Schedulers;
 
 public class BlueService extends Service {
+
+    private Subscription mSubscription;
+
     public BlueService() {
     }
     private MyBinder mBinder = new MyBinder();
@@ -63,22 +73,38 @@ public class BlueService extends Service {
             return BlueService.this;
         }
         public void startSendLocation() {
-            Observable.interval(2, 2, TimeUnit.SECONDS)
-                    .subscribe(new Subscriber<Long>() {
-                @Override
-                public void onCompleted() {
-                    LogUtil.e("Sequence complete.");
-                }
-                @Override
-                public void onError(Throwable e) {
-                    LogUtil.e("error.");
-                }
-                @Override
-                public void onNext(Long aLong) {
-                    //两秒发送一次
-                    RxBus.getInstance().post(new BlueEvent(TimeUtils.getCurTimeString()));
-                }
-            });
+            //两秒发送一次
+            mSubscription = Observable.interval(2, 2, TimeUnit.SECONDS)
+                    .subscribe(new BaseSubscriber<Long>(getApplicationContext()) {
+                        @Override
+                        public void onCompleted() {
+                            LogUtil.e("Sequence complete.");
+                        }
+
+                        @Override
+                        public void onError(Throwable e) {
+                            LogUtil.e("error.");
+                        }
+                        @Override
+                        public void onNext(Long aLong) {
+                            //两秒发送一次
+
+                            RetrofitClient.getInstance().transporting("D000000"+ new Random().nextInt(12))
+                                    .subscribeOn(Schedulers.io())
+                                    .observeOn(Schedulers.io())
+                                    .subscribe(new Action1<PlaceBackBean>() {
+                                        @Override
+                                        public void call(PlaceBackBean bean) {
+                                            LogUtil.d("MyBinder", GsonUtil.parseObjectToJson(bean));
+                                            if (!bean.getBody()) {
+                                                mSubscription.unsubscribe();
+                                               // stopSelf();
+                                            }
+                                            RxBus.getInstance().post(new BlueEvent(TimeUtils.getCurTimeString()));
+                                        }
+                                    });
+                        }
+                    });
             // 执行具体的下载任务
         }
 

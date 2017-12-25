@@ -5,7 +5,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -94,9 +93,9 @@ public class NewWayBillActivity extends AppActivity {
     private SelectDecotorDl mDlwzAccetDector;
 
     //输送的地理位子
-    private SelectDecotorDl mDlwzOutDector;
+    private SelectDecotorDl         mDlwzOutDector;
     private SaveBean.TaskRecordBean mTaskRecordBean;
-    private SaveBean mSaveBean;
+    private SaveBean                mSaveBean;
 
     @Override
     protected int getContentViewId() {
@@ -179,7 +178,7 @@ public class NewWayBillActivity extends AppActivity {
                                                 List<TaskDetailBean.BodyBean.PlaceListBean> placeList = bean.getBody().getPlaceList();
                                                 if (placeList != null && placeList.size() > 0) {
                                                     mTvJsqy.setText(placeList.get(0).getPlaceName());
-                                                    mTaskRecordBean.setEndPlaceId(placeList.get(0).getPlaceId()+"");
+                                                    mTaskRecordBean.setEndPlaceId(placeList.get(0).getPlaceId() + "");
                                                     mTaskRecordBean.setEndPlaceName(placeList.get(0).getPlaceName());
                                                 }
 
@@ -249,7 +248,7 @@ public class NewWayBillActivity extends AppActivity {
         ButterKnife.bind(this);
     }
 
-    @OnClick({R.id.ll_task_type,  R.id.ll_ysrq, R.id.ll_ysqy, R.id.ll_jsqy,  R.id.ll_bz, R.id.tv_submit})
+    @OnClick({R.id.ll_task_type, R.id.ll_ysrq, R.id.ll_ysqy, R.id.ll_jsqy, R.id.ll_bz, R.id.tv_submit})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             //任务类型
@@ -292,11 +291,11 @@ public class NewWayBillActivity extends AppActivity {
             ToastUtil.showToast("接收区域必填");
             return;
         }
-        if(TimeUtils.getCurTimeMills()>TimeUtils.string2Milliseconds(mTvYsrq.getText().toString())){
+        if (TimeUtils.getCurTimeMills() > TimeUtils.string2Milliseconds(mTvYsrq.getText().toString(),new SimpleDateFormat("yyyy-MM-dd HH:mm"))) {
             mTvYsrq.setTextColor(getResources().getColor(R.color.red));
             ToastUtil.showToast("运送时间不能小于当前时间");
             return;
-        }else{
+        } else {
             mTvYsrq.setTextColor(getResources().getColor(R.color.textGrey666));
         }
         if (TextUtils.isEmpty(mTvTaskType.getText().toString())) {
@@ -304,19 +303,21 @@ public class NewWayBillActivity extends AppActivity {
             return;
         }
 
-       mTaskRecordBean.setRemark(mTvBz.getText().toString());
-       mTaskRecordBean.setRecordNum(mTvWaybillNum.getText().toString());
+        mTaskRecordBean.setRemark(mTvBz.getText().toString());
+        mTaskRecordBean.setRecordNum(mTvWaybillNum.getText().toString());
         String s = GsonUtil.parseObjectToJson(mSaveBean);
-        RequestBody body=RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8"),s);
+        RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8"), s);
         RetrofitClient.getInstance().saveTaskRecord(body)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new BaseSubscriber<ServiceBean>(this) {
-            @Override
-            public void onNext(ServiceBean bean) {
-                Log.d("NewWayBillActivity", GsonUtil.parseObjectToJson(bean));
-            }
-        });
+                    @Override
+                    public void onNext(ServiceBean bean) {
+                        ToastUtil.showToast("新建成功!");
+                        setResult(RESULT_OK);
+                        finish();
+                    }
+                });
 
 
     }
@@ -355,14 +356,42 @@ public class NewWayBillActivity extends AppActivity {
 
         getNoLinkData();
 
-        OptionsPickerView pvOptions = new  OptionsPickerView.Builder(this, new OptionsPickerView.OnOptionsSelectListener() {
+        OptionsPickerView pvOptions = new OptionsPickerView.Builder(this, new OptionsPickerView.OnOptionsSelectListener() {
             @Override
-            public void onOptionsSelect(int options1, int option2, int options3 ,View v) {
+            public void onOptionsSelect(int options1, int option2, int options3, View v) {
                 //返回的分别是三个级别的选中位置
-                String tx = day.get(options1) +" "
-                        + hours.get(option2)+":"
+
+                String dayTime=null;
+
+                switch (day.get(options1)) {
+                    case "今天":
+                        dayTime = TimeUtils.getCurTimeString(new SimpleDateFormat("yyyy-MM-dd"));
+                        break;
+                    case "明天":
+                        dayTime = TimeUtils.milliseconds2String(TimeUtils.getCurTimeMills()+1000*60*60*24,new SimpleDateFormat("yyyy-MM-dd"));
+                        break;
+                    case "后天":
+                        dayTime = TimeUtils.milliseconds2String(TimeUtils.getCurTimeMills()+2*1000*60*60*24,new SimpleDateFormat("yyyy-MM-dd"));
+                        break;
+                    case "三天后":
+                        dayTime = TimeUtils.milliseconds2String(TimeUtils.getCurTimeMills()+3*1000*60*60*24,new SimpleDateFormat("yyyy-MM-dd"));
+                        break;
+                    case "四天后":
+                        dayTime = TimeUtils.milliseconds2String(TimeUtils.getCurTimeMills()+4*1000*60*60*24,new SimpleDateFormat("yyyy-MM-dd"));
+                        break;
+                    case "五天后":
+                        dayTime = TimeUtils.milliseconds2String(TimeUtils.getCurTimeMills()+5*1000*60*60*24,new SimpleDateFormat("yyyy-MM-dd"));
+                        break;
+                    default:
+                        dayTime = TimeUtils.getCurTimeString(new SimpleDateFormat("yyyy-MM-dd"));
+                        break;
+                }
+                String tx = dayTime + " "
+                        + hours.get(option2) + ":"
                         + minutes.get(options3);
+
                 mTvYsrq.setText(tx);
+                mTaskRecordBean.setDeadline(TimeUtils.milliseconds2String(TimeUtils.string2Milliseconds(mTvYsrq.getText().toString(),new SimpleDateFormat("yyyy-MM-dd HH:mm"))));
             }
         }).build();
         pvOptions.setNPicker(day, hours, minutes);
@@ -370,6 +399,7 @@ public class NewWayBillActivity extends AppActivity {
 
 
     }
+
     private ArrayList<String> day     = new ArrayList<>();
     private ArrayList<String> hours   = new ArrayList<>();
     private ArrayList<String> minutes = new ArrayList<>();
@@ -381,7 +411,6 @@ public class NewWayBillActivity extends AppActivity {
         day.add("三天后");
         day.add("四天后");
         day.add("五天后");
-
 
 
         hours.add("01");
@@ -397,11 +426,11 @@ public class NewWayBillActivity extends AppActivity {
         hours.add("11");
         hours.add("12");
 
-        for (int i = 0; i <60 ; i++) {
-            if (i<10){
-                minutes.add("0"+i);
-            }else{
-                minutes.add(i+"");
+        for (int i = 0; i < 60; i++) {
+            if (i < 10) {
+                minutes.add("0" + i);
+            } else {
+                minutes.add(i + "");
             }
         }
     }

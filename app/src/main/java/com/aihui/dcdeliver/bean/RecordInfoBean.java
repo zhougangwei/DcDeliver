@@ -394,7 +394,7 @@ public class RecordInfoBean implements  Serializable{
 
             @Override
             public String getName() {
-                return startPlaceName;
+                return "运送单发布成功";
             }
 
             @Override

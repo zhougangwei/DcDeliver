@@ -13,7 +13,7 @@ public class Content {
 
     public static final String PASSWORD     = "password";             //密码
     public static final String USER_ACCOUNT = "user_account";      //账号
-    public static final String WS_ADDRESS   = "http://192.168.1.198:8080/";      //账号
+    public static final String WS_ADDRESS   = "http://192.168.1.198:8888/";      //账号
 
     public static final String HAS_RECEIVE  = "hasReceive";      //接收权限
     public static final String HAS_SAVE     = "hasSave";      //接收权限
@@ -24,6 +24,9 @@ public class Content {
 
     public static final String IS_LOGIN     = "isLogin";      //接收权限
 
+    public static final int NEW_WAY_REQUEST_CODE = 1;       //新建request
+
+
 
     //成功
     public static final int WEB_RESP_CODE_SUCCESS = 200;
@@ -31,4 +34,5 @@ public class Content {
     public static final int TOKEN_EXPRIED         = 704;
 
 
+    public static final String HAS_NEXT_RECORD="hasNextRecord"; //是否有下调记录
 }

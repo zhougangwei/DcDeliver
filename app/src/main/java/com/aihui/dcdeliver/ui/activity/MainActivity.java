@@ -24,6 +24,7 @@ import com.aihui.dcdeliver.http.RetrofitClient;
 import com.aihui.dcdeliver.rxbus.RxBus;
 import com.aihui.dcdeliver.rxbus.event.AddEvent;
 import com.aihui.dcdeliver.rxbus.event.FraEvent;
+import com.aihui.dcdeliver.rxbus.event.ReceiveEvent;
 import com.aihui.dcdeliver.service.BlueService;
 import com.aihui.dcdeliver.ui.FragmentFactory;
 import com.aihui.dcdeliver.util.SPUtil;
@@ -103,7 +104,30 @@ public class MainActivity extends AppActivity implements DuoMenuView.OnMenuClick
         goToFragment(0, false);
         mMenuAdapter.setViewSelected(0, true);
         setTitle(mTitles.get(0));
+
+
+        if (SPUtil.getBoolean(this, Content.HAS_NEXT_RECORD, false)){
             startService();
+        }
+
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (resultCode==RESULT_OK){
+            switch (requestCode) {
+                //新建单子
+                case Content.NEW_WAY_REQUEST_CODE:
+                    /* 滚去刷新homefragment*/
+            RxBus.getInstance().post(new ReceiveEvent());
+                    break;
+            }
+        }
+
+
+
     }
 
     private void startService() {
@@ -211,16 +235,16 @@ public class MainActivity extends AppActivity implements DuoMenuView.OnMenuClick
         // Set the right options selected
         mMenuAdapter.setViewSelected(position, true);
         // Navigate to the right fragment
-        switch (position) {
-            case 3:
+        switch (objectClicked.toString()) {
+            case "切换状态":
                 mTvTitle.setText(mTitles.get(0));
                 RxBus.getInstance().post(new FraEvent());
                 break;
-            case 4:
+            case "登出":
                 gotoOut();
                 break;
             default:
-                goToFragment(position, false);
+                goToFragment(0, false);
                 break;
 
 
@@ -242,20 +266,18 @@ public class MainActivity extends AppActivity implements DuoMenuView.OnMenuClick
                         if(RxBus.getInstance().hasObservers()){
                             RxBus.getInstance().unSubscribe(this);
                         }
-
                         for (int i = 0; i < mTitles.size(); i++) {
                             BaseFragment fragment = FragmentFactory.getFragment(i);
                             /*
                             * 注销
                             * */
-                            fragment.unSubsrcibe();
                             if (fragment!=null){
                                 FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
                                 transaction.remove(fragment).commit();
                             }
                         }
-                        FragmentFactory.clearAllFragment();
-                        SPUtil.saveBoolean(MainActivity.this, Content.IS_LOGIN, false);
+                     FragmentFactory.clearAllFragment();
+                        //SPUtil.saveBoolean(MainActivity.this, Content.IS_LOGIN, false);
                         SPUtil.clear(MainActivity.this);
                         startActivity(new Intent(MainActivity.this, LoginActivity.class));
                         finish();
@@ -271,7 +293,7 @@ public class MainActivity extends AppActivity implements DuoMenuView.OnMenuClick
         switch (view.getId()) {
             case R.id.iv_add:
                 Intent intent = new Intent(this, NewWayBillActivity.class);
-                startActivity(intent);
+                startActivityForResult(intent,Content.NEW_WAY_REQUEST_CODE);
                 break;
             default:
                 break;

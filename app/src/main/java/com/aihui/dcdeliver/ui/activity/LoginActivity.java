@@ -21,6 +21,7 @@ import com.aihui.dcdeliver.http.MyService;
 import com.aihui.dcdeliver.http.RetrofitClient;
 import com.aihui.dcdeliver.util.Inpututils;
 import com.aihui.dcdeliver.util.SPUtil;
+import com.blankj.utilcode.utils.TimeUtils;
 import com.wang.avi.AVLoadingIndicatorView;
 
 import butterknife.BindView;
@@ -87,12 +88,58 @@ public class LoginActivity extends AppActivity {
             }
         });
 
-        if (SPUtil.getBoolean(LoginActivity.this, Content.IS_LOGIN, false)) {
+        if (TimeUtils.getCurTimeString(mFormat).equals(SPUtil.getString(LoginActivity.this, Content.IS_LOGIN, ""))) {
             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
             startActivity(intent);
             finish();
         }
 
+       // gotoLogin();
+    }
+
+    private void gotoLogin() {
+        if (isLogin){
+             return;
+         }
+        RetrofitClient.getRetrofit()
+                .create(MyService.class)
+                .login()
+                .subscribeOn(Schedulers.io())
+                .doOnSubscribe(new Action0() {
+                    @Override
+                    public void call() {
+                        isLogin = true;
+                    }
+                })
+                .subscribeOn(AndroidSchedulers.mainThread()) // 指定主线程
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new BaseSubscriber<LoginBean>(LoginActivity.this) {
+                    @Override
+                    public void onError(Throwable e) {
+                        isLogin = false;
+                        super.onError(e);
+                    }
+                    @Override
+                    public void onNext(LoginBean bean) {
+                        isLogin = false;
+                        LoginBean.BodyBean body = bean.getBody();
+                        SPUtil.saveString(LoginActivity.this, "userName", body.getUser().getUserName());
+                        SPUtil.saveString(LoginActivity.this, "deptName", body.getUser().getDeptName());
+                        LoginBean.BodyBean.PermissionBean permission = body.getPermission();
+                        boolean hasReceive = permission.isHasReceive();
+                        boolean hasSave = permission.isHasSave();
+                        boolean hasNextRecord = permission.isHasNextRecord();
+                        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                        SPUtil.saveBoolean(LoginActivity.this, Content.HAS_RECEIVE, hasReceive);
+                        SPUtil.saveBoolean(LoginActivity.this, Content.HAS_SAVE, hasSave);
+                        SPUtil.saveBoolean(LoginActivity.this, Content.HAS_SIGN, hasSave);
+                        SPUtil.saveString(LoginActivity.this, Content.IS_LOGIN, TimeUtils.getCurTimeString(mFormat));
+                        SPUtil.saveBoolean(LoginActivity.this, Content.HAS_NEXT_RECORD, hasNextRecord);
+                        //关闭加载动画
+                        startActivity(intent);
+                        finish();
+                    }
+                });
     }
 
     @Override
@@ -142,8 +189,7 @@ public class LoginActivity extends AppActivity {
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
           /*  */
-
-
+            SPUtil.saveString(this, Content.PASSWORD, password);
 
             if (isLogin){
                 return;
@@ -166,12 +212,13 @@ public class LoginActivity extends AppActivity {
                     .subscribe(new BaseSubscriber<LoginBean>(LoginActivity.this) {
                         @Override
                         public void onError(Throwable e) {
+                            isLogin = false;
                             mAvi.hide();
                             super.onError(e);
                         }
                         @Override
                         public void onNext(LoginBean bean) {
-
+                            isLogin = false;
                             LoginBean.BodyBean body = bean.getBody();
                             SPUtil.saveString(LoginActivity.this, "userName", body.getUser().getUserName());
                             SPUtil.saveString(LoginActivity.this, "deptName", body.getUser().getDeptName());
@@ -180,12 +227,14 @@ public class LoginActivity extends AppActivity {
 
                             boolean hasReceive = permission.isHasReceive();
                             boolean hasSave = permission.isHasSave();
+                            boolean hasNextRecord = permission.isHasNextRecord();
                             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
 
                             SPUtil.saveBoolean(LoginActivity.this, Content.HAS_RECEIVE, hasReceive);
                             SPUtil.saveBoolean(LoginActivity.this, Content.HAS_SAVE, hasSave);
                             SPUtil.saveBoolean(LoginActivity.this, Content.HAS_SIGN, hasSave);
-                            SPUtil.saveBoolean(LoginActivity.this, Content.IS_LOGIN, true);
+                            SPUtil.saveString(LoginActivity.this, Content.IS_LOGIN, TimeUtils.getCurTimeString(mFormat));
+                            SPUtil.saveBoolean(LoginActivity.this, Content.HAS_NEXT_RECORD, hasNextRecord);
                             //关闭加载动画
                             mAvi.hide();
                             startActivity(intent);
