@@ -30,7 +30,11 @@ public interface MyService {
      */
 
     @GET("/applogin?")
-    Observable<LoginBean> login(@Query("userName") String userName, @Query("password") String passWord);
+    Observable<LoginBean> login(
+
+            @Query("userName") String userName, @Query("password") String passWord,
+    @Query("token") String tokenId
+    );
 
     @GET("/applogin?")
     Observable<LoginBean> login();
@@ -123,7 +127,12 @@ public interface MyService {
     Observable<ServiceBean> signIn(@Query("way") int recordId);
 
 
-    @GET("/app/task/record/transporting?")
-    Observable<PlaceBackBean> transporting(@Query("placeCode") String placeCode);
+    @Headers("Content-Type: application/json")
+    @POST("/app/task/record/transporting")
+    Observable<PlaceBackBean> transporting(@Body RequestBody route);
+
+ /*   @Headers("Content-Type: application/json")
+    @POST("/app/task/record/transporting?")
+    Observable<PlaceBackBean> transporting(@Query("placeCode") String placeCode);*/
 
 }

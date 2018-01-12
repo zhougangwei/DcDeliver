@@ -13,10 +13,10 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import java.util.List;
-
 import com.aihui.dcdeliver.R;
 import com.aihui.dcdeliver.commponent.stepview.bean.StepBean;
+
+import java.util.List;
 
 /**
  * 日期：16/6/24 11:48
@@ -32,7 +32,6 @@ public class VerticalStepView extends LinearLayout implements VerticalStepViewIn
     private int mUnComplectedTextColor = ContextCompat.getColor(getContext(), R.color.uncompleted_text_color);//定义默认未完成文字的颜色;
     private int mComplectedTextColor = ContextCompat.getColor(getContext(), android.R.color.white);//定义默认完成文字的颜色;
     private int mComplectingTextColor=ContextCompat.getColor(getContext(), R.color.appColor);//定义默认正在完成文字的颜色;
-
 
 
     private int mTextSize = 14;//default textSize
@@ -57,7 +56,7 @@ public class VerticalStepView extends LinearLayout implements VerticalStepViewIn
         init();
     }
 
-    private void init()
+    public void init()
     {
         View rootView = LayoutInflater.from(getContext()).inflate(R.layout.widget_vertical_stepsview, this);
         mStepsViewIndicator = (VerticalStepViewIndicator) rootView.findViewById(R.id.steps_indicator);
@@ -258,7 +257,6 @@ public class VerticalStepView extends LinearLayout implements VerticalStepViewIn
                     mTextView.setMaxWidth(getWidth()/2);
 
                     mTextView.setLayoutParams(layoutParams1);
-
 
 
                     /*

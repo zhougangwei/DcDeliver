@@ -1,9 +1,7 @@
 package com.aihui.dcdeliver.ui.activity;
 
-import android.content.ComponentName;
 import android.content.Intent;
-import android.content.ServiceConnection;
-import android.os.IBinder;
+import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
@@ -11,7 +9,6 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.aihui.dcdeliver.R;
 import com.aihui.dcdeliver.adapter.MenuAdapter;
@@ -33,6 +30,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import butterknife.BindView;
+import butterknife.ButterKnife;
 import butterknife.OnClick;
 import nl.psdcompany.duonavigationdrawer.views.DuoDrawerLayout;
 import nl.psdcompany.duonavigationdrawer.views.DuoMenuView;
@@ -49,6 +47,7 @@ public class MainActivity extends AppActivity implements DuoMenuView.OnMenuClick
     FrameLayout mContainer;
     @BindView(R.id.tv_title)
     TextView    mTvTitle;
+
     private MenuAdapter mMenuAdapter;
     private ViewHolder  mViewHolder;
 
@@ -68,9 +67,13 @@ public class MainActivity extends AppActivity implements DuoMenuView.OnMenuClick
     @Override
     protected void initData() {
         initEventBus();
+
+
+
     }
 
     private void initEventBus() {
+
         Subscription subscribe = RxBus.getInstance().toObservable(AddEvent.class)
                 .subscribe(new Action1<AddEvent>() {
                     @Override
@@ -85,17 +88,52 @@ public class MainActivity extends AppActivity implements DuoMenuView.OnMenuClick
                         }
                     }
                 });
-        RxBus.getInstance().addSubscription(this,subscribe);
+        RxBus.getInstance().addSubscription(this, subscribe);
 
     }
 
 
     @Override
     protected void initView() {
+        /*
+        * 在这里注册
+        * */
 
         mTitles = new ArrayList<>(Arrays.asList(getResources().getStringArray(R.array.menuOptions)));
         // Initialize the views
         mViewHolder = new ViewHolder();
+
+        View headerView = mViewHolder.mDuoMenuView.getHeaderView();
+
+        TextView tvName = headerView.findViewById(R.id.tv_user);
+        TextView tvAccount = headerView.findViewById(R.id.tv_account);
+
+        tvName.setText(SPUtil.getUserName(this));
+        tvAccount.setText("工号:" + SPUtil.getUserAccount(this));
+
+        View footerView = mViewHolder.mDuoMenuView.getFooterView();
+        TextView tvExit = footerView.findViewById(R.id.tv_exit);
+        TextView tvChange = footerView.findViewById(R.id.tv_change);
+
+        tvExit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                /*登出*/
+                gotoOut();
+            }
+        });
+        tvChange.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mViewHolder.mDuoDrawerLayout.closeDrawer();
+                mTvTitle.setText(mTitles.get(0));
+                RxBus.getInstance().post(new FraEvent());
+            }
+        });
+
+
+
+
         handleToolbar();
         // Handle menu actions
         handleMenu();
@@ -104,58 +142,89 @@ public class MainActivity extends AppActivity implements DuoMenuView.OnMenuClick
         goToFragment(0, false);
         mMenuAdapter.setViewSelected(0, true);
         setTitle(mTitles.get(0));
-
-
-        if (SPUtil.getBoolean(this, Content.HAS_NEXT_RECORD, false)){
-            startService();
+        if (SPUtil.getBoolean(this, Content.HAS_NEXT_RECORD, false)) {
+            startServize();
         }
+        boolean hasReceive = SPUtil.getHasReceive(this);
+        boolean hasSave = SPUtil.getHasSave(this);
 
+        if (hasReceive && hasSave) {
+            footerView.setVisibility(View.VISIBLE);
+            //接收
+        } else if (hasReceive) {
+            footerView.setVisibility(View.GONE);
+            //保存
+        } else if (hasSave) {
+            footerView.setVisibility(View.GONE);
+        }
     }
+
+
+
+
+
+    /**
+     * Callback received when a permissions request has been completed.
+     */
+
+
+    /*public boolean hasPermission(String... permissons) {
+        for (String permisson : permissons) {
+            if ((ContextCompat.checkSelfPermission(this,
+                    permisson) != PackageManager.PERMISSION_GRANTED)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public void requestPermission(int requestCode, String... permissions) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            requestPermissions(permissions, requestCode);
+        }
+    }*/
+
+
+
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (resultCode==RESULT_OK){
+        if (resultCode == RESULT_OK) {
             switch (requestCode) {
                 //新建单子
                 case Content.NEW_WAY_REQUEST_CODE:
                     /* 滚去刷新homefragment*/
-            RxBus.getInstance().post(new ReceiveEvent());
+                    RxBus.getInstance().post(new ReceiveEvent());
                     break;
             }
         }
 
-
-
     }
 
-    private void startService() {
+    public void startServize() {
 
         Intent it = new Intent().setClass(this, BlueService.class);
         startService(it);
-        bindService(it,mConnection,BIND_AUTO_CREATE);
+      //  bindService(it, mConnection, BIND_AUTO_CREATE);
 
     }
 
-
-    private BlueService.MyBinder myBinder;
-    private BlueService mService;
+ /*   private BlueService.MyBinder myBinder;
+    private BlueService          mService;
     private ServiceConnection mConnection = new ServiceConnection() {
-
         @Override
         public void onServiceDisconnected(ComponentName name) {
         }
-
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             myBinder = (BlueService.MyBinder) service;
             mService = myBinder.GetService();
             myBinder.startSendLocation();
         }
-    };
-
-
+    };*/
 
 
     private void handleToolbar() {
@@ -183,19 +252,18 @@ public class MainActivity extends AppActivity implements DuoMenuView.OnMenuClick
 
     private void handleMenu() {
         mMenuAdapter = new MenuAdapter(mTitles, mTitleDraw);
-
         mViewHolder.mDuoMenuView.setOnMenuClickListener(this);
         mViewHolder.mDuoMenuView.setAdapter(mMenuAdapter);
     }
 
     @Override
     public void onFooterClicked() {
-        Toast.makeText(this, "onFooterClicked", Toast.LENGTH_SHORT).show();
+
     }
 
     @Override
     public void onHeaderClicked() {
-        Toast.makeText(this, "onHeaderClicked", Toast.LENGTH_SHORT).show();
+
     }
 
     private void goToFragment(int position, boolean addToBackStack) {
@@ -217,10 +285,10 @@ public class MainActivity extends AppActivity implements DuoMenuView.OnMenuClick
 
     @Override
     protected void onDestroy() {
-        if (mService != null) {
+        /*if (mService != null) {
             unbindService(mConnection);
             //stopService(intent);
-        }
+        }*/
         /*
         * 注销rxbus
         * */
@@ -237,11 +305,11 @@ public class MainActivity extends AppActivity implements DuoMenuView.OnMenuClick
         // Navigate to the right fragment
         switch (objectClicked.toString()) {
             case "切换状态":
-                mTvTitle.setText(mTitles.get(0));
-                RxBus.getInstance().post(new FraEvent());
+                // mTvTitle.setText(mTitles.get(0));
+                // RxBus.getInstance().post(new FraEvent());
                 break;
             case "登出":
-                gotoOut();
+                // gotoOut();
                 break;
             default:
                 goToFragment(0, false);
@@ -263,7 +331,8 @@ public class MainActivity extends AppActivity implements DuoMenuView.OnMenuClick
                 /*
                 * 清除本地缓存
                 * */
-                        if(RxBus.getInstance().hasObservers()){
+                      //  XGPushManager.registerPush(MainActivity.this, "*");
+                        if (RxBus.getInstance().hasObservers()) {
                             RxBus.getInstance().unSubscribe(this);
                         }
                         for (int i = 0; i < mTitles.size(); i++) {
@@ -271,12 +340,12 @@ public class MainActivity extends AppActivity implements DuoMenuView.OnMenuClick
                             /*
                             * 注销
                             * */
-                            if (fragment!=null){
+                            if (fragment != null) {
                                 FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
                                 transaction.remove(fragment).commit();
                             }
                         }
-                     FragmentFactory.clearAllFragment();
+                        FragmentFactory.clearAllFragment();
                         //SPUtil.saveBoolean(MainActivity.this, Content.IS_LOGIN, false);
                         SPUtil.clear(MainActivity.this);
                         startActivity(new Intent(MainActivity.this, LoginActivity.class));
@@ -293,11 +362,18 @@ public class MainActivity extends AppActivity implements DuoMenuView.OnMenuClick
         switch (view.getId()) {
             case R.id.iv_add:
                 Intent intent = new Intent(this, NewWayBillActivity.class);
-                startActivityForResult(intent,Content.NEW_WAY_REQUEST_CODE);
+                startActivityForResult(intent, Content.NEW_WAY_REQUEST_CODE);
                 break;
             default:
                 break;
         }
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        // TODO: add setContentView(...) invocation
+        ButterKnife.bind(this);
     }
 
 

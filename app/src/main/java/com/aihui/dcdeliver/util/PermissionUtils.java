@@ -13,12 +13,12 @@ import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.aihui.dcdeliver.R;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import com.aihui.dcdeliver.R;
 
 
 /**
@@ -45,6 +45,8 @@ public class PermissionUtils {
     public static final  int    CODE_ACCESS_COARSE_LOCATION = 6;
     public static final  int    CODE_READ_EXTERNAL_STORAGE  = 7;
     public static final  int    CODE_WRITE_EXTERNAL_STORAGE = 8;
+
+
     public static final  int    CODE_MULTI_PERMISSION       = 100;
 
     public static final String PERMISSION_RECORD_AUDIO           = Manifest.permission.RECORD_AUDIO;

@@ -474,7 +474,7 @@ public class RecordInfoBean implements  Serializable{
             }
         }
 
-        public static class DetailListBean implements Serializable , StepBean {
+        public static class DetailListBean implements Serializable , StepBean  {
             /**
              * detailTime : 2017-12-21 16:22:00
              * id : 1

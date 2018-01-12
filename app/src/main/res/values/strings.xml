@@ -65,8 +65,7 @@
 
     <array name="menuOptions">
         <item>运送单</item>
-        <item>切换状态</item>
-        <item>登出</item>
+
     </array>
     <integer-array name="menuOptionsDraw">
         <item>@mipmap/ic_ysd</item>

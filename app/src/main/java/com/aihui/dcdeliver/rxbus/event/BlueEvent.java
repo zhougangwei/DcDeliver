@@ -1,5 +1,9 @@
 package com.aihui.dcdeliver.rxbus.event;
 
+import org.altbeacon.beacon.Beacon;
+
+import java.util.List;
+
 /**
  * @ 创建者   zhou
  * @ 创建时间   2017/12/24 15:23
@@ -10,17 +14,9 @@ package com.aihui.dcdeliver.rxbus.event;
  */
 
 public class BlueEvent {
-    String location;
 
-    public String getLocation() {
-        return location;
-    }
-
-    public void setLocation(String location) {
-        this.location = location;
-    }
-
-    public BlueEvent(String location) {
-        this.location = location;
+    public List<Beacon> beacons;
+    public BlueEvent(List<Beacon> beacons) {
+        this.beacons=beacons;
     }
 }

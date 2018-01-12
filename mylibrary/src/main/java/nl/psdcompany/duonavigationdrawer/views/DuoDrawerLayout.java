@@ -848,7 +848,7 @@ public class DuoDrawerLayout extends RelativeLayout {
             if (resourceId > 0) {
                 result = getResources().getDimensionPixelSize(resourceId);
             }
-            return result;
+            return 0;
         }
     }
 

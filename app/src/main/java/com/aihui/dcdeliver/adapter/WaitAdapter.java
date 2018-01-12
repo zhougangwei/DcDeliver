@@ -26,7 +26,9 @@ public class WaitAdapter extends BaseQuickAdapter<RecordListBean.BodyBean.ListBe
         helper.setText(R.id.tv_type, item.getStatusText());
         if(item.getStatus()==1){
             helper.setBackgroundRes(R.id.tv_type,R.drawable.shape_icon_sqz);
-        }else if(item.getStatus()>=2&&item.getStatus()<=3){
+        }else if(item.getStatus()==2){
+            helper.setBackgroundRes(R.id.tv_type,R.drawable.shape_icon_yjs);
+        }else if (item.getStatus()==3){
             helper.setBackgroundRes(R.id.tv_type,R.drawable.shape_icon_zzjx);
         }
 

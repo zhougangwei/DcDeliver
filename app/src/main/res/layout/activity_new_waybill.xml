@@ -63,6 +63,7 @@
             android:orientation="vertical">
 
             <LinearLayout
+                android:visibility="gone"
                 style="@style/item_ll_r22_l22"
                 android:layout_marginBottom="27px">
 

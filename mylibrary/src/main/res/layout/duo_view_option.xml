@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:layout_alignBottom="@+id/view_option_text_layout"
         android:layout_alignTop="@+id/view_option_text_layout"
-        android:src="@drawable/duo_shape_rectangled_red"/>
+        />
 
     <RelativeLayout
         android:id="@+id/view_option_text_layout"
@@ -23,13 +23,14 @@
 
         <ImageView
             android:id="@+id/duo_view_option_selector"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
             android:layout_centerVertical="true"
             android:layout_marginLeft="16dp"
             android:src="@drawable/duo_shape_circled_white"/>
 
         <TextView
+
             android:id="@+id/duo_view_option_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

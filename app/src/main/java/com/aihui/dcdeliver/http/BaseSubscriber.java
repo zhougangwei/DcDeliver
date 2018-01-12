@@ -1,18 +1,24 @@
 package com.aihui.dcdeliver.http;
 
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 import android.widget.Toast;
 
 import com.aihui.dcdeliver.R;
+import com.aihui.dcdeliver.application.ActivityManager;
+import com.aihui.dcdeliver.service.BlueService;
+import com.aihui.dcdeliver.ui.activity.LoginActivity;
+import com.aihui.dcdeliver.ui.activity.MainActivity;
 import com.aihui.dcdeliver.util.LogUtil;
+import com.aihui.dcdeliver.util.SPUtil;
 
 import java.io.IOException;
 
 import retrofit2.adapter.rxjava.HttpException;
 import rx.Subscriber;
 
-public abstract  class BaseSubscriber<T> extends Subscriber<T> {
+public abstract class BaseSubscriber<T> extends Subscriber<T> {
     protected Context mContext;
 
     public BaseSubscriber(Context context) {
@@ -36,19 +42,26 @@ public abstract  class BaseSubscriber<T> extends Subscriber<T> {
             Toast.makeText(mContext, mContext.getString(R.string.cannot_connected_server), Toast.LENGTH_SHORT).show();
         } else if (e instanceof ApiException) {
             ApiException exception = (ApiException) e;
-            if (exception.isCookieExpried()) {
-                //处理token失效对应的逻辑 重新登录 重新登录后 还是在原来的页面 然后重新提交下数据就好了
-              //  SPUtil.saveString(mContext, Content.IS_LOGIN, TimeUtils.getCurTimeString(mFormat));
-              //  Intent intent = new Intent(mContext, LoginActivity.class);
-              //  mContext.startActivity(intent);
-                //    ActivityManager.getInstance().finishActivity(MainActivity.class);
+            try {
+                if (exception.isCookieExpried()) {
+                    Toast.makeText(mContext, "登录过期", Toast.LENGTH_SHORT).show();
+                    //处理token失效对应的逻辑 重新登录 重新登录后 还是在原来的页面 然后重新提交下数据就好了
+                    SPUtil.clear(mContext);
+                    Intent intent = new Intent(mContext, LoginActivity.class);
+                    mContext.startActivity(intent);
 
-            } else {
-               Toast.makeText(mContext,"失败"+ e.getMessage(), Toast.LENGTH_SHORT).show();
+                    ActivityManager.getInstance().finishActivity(MainActivity.class);
+                    Intent serviceIntent = new Intent(mContext, BlueService.class);
+                    mContext.stopService(serviceIntent);
+                    //    ActivityManager.getInstance().finishActivity(MainActivity.class);
+                } else {
+                    Toast.makeText(mContext, "失败" + e.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            } catch (Exception e1) {
+                e1.printStackTrace();
             }
-        } 
+        }
     }
-
 
 
 }

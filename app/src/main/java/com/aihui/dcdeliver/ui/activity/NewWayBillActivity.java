@@ -43,6 +43,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import okhttp3.RequestBody;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action0;
 import rx.schedulers.Schedulers;
 
 public class NewWayBillActivity extends AppActivity {
@@ -96,6 +97,7 @@ public class NewWayBillActivity extends AppActivity {
     private SelectDecotorDl         mDlwzOutDector;
     private SaveBean.TaskRecordBean mTaskRecordBean;
     private SaveBean                mSaveBean;
+    private boolean isSubmit = false;
 
     @Override
     protected int getContentViewId() {
@@ -213,7 +215,6 @@ public class NewWayBillActivity extends AppActivity {
                                 mTvYsqy.setText(manger.getLongName());
                             }
                         });
-
                         mDlwzAccetDector = new SelectDecotorDl(NewWayBillActivity.this, (JsonObject) bean.get("body"), PlaceBean.class);
                         mDlwzAccetDector.setOnBackSelectListener(new SelectDecotorDl.OnBackSelectListener() {
                             @Override
@@ -278,6 +279,10 @@ public class NewWayBillActivity extends AppActivity {
 
     private void gotoSubmit() {
 
+        if(isSubmit){
+            return;
+        }
+
         mTvSubmit.requestFocus();
         if (TextUtils.isEmpty(mTvYsrq.getText().toString())) {
             ToastUtil.showToast("运送时间必填");
@@ -304,18 +309,26 @@ public class NewWayBillActivity extends AppActivity {
         }
 
         mTaskRecordBean.setRemark(mTvBz.getText().toString());
-        mTaskRecordBean.setRecordNum(mTvWaybillNum.getText().toString());
+        //mTaskRecordBean.setRecordNum(mTvWaybillNum.getText().toString());
         String s = GsonUtil.parseObjectToJson(mSaveBean);
         RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8"), s);
         RetrofitClient.getInstance().saveTaskRecord(body)
+                .doOnSubscribe(new Action0() {
+                    @Override
+                    public void call() {
+                        isSubmit = true;
+                    }
+                })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new BaseSubscriber<ServiceBean>(this) {
                     @Override
                     public void onNext(ServiceBean bean) {
                         ToastUtil.showToast("新建成功!");
+                        isSubmit = false;
                         setResult(RESULT_OK);
                         finish();
+
                     }
                 });
 
@@ -412,19 +425,13 @@ public class NewWayBillActivity extends AppActivity {
         day.add("四天后");
         day.add("五天后");
 
-
-        hours.add("01");
-        hours.add("02");
-        hours.add("03");
-        hours.add("04");
-        hours.add("05");
-        hours.add("06");
-        hours.add("07");
-        hours.add("08");
-        hours.add("09");
-        hours.add("10");
-        hours.add("11");
-        hours.add("12");
+        for (int i = 0; i < 24; i++) {
+            if (i < 10) {
+                hours.add("0" + i);
+            } else {
+                hours.add(i + "");
+            }
+        }
 
         for (int i = 0; i < 60; i++) {
             if (i < 10) {

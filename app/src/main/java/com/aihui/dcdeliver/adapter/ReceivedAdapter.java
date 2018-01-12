@@ -31,9 +31,12 @@ public class ReceivedAdapter extends BaseQuickAdapter<RecordListBean.BodyBean.Li
 
         if (item.getStatus() == 4) {
             helper.setBackgroundRes(R.id.tv_type, R.drawable.shape_icon_ywc);
-        } else if (item.getStatus() < 4) {
+        } else if (item.getStatus() ==2) {
             helper.setBackgroundRes(R.id.tv_type, R.drawable.shape_icon_yjs);
+        }else if (item.getStatus()==3){
+            helper.setBackgroundRes(R.id.tv_type, R.drawable.shape_icon_zzjx);
         }
+
         if (item.getStatus()==2||item.getStatus()==3){
             helper.getView(R.id.bt_receive).setVisibility(View.GONE);
         }else{
@@ -57,6 +60,12 @@ public class ReceivedAdapter extends BaseQuickAdapter<RecordListBean.BodyBean.Li
             helper.getView(R.id.bt_receive).setVisibility(View.VISIBLE);
         } else {
             helper.getView(R.id.bt_receive).setVisibility(View.GONE);
+        }
+
+        if (item.getStatus()==3){
+            helper.getView(R.id.bt_receive).setVisibility(View.GONE);
+        }else if(item.getStatus()==2){
+            helper.getView(R.id.bt_receive).setVisibility(View.VISIBLE);
         }
 
         helper.addOnClickListener(R.id.tv_cancel);

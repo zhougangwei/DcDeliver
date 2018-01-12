@@ -7,7 +7,11 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".ui.activity.WaybillInTransActivity">
+
     <include layout="@layout/include_small_title"></include>
+
+    <include layout="@layout/icon_back"></include>
+
     <com.aihui.dcdeliver.commponent.CircleImageView
         android:id="@+id/iv_cycle"
         android:layout_width="256px"
@@ -69,15 +73,17 @@
 
     <FrameLayout
         android:id="@+id/fl"
-        android:layout_below="@+id/rl_ys"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/rl_ys">
+
         <RelativeLayout
             android:id="@+id/rl_cancel_recive"
             android:layout_width="match_parent"
             android:layout_height="112px"
             android:layout_marginTop="56px"
-           >
+            >
+
             <TextView
                 android:id="@+id/tv_cancel"
                 android:layout_width="456px"
@@ -103,21 +109,21 @@
                 android:textSize="48px"/>
         </RelativeLayout>
 
-    <Button
-        android:visibility="gone"
-        android:id="@+id/bt_receive"
-        android:layout_width="match_parent"
-        android:layout_height="112px"
-        android:layout_centerInParent="true"
-        android:layout_marginBottom="36px"
-        android:layout_marginLeft="36px"
-        android:layout_marginRight="36px"
-        android:layout_marginTop="56px"
-        android:background="@drawable/shape_button_receive"
-        android:text="接 单"
-        android:textColor="@color/white"
-        android:textSize="48px"
-        />
+        <Button
+            android:id="@+id/bt_receive"
+            android:layout_width="match_parent"
+            android:layout_height="112px"
+            android:layout_centerInParent="true"
+            android:layout_marginBottom="36px"
+            android:layout_marginLeft="36px"
+            android:layout_marginRight="36px"
+            android:layout_marginTop="56px"
+            android:background="@drawable/shape_button_receive"
+            android:text="接 单"
+            android:textColor="@color/white"
+            android:textSize="48px"
+            android:visibility="gone"
+            />
     </FrameLayout>
 
     <ImageView
@@ -127,180 +133,218 @@
         android:layout_below="@+id/fl"
 
         />
-    <ScrollView
-        android:layout_below="@+id/iv_shadow"
+
+    <in.srain.cube.views.ptr.PtrClassicFrameLayout
+        android:id="@+id/store_house_ptr_frame"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-        <RelativeLayout
+        android:layout_height="match_parent"
+        android:layout_below="@+id/iv_shadow"
+        >
+        <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            >
+            android:layout_height="match_parent">
 
-
-            <android.support.v7.widget.CardView
-                android:id="@+id/cv_one"
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-
-                android:layout_margin="24px"
-                app:cardCornerRadius="8px"
-                app:cardElevation="24px"
+                android:layout_height="match_parent"
                 >
 
-                <LinearLayout
+
+                <android.support.v7.widget.CardView
+                    android:id="@+id/cv_one"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="29px">
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="142px"
+                    android:layout_margin="24px"
+                    app:cardCornerRadius="8px"
+                    app:cardElevation="24px"
+                    >
 
-                        android:gravity="center_vertical"
-                        android:text="运送信息"
-                        android:textColor="@color/black"
-                        android:textSize="48px"/>
+
 
 
                     <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="142px"
-                        >
-
-                        <TextView
-                            style="@style/in_trans_left"
-                            android:text="任务类型"/>
-
-                        <TextView
-                            android:id="@+id/tv_taskType"
-                            style="@style/intrans_right"
-                            android:hint="病人检查"/>
-                    </LinearLayout>
-
-                    <include layout="@layout/line"></include>
-
-                    <android.support.v7.widget.RecyclerView
-                        android:id="@+id/rv_task"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        >
-                    </android.support.v7.widget.RecyclerView>
-
-                    <include layout="@layout/line"></include>
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="142px"
-                        >
+                        android:orientation="vertical"
+                        android:padding="29px">
 
                         <TextView
-                            style="@style/in_trans_left"
-                            android:text="运送时间"/>
+                            android:layout_width="wrap_content"
+                            android:layout_height="142px"
+
+                            android:gravity="center_vertical"
+                            android:text="运送信息"
+                            android:textColor="@color/black"
+                            android:textSize="48px"/>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="142px"
+                            >
+                            <TextView
+                                style="@style/in_trans_left"
+                                android:text="申请人"/>
+                            <TextView
+                                android:id="@+id/tv_sqr"
+                                style="@style/intrans_right"
+                                />
+                        </LinearLayout>
+
+
+                        <include layout="@layout/line"></include>
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="142px"
+                            >
+
+                            <TextView
+                                style="@style/in_trans_left"
+                                android:text="任务类型"/>
+
+                            <TextView
+                                android:id="@+id/tv_taskType"
+                                style="@style/intrans_right"
+                                />
+                        </LinearLayout>
+
+                        <include layout="@layout/line"></include>
+
+                        <android.support.v7.widget.RecyclerView
+                            android:id="@+id/rv_task"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            >
+                        </android.support.v7.widget.RecyclerView>
+
+                        <include layout="@layout/line"></include>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="142px"
+                            >
+
+                            <TextView
+                                style="@style/in_trans_left"
+                                android:text="运送时间"/>
+
+                            <TextView
+                                android:id="@+id/tv_arrive_time"
+                                style="@style/intrans_right"
+                                />
+                        </LinearLayout>
+
+                        <include layout="@layout/line"></include>
+
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="142px"
+                            >
+
+                            <TextView
+                                style="@style/in_trans_left"
+                                android:text="运送单号"/>
+
+                            <TextView
+                                android:id="@+id/tv_trans_num"
+                                style="@style/intrans_right"
+
+
+                                android:textColor="@color/appColor"/>
+                        </LinearLayout>
+
+                        <include layout="@layout/line"></include>
+
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="142px"
+                            >
+
+                            <TextView
+                                style="@style/in_trans_left"
+                                android:text="接收区域"/>
+
+                            <TextView
+                                android:id="@+id/tv_start_area"
+                                style="@style/intrans_right"
+                                />
+                        </LinearLayout>
+                        <include layout="@layout/line"></include>
+
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="142px"
+                            >
+
+                            <TextView
+                                style="@style/in_trans_left"
+                                android:text="取单区域"/>
+
+                            <TextView
+                                android:id="@+id/tv_end_area"
+                                style="@style/intrans_right"
+                                />
+                        </LinearLayout>
+
+                        <include layout="@layout/line"></include>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="142px"
+                            android:visibility="gone"
+                            >
+
+                            <TextView
+                                style="@style/in_trans_left"
+                                android:text="运送工具"/>
+
+                            <TextView
+                                android:id="@+id/tv_get_way"
+                                style="@style/intrans_right"
+                                android:hint="轮椅"/>
+
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/ll_remark"
+                            android:layout_width="match_parent"
+                            android:layout_height="142px"
+                            >
+
+                            <TextView
+                                style="@style/in_trans_left"
+                                android:text="备注"/>
+                        </LinearLayout>
 
                         <TextView
-                            android:id="@+id/tv_arrive_time"
+                            android:id="@+id/tv_remark"
                             style="@style/intrans_right"
-                            />
-                    </LinearLayout>
-
-                    <include layout="@layout/line"></include>
-
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="142px"
-                        >
-
-                        <TextView
-                            style="@style/in_trans_left"
-                            android:text="运送单号"/>
-
-                        <TextView
-                            android:id="@+id/tv_trans_num"
-                            style="@style/intrans_right"
-
-
-                            android:textColor="@color/appColor"/>
-                    </LinearLayout>
-
-                    <include layout="@layout/line"></include>
-
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="142px"
-                        >
-
-                        <TextView
-                            style="@style/in_trans_left"
-                            android:text="接收区域"/>
-
-                        <TextView
-                            android:id="@+id/tv_start_area"
-                            style="@style/intrans_right"
-                            android:hint="一楼"/>
-                    </LinearLayout>
-
-                    <include layout="@layout/line"></include>
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="142px"
-                        >
-
-                        <TextView
-                            style="@style/in_trans_left"
-                            android:text="取单区域"/>
-
-                        <TextView
-                            android:id="@+id/tv_end_area"
-                            style="@style/intrans_right"
-                            android:hint="一楼"/>
-                    </LinearLayout>
-
-                    <include layout="@layout/line"></include>
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="142px"
-                        android:visibility="gone"
-                        >
-
-                        <TextView
-                            style="@style/in_trans_left"
-                            android:text="运送工具"/>
-
-                        <TextView
-                            android:id="@+id/tv_get_way"
-                            style="@style/intrans_right"
-                            android:hint="轮椅"/>
-
+                            android:layout_width="match_parent"
+                            android:layout_height="142px"
+                            android:background="@color/white"
+                            android:gravity="start"
+                            android:textColorHint="@color/textGrey888"/>
 
                     </LinearLayout>
-                    <LinearLayout
-                        android:id="@+id/ll_remark"
-                        android:layout_width="match_parent"
-                        android:layout_height="142px"
-                        >
-                        <TextView
-                            style="@style/in_trans_left"
-                            android:text="备注"/>
-                    </LinearLayout>
-
-                    <TextView
-                        style="@style/intrans_right"
-                        android:id="@+id/tv_remark"
-                        android:layout_width="match_parent"
-                        android:layout_height="142px"
-                        android:background="@color/white"
-                        android:gravity="start"
-                        android:textColorHint="@color/textGrey888"/>
-
-                </LinearLayout>
-            </android.support.v7.widget.CardView>
+                </android.support.v7.widget.CardView>
 
 
-        </RelativeLayout>
-    </ScrollView>
+            </RelativeLayout>
+        </ScrollView>
+    </in.srain.cube.views.ptr.PtrClassicFrameLayout>
+
+    <com.wang.avi.AVLoadingIndicatorView
+        android:id="@+id/avi"
+        style="@style/AVLoadingIndicatorView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:visibility="gone"
+        app:indicatorColor="@color/appColor"
+        app:indicatorName="BallSpinFadeLoaderIndicator"
+        />
 </RelativeLayout>

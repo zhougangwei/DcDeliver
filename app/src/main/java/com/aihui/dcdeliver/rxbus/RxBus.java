@@ -46,6 +46,10 @@ public class RxBus {
         mSubject.onNext(o);
     }
 
+    public void postDelay(Object o) {
+        mSubject.onNext(o);
+    }
+
     /**
      * 返回指定类型的Observable实例
      *

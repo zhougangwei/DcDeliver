@@ -32,7 +32,12 @@ public class AddCookiesInterceptor implements Interceptor {
                     public void call(String cookie) {
                         //添加cookie
                         builder.addHeader("Cookie", cookie);
-                        builder.addHeader("tokenId", cookie);
+                        try {
+                            String tokenId = cookie.split("sid=")[1];
+                            builder.addHeader("tokenId",tokenId );
+                        }catch (Exception e){
+                            builder.addHeader("tokenId",cookie );
+                        }
                     }
                 });
         return chain.proceed(builder.build());

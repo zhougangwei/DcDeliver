@@ -2,6 +2,7 @@ package com.aihui.dcdeliver.ui.activity;
 
 import android.content.Intent;
 import android.graphics.Rect;
+import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.view.MotionEvent;
 import android.view.View;
@@ -11,6 +12,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.aihui.dcdeliver.R;
 import com.aihui.dcdeliver.base.AppActivity;
@@ -20,8 +22,10 @@ import com.aihui.dcdeliver.http.BaseSubscriber;
 import com.aihui.dcdeliver.http.MyService;
 import com.aihui.dcdeliver.http.RetrofitClient;
 import com.aihui.dcdeliver.util.Inpututils;
+import com.aihui.dcdeliver.util.PermissionUtils;
 import com.aihui.dcdeliver.util.SPUtil;
 import com.blankj.utilcode.utils.TimeUtils;
+import com.tencent.android.tpush.XGPushConfig;
 import com.wang.avi.AVLoadingIndicatorView;
 
 import butterknife.BindView;
@@ -59,7 +63,7 @@ public class LoginActivity extends AppActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        String userId = SPUtil.getUserAccount(this);
+        String userId = SPUtil.getUserName(this);
         String passWord = SPUtil.getPassWord(this);
         if (!TextUtils.isEmpty(userId)) {
             mEtUser.setText(userId);
@@ -88,13 +92,75 @@ public class LoginActivity extends AppActivity {
             }
         });
 
+     /*   XGPushManager.registerPush(this, new XGIOperateCallback() {
+            @Override
+            public void onSuccess(Object data, int flag) {
+                Log.d("TPush", "注册成功，设备token为：" + data);
+            }
+            @Override
+            public void onFail(Object data, int errCode, String msg) {
+                Log.d("TPush", "注册失败，错误码：" + errCode + ",错误信息：" + msg);
+            }
+        });*/
+
         if (TimeUtils.getCurTimeString(mFormat).equals(SPUtil.getString(LoginActivity.this, Content.IS_LOGIN, ""))) {
             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
             startActivity(intent);
             finish();
+        }else{
+            gotoLogin();
         }
 
-       // gotoLogin();
+        requstPermisson();
+
+    }
+
+    private void requstPermisson() {
+        PermissionUtils.requestMultiPermissions(this, mPermissionGrant);
+    }
+
+    private PermissionUtils.PermissionGrant mPermissionGrant = new PermissionUtils.PermissionGrant() {
+        @Override
+        public void onPermissionGranted(int requestCode) {
+            switch (requestCode) {
+                case PermissionUtils.CODE_RECORD_AUDIO:
+                    Toast.makeText(LoginActivity.this, "Result Permission Grant CODE_RECORD_AUDIO", Toast.LENGTH_SHORT).show();
+                    break;
+                case PermissionUtils.CODE_GET_ACCOUNTS:
+                    Toast.makeText(LoginActivity.this, "Result Permission Grant CODE_GET_ACCOUNTS", Toast.LENGTH_SHORT).show();
+                    break;
+                case PermissionUtils.CODE_READ_PHONE_STATE:
+                    Toast.makeText(LoginActivity.this, "Result Permission Grant CODE_READ_PHONE_STATE", Toast.LENGTH_SHORT).show();
+                    break;
+                case PermissionUtils.CODE_CALL_PHONE:
+                    Toast.makeText(LoginActivity.this, "Result Permission Grant CODE_CALL_PHONE", Toast.LENGTH_SHORT).show();
+                    break;
+                case PermissionUtils.CODE_CAMERA:
+                    Toast.makeText(LoginActivity.this, "Result Permission Grant CODE_CAMERA", Toast.LENGTH_SHORT).show();
+                    break;
+                case PermissionUtils.CODE_ACCESS_FINE_LOCATION:
+                    Toast.makeText(LoginActivity.this, "Result Permission Grant CODE_ACCESS_FINE_LOCATION", Toast.LENGTH_SHORT).show();
+                    break;
+                case PermissionUtils.CODE_ACCESS_COARSE_LOCATION:
+                    Toast.makeText(LoginActivity.this, "Result Permission Grant CODE_ACCESS_COARSE_LOCATION", Toast.LENGTH_SHORT).show();
+                    break;
+                case PermissionUtils.CODE_READ_EXTERNAL_STORAGE:
+                    Toast.makeText(LoginActivity.this, "Result Permission Grant CODE_READ_EXTERNAL_STORAGE", Toast.LENGTH_SHORT).show();
+                    break;
+                case PermissionUtils.CODE_WRITE_EXTERNAL_STORAGE:
+                    Toast.makeText(LoginActivity.this, "Result Permission Grant CODE_WRITE_EXTERNAL_STORAGE", Toast.LENGTH_SHORT).show();
+                    break;
+                default:
+                    break;
+            }
+        }
+    };
+
+
+    @Override
+    public void onRequestPermissionsResult(final int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        PermissionUtils.requestPermissionsResult(this, requestCode, permissions, grantResults, mPermissionGrant);
     }
 
     private void gotoLogin() {
@@ -117,7 +183,7 @@ public class LoginActivity extends AppActivity {
                     @Override
                     public void onError(Throwable e) {
                         isLogin = false;
-                        super.onError(e);
+                        //super.onError(e);
                     }
                     @Override
                     public void onNext(LoginBean bean) {
@@ -129,7 +195,10 @@ public class LoginActivity extends AppActivity {
                         boolean hasReceive = permission.isHasReceive();
                         boolean hasSave = permission.isHasSave();
                         boolean hasNextRecord = permission.isHasNextRecord();
-                        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                        Intent intent = new Intent(LoginActivity.this, LoginActivity.class);
+
+
+                        SPUtil.saveString(LoginActivity.this,Content.USER_ACCOUNT,body.getUser().getAccount());
                         SPUtil.saveBoolean(LoginActivity.this, Content.HAS_RECEIVE, hasReceive);
                         SPUtil.saveBoolean(LoginActivity.this, Content.HAS_SAVE, hasSave);
                         SPUtil.saveBoolean(LoginActivity.this, Content.HAS_SIGN, hasSave);
@@ -196,7 +265,7 @@ public class LoginActivity extends AppActivity {
             }
             RetrofitClient.getRetrofit()
                     .create(MyService.class)
-                    .login(userId, password)
+                    .login(userId, password, XGPushConfig.getToken(this))
                     .subscribeOn(Schedulers.io())
                     .doOnSubscribe(new Action0() {
                         @Override
@@ -228,8 +297,8 @@ public class LoginActivity extends AppActivity {
                             boolean hasReceive = permission.isHasReceive();
                             boolean hasSave = permission.isHasSave();
                             boolean hasNextRecord = permission.isHasNextRecord();
-                            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-
+                            Intent intent = new Intent(LoginActivity.this, LoginActivity.class);
+                            SPUtil.saveString(LoginActivity.this,Content.USER_ACCOUNT,body.getUser().getAccount());
                             SPUtil.saveBoolean(LoginActivity.this, Content.HAS_RECEIVE, hasReceive);
                             SPUtil.saveBoolean(LoginActivity.this, Content.HAS_SAVE, hasSave);
                             SPUtil.saveBoolean(LoginActivity.this, Content.HAS_SIGN, hasSave);

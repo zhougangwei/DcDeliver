@@ -15,14 +15,21 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.aihui.dcdeliver.R;
+import com.aihui.dcdeliver.application.BaseApplication;
 import com.aihui.dcdeliver.base.AppActivity;
+import com.aihui.dcdeliver.base.Content;
 import com.aihui.dcdeliver.bean.RecordInfoBean;
 import com.aihui.dcdeliver.bean.ServiceBean;
 import com.aihui.dcdeliver.commponent.CircleImageView;
 import com.aihui.dcdeliver.http.BaseSubscriber;
 import com.aihui.dcdeliver.http.RetrofitClient;
+import com.aihui.dcdeliver.rxbus.RxBus;
+import com.aihui.dcdeliver.rxbus.event.ReceiveEvent;
+import com.aihui.dcdeliver.service.BlueService;
+import com.aihui.dcdeliver.util.AlertUtil;
 import com.aihui.dcdeliver.util.SPUtil;
 import com.aihui.dcdeliver.util.ToastUtil;
+import com.wang.avi.AVLoadingIndicatorView;
 import com.zhy.adapter.recyclerview.CommonAdapter;
 import com.zhy.adapter.recyclerview.base.ViewHolder;
 
@@ -32,6 +39,10 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import in.srain.cube.views.ptr.PtrClassicFrameLayout;
+import in.srain.cube.views.ptr.PtrDefaultHandler;
+import in.srain.cube.views.ptr.PtrFrameLayout;
+import in.srain.cube.views.ptr.PtrHandler;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
@@ -72,11 +83,14 @@ public class WaybillInTransActivity extends AppActivity {
     TextView        mTvEndArea;
     @BindView(R.id.tv_get_way)
     TextView        mTvGetWay;
+
+    @BindView(R.id.tv_sqr)
+    TextView mTvSqr;
     @BindView(R.id.cv_one)
-    CardView        mCvOne;
+    CardView mCvOne;
 
     @BindView(R.id.tv_remark)
-    TextView        mTvRemark;
+    TextView mTvRemark;
 
     @BindView(R.id.rv_task)
     RecyclerView mRvTask;
@@ -84,11 +98,20 @@ public class WaybillInTransActivity extends AppActivity {
     @BindView(R.id.fl)
     FrameLayout mFl;
 
-    @BindView( R.id.ll_remark)
+    @BindView(R.id.ll_remark)
     LinearLayout mLlRemark;
 
+
     @BindView(R.id.rl_cancel_recive)
-    RelativeLayout mRlCancel;
+    RelativeLayout         mRlCancel;
+    @BindView(R.id.iv_back)
+    ImageView              mIvBack;
+    @BindView(R.id.avi)
+    AVLoadingIndicatorView mAvi;
+    @BindView(R.id.store_house_ptr_frame)
+    PtrClassicFrameLayout  mPtr;
+
+
     private int mRecordId = -1;
     private RecordInfoBean.BodyBean mBodyBean;
 
@@ -106,14 +129,32 @@ public class WaybillInTransActivity extends AppActivity {
         }
         String type = intent.getStringExtra("type");
         if (WAIT_RECORD.equals(type)) {
-            mRlCancel.setVisibility(View.GONE);
-            mBtReceive.setVisibility(View.VISIBLE);
         } else if (RECEIVE_RECORD.equals(type)) {
-            mRlCancel.setVisibility(View.VISIBLE);
-            mBtReceive.setVisibility(View.GONE);
-        }else{
+        } else {
             mFl.setVisibility(View.GONE);
         }
+        mPtr.setPtrHandler(new PtrHandler() {
+            @Override
+            public boolean checkCanDoRefresh(PtrFrameLayout frame, View content, View header) {
+                /**
+                 *检查是否可以刷新，这里使用默认的PtrHandler进行判断
+                 */
+                return PtrDefaultHandler.checkContentCanBePulledDown(frame, content, header);
+            }
+
+            @Override
+            public void onRefreshBegin(PtrFrameLayout frame) {
+                /**
+                 * 在刷新前需要准备什么工作
+                 */
+                getData();
+            }
+        });
+        getData();
+
+    }
+
+    private void getData() {
         RetrofitClient.getInstance().getRecordInfo(mRecordId)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -122,23 +163,38 @@ public class WaybillInTransActivity extends AppActivity {
                     public void onNext(RecordInfoBean recordInfoBean) {
 
                         mBodyBean = recordInfoBean.getBody();
-
-
                         RecordInfoBean.BodyBean.TaskRecordBean taskRecord = mBodyBean.getTaskRecord();
                         String[] split = taskRecord.getDeadline().split(" ")[1].split(":");
-                        mTvTime.setText(split[0] + ":" + split[1]);
+
+                        mTvSqr.setText(taskRecord.getCreateUserName());
+
+                        mTvTime.setText(split[0] + " " + split[1]);
                         mTvTaskType.setText(taskRecord.getTaskClassName());
                         mTvStartArea.setText(taskRecord.getStartPlaceName());
                         mTvEndArea.setText(taskRecord.getEndPlaceName());
                         mTvArriveTime.setText(taskRecord.getDeadline());
-                        mTvState.setText(SPUtil.getUserName(WaybillInTransActivity.this) + " " + taskRecord.getStatusText());
+
+                        if (taskRecord.getStatus() == 1) {
+                            mRlCancel.setVisibility(View.GONE);
+                            mBtReceive.setVisibility(View.VISIBLE);
+                            mTvState.setText(taskRecord.getStatusText());
+                        } else {
+
+                            mTvState.setText(SPUtil.getUserName(WaybillInTransActivity.this) + " " + taskRecord.getStatusText());
+                        }
+
+                        if (taskRecord.getStatus() == 2) {
+                            mRlCancel.setVisibility(View.VISIBLE);
+                            mBtReceive.setVisibility(View.GONE);
+                        }
+
 
                         mTvTransNum.setText(taskRecord.getRecordNum());
 
-                        if(TextUtils.isEmpty(taskRecord.getRemark())){
+                        if (TextUtils.isEmpty(taskRecord.getRemark())) {
                             mLlRemark.setVisibility(View.GONE);
                             mTvRemark.setVisibility(View.GONE);
-                        }else{
+                        } else {
                             mTvRemark.setText(taskRecord.getRemark());
                         }
                         List<RecordInfoBean.BodyBean.ExtListBean> extList = mBodyBean.getExtList();
@@ -160,16 +216,21 @@ public class WaybillInTransActivity extends AppActivity {
                         } else {
                             mRvTask.setVisibility(View.GONE);
                         }
-                       if (taskRecord.getStatus() >= 3) {         //可点击看详情
+                        if (taskRecord.getStatus() >= 3) {         //可点击看详情
                             mRlYs.setClickable(true);
                             mRlYs.setEnabled(true);
+                            mIvDetail.setVisibility(View.VISIBLE);
+                            mRlCancel.setVisibility(View.GONE);
+                            mBtReceive.setVisibility(View.GONE);
                         } else {
                             mRlYs.setClickable(false);
                             mRlYs.setEnabled(false);
+                            mIvDetail.setVisibility(View.GONE);
                         }
+                        mPtr.refreshComplete();
+                        mAvi.hide();
                     }
                 });
-
     }
 
     @Override
@@ -177,49 +238,181 @@ public class WaybillInTransActivity extends AppActivity {
 
     }
 
-    @OnClick({R.id.tv_cancel, R.id.tv_sure, R.id.rl_ys})
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK && requestCode == Content.STATE_REQUEST_CODE) {
+            initData();
+        }
+
+    }
+
+    @OnClick({R.id.tv_cancel, R.id.bt_receive, R.id.tv_sure, R.id.rl_ys, R.id.iv_back})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.tv_cancel:
-                if (mRecordId != -1) {
-                    RetrofitClient.getInstance().cancelReceive(mRecordId)
-                            .subscribeOn(Schedulers.io())
-                            .observeOn(AndroidSchedulers.mainThread())
-                            .subscribe(new BaseSubscriber<ServiceBean>(this) {
-                                @Override
-                                public void onNext(ServiceBean bean) {
-                                    ToastUtil.showToast("成功");
+
+                new AlertUtil().showDialog(WaybillInTransActivity.this, "确认取消吗?", new AlertUtil.onBackResult() {
+                            @Override
+                            public void backResult() {
+                                if (mRecordId != -1) {
+                                    RetrofitClient.getInstance().cancelReceive(mRecordId)
+                                            .subscribeOn(Schedulers.io())
+                                            .observeOn(AndroidSchedulers.mainThread())
+                                            .subscribe(new BaseSubscriber<ServiceBean>(WaybillInTransActivity.this) {
+                                                @Override
+                                                public void onNext(ServiceBean bean) {
+                                                    mAvi.setVisibility(View.VISIBLE);
+                                                    mAvi.show();
+                                                    ToastUtil.showToast("取消成功");
+                                                    RxBus.getInstance().post(new ReceiveEvent());
+                                                    initData();
+                                                }
+                                            });
                                 }
-                            });
-                }
+                            }});
                 break;
+            case R.id.bt_receive:
+                new AlertUtil().showDialog(WaybillInTransActivity.this, "确认接收吗?", new AlertUtil.onBackResult() {
+                    @Override
+                    public void backResult() {
+
+                        if (mRecordId != -1) {
+                            RetrofitClient.getInstance().receiveRecord(mRecordId)
+                                    .subscribeOn(Schedulers.io())
+                                    .observeOn(AndroidSchedulers.mainThread()).
+                                    subscribe(new BaseSubscriber<ServiceBean>(BaseApplication.sContext) {
+                                        @Override
+                                        public void onNext(ServiceBean bean) {
+                                            ToastUtil.showToast("接收成功");
+                                            mAvi.setVisibility(View.VISIBLE);
+                                            mAvi.show();
+                                            RxBus.getInstance().post(new ReceiveEvent());
+                                            initData();
+                                            mRlCancel.setVisibility(View.VISIBLE);
+                                            mBtReceive.setVisibility(View.GONE);
+                                        }
+                                    });
+                        }
+                    }
+                });
+                break;
+
             case R.id.tv_sure:
-                if (mRecordId != -1) {
-                    RetrofitClient.getInstance().startRecord(mRecordId)
-                            .subscribeOn(Schedulers.io())
-                            .observeOn(AndroidSchedulers.mainThread())
-                            .subscribe(new BaseSubscriber<ServiceBean>(this) {
-                                @Override
-                                public void onNext(ServiceBean bean) {
-                                    ToastUtil.showToast("成功");
-                                }
-                            });
-                }
+                new AlertUtil().showDialog(WaybillInTransActivity.this, "是否确认?", new AlertUtil.onBackResult() {
+                    @Override
+                    public void backResult() {
+                        if (mRecordId != -1) {
+                            RetrofitClient.getInstance().startRecord(mRecordId)
+                                    .subscribeOn(Schedulers.io())
+                                    .observeOn(AndroidSchedulers.mainThread())
+                                    .subscribe(new BaseSubscriber<ServiceBean>(WaybillInTransActivity.this) {
+                                        @Override
+                                        public void onNext(ServiceBean bean) {
+                                            ToastUtil.showToast("确认成功");
+                                            Intent it = new Intent().setClass(WaybillInTransActivity.this, BlueService.class);
+                                            startService(it);
+                                            //bindService(it, mConnection, BIND_AUTO_CREATE);
+                                            mAvi.setVisibility(View.VISIBLE);
+                                            mAvi.show();
+                                            RxBus.getInstance().post(new ReceiveEvent());
+                                            initData();
+                                        }
+                                    });
+                        }
+
+                    }
+                });
+
+
                 break;
             case R.id.rl_ys:
                 Intent intent = new Intent(this, TransStateActivity.class);
                 ArrayList<RecordInfoBean.BodyBean.DetailListBean> detailList = (ArrayList<RecordInfoBean.BodyBean.DetailListBean>) mBodyBean.getDetailList();
                 RecordInfoBean.BodyBean.DetailListBean detailListBean = detailList.get(0);
-                detailListBean.setPlaceName("护工接单("+detailListBean.getUserName()+")");
+                detailListBean.setPlaceName(detailListBean.getUserName() + "接单");
+                detailListBean.setDetailTime(detailListBean.getDetailTime());
+
 
                 RecordInfoBean.BodyBean.DetailListBean detailListBean1 = detailList.get(1);
-                detailListBean1.setPlaceName("护工取单("+detailListBean1.getUserName()+")");
+                detailListBean1.setPlaceName(detailListBean1.getUserName() + "取单");
+                detailListBean.setDetailTime(detailListBean.getDetailTime());
 
-                intent.putExtra("detailList",detailList);
-                intent.putExtra("taskFirst",mBodyBean.getTaskRecord());
-                startActivity(intent);
+
+                RecordInfoBean.BodyBean.DetailListBean lastDetailBean = detailList.get(detailList.size() - 1);
+
+                RecordInfoBean.BodyBean.DetailListBean stateBean = new RecordInfoBean.BodyBean.DetailListBean();
+
+                String detailTime = lastDetailBean.getDetailTime();
+
+                stateBean.setDetailTime(detailTime.substring(0, detailTime.lastIndexOf(":")));
+
+                switch (lastDetailBean.getState()) {
+                    case 1:
+                        stateBean.setPlaceName("等待取单");
+                        break;
+                    case 2:
+                        stateBean.setPlaceName("护工运送中");
+                        break;
+                    case 3:                 //正在运送中
+                        stateBean.setPlaceName("护工运送中");
+                        break;
+                    case 4:                 //运送完成
+                        stateBean.setPlaceName("运送完成");
+                        break;
+                    default:
+                        stateBean.setPlaceName("等待接单");
+                        break;
+                }
+
+                String dealTime = null;
+                for (int i = 0; i < detailList.size(); i++) {
+                    RecordInfoBean.BodyBean.DetailListBean detailListBean3 = detailList.get(i);
+                    String[] split = detailListBean3.getDetailTime().split(" ");
+                    String date = split[0];
+                    String hour = split[1];
+                    String[] split1 = hour.split(":");
+                    String timeSecond = split1[0] + ":" + split1[1];
+                    if (!date.equals(dealTime)) {
+                        detailListBean3.setDetailTime(date + " " + timeSecond);
+                    } else {
+                        detailListBean3.setDetailTime(timeSecond);
+                    }
+                    dealTime = date;
+                }
+                stateBean.setType(lastDetailBean.getType());
+                detailList.add(stateBean);
+
+                intent.putExtra("recordId", mRecordId);
+                intent.putExtra("detailList", detailList);
+                intent.putExtra("taskFirst", mBodyBean.getTaskRecord());
+                startActivityForResult(intent, Content.STATE_REQUEST_CODE);
+                break;
+            case R.id.iv_back:
+                finish();
                 break;
         }
+    }
+
+  /*  private BlueService.MyBinder myBinder;
+    private BlueService          mService;
+
+    private ServiceConnection mConnection = new ServiceConnection() {
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+        }
+
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            myBinder = (BlueService.MyBinder) service;
+            mService = myBinder.GetService();
+            myBinder.startSendLocation();
+        }
+    };*/
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
     }
 
     @Override
@@ -228,4 +421,6 @@ public class WaybillInTransActivity extends AppActivity {
         // TODO: add setContentView(...) invocation
         ButterKnife.bind(this);
     }
+
+
 }
