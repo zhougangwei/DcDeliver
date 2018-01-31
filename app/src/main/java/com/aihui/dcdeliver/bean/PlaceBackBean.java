@@ -17,7 +17,7 @@ public class PlaceBackBean {
      */
 
     private String msg;
-    private boolean body;
+    private String body;
     private int     code;
 
     public String getMsg() {
@@ -28,11 +28,11 @@ public class PlaceBackBean {
         this.msg = msg;
     }
 
-    public boolean getBody() {
+    public String getBody() {
         return body;
     }
 
-    public void setBody(boolean body) {
+    public void setBody(String body) {
         this.body = body;
     }
 

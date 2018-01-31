@@ -80,6 +80,7 @@
             </intent-filter>
         </activity>
         <activity
+
             android:name=".ui.activity.LoginActivity"
             android:label="@string/title_activity_login">
 
@@ -105,6 +106,15 @@
 
         <service
             android:name=".service.BlueService"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter android:priority="1000" >
+                <action android:name="com.aihui.dcdeliver" />
+            </intent-filter>
+        </service>
+
+        <service
+            android:name=".service.DyxService"
             android:enabled="true"
             android:exported="true">
             <intent-filter android:priority="1000" >

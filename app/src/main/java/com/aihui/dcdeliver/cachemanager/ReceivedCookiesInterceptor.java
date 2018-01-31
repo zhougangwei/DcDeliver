@@ -1,7 +1,8 @@
 package com.aihui.dcdeliver.cachemanager;
 
 import android.content.Context;
-import android.content.SharedPreferences;
+
+import com.aihui.dcdeliver.util.SPUtil;
 
 import java.io.IOException;
 
@@ -48,10 +49,8 @@ public class ReceivedCookiesInterceptor implements Interceptor {
                             cookieBuffer.append(cookie);
                         }
                     });
-            SharedPreferences sharedPreferences = context.getSharedPreferences("cookie", Context.MODE_PRIVATE);
-            SharedPreferences.Editor editor = sharedPreferences.edit();
-            editor.putString("cookie", cookieBuffer.toString());
-            editor.commit();
+           SPUtil.saveString(context, "cookie",cookieBuffer.toString());
+
         }
 
         return originalResponse;

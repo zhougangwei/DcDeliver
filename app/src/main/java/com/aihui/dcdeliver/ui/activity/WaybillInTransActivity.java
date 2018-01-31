@@ -25,7 +25,7 @@ import com.aihui.dcdeliver.http.BaseSubscriber;
 import com.aihui.dcdeliver.http.RetrofitClient;
 import com.aihui.dcdeliver.rxbus.RxBus;
 import com.aihui.dcdeliver.rxbus.event.ReceiveEvent;
-import com.aihui.dcdeliver.service.BlueService;
+import com.aihui.dcdeliver.service.ServiceFactory;
 import com.aihui.dcdeliver.util.AlertUtil;
 import com.aihui.dcdeliver.util.SPUtil;
 import com.aihui.dcdeliver.util.ToastUtil;
@@ -46,6 +46,7 @@ import in.srain.cube.views.ptr.PtrHandler;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
+import static com.aihui.dcdeliver.ui.fragment.HomeFragment.MY_SENDING_RECORD;
 import static com.aihui.dcdeliver.ui.fragment.HomeFragment.RECEIVE_RECORD;
 import static com.aihui.dcdeliver.ui.fragment.HomeFragment.WAIT_RECORD;
 
@@ -130,7 +131,8 @@ public class WaybillInTransActivity extends AppActivity {
         String type = intent.getStringExtra("type");
         if (WAIT_RECORD.equals(type)) {
         } else if (RECEIVE_RECORD.equals(type)) {
-        } else {
+        } else if(MY_SENDING_RECORD.equals(type)) {
+        }else{
             mFl.setVisibility(View.GONE);
         }
         mPtr.setPtrHandler(new PtrHandler() {
@@ -310,7 +312,7 @@ public class WaybillInTransActivity extends AppActivity {
                                         @Override
                                         public void onNext(ServiceBean bean) {
                                             ToastUtil.showToast("确认成功");
-                                            Intent it = new Intent().setClass(WaybillInTransActivity.this, BlueService.class);
+                                            Intent it = new Intent().setClass(WaybillInTransActivity.this, ServiceFactory.getSeviceClass());
                                             startService(it);
                                             //bindService(it, mConnection, BIND_AUTO_CREATE);
                                             mAvi.setVisibility(View.VISIBLE);

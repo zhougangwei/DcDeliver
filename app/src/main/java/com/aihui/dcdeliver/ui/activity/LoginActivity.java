@@ -75,7 +75,6 @@ public class LoginActivity extends AppActivity {
 
     @Override
     protected void initData() {
-
     }
 
     @Override
@@ -103,15 +102,19 @@ public class LoginActivity extends AppActivity {
             }
         });*/
 
-        if (TimeUtils.getCurTimeString(mFormat).equals(SPUtil.getString(LoginActivity.this, Content.IS_LOGIN, ""))) {
+        requstPermisson();
+
+        //先判断是不是过期进来的 过期进来的 不需要以下两部
+        if(1==getIntent().getIntExtra("where",0)){
+            return;
+        }
+        if (TimeUtils.getCurTimeString(mFormat).equals(SPUtil.getString(LoginActivity.this, Content.LOGIN_TIME, ""))) {
             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
             startActivity(intent);
             finish();
         }else{
             gotoLogin();
         }
-
-        requstPermisson();
 
     }
 
@@ -163,6 +166,8 @@ public class LoginActivity extends AppActivity {
         PermissionUtils.requestPermissionsResult(this, requestCode, permissions, grantResults, mPermissionGrant);
     }
 
+
+
     private void gotoLogin() {
         if (isLogin){
              return;
@@ -183,7 +188,8 @@ public class LoginActivity extends AppActivity {
                     @Override
                     public void onError(Throwable e) {
                         isLogin = false;
-                        //super.onError(e);
+                        SPUtil.clear(LoginActivity.this);
+                      super.onError(e);
                     }
                     @Override
                     public void onNext(LoginBean bean) {
@@ -194,7 +200,7 @@ public class LoginActivity extends AppActivity {
                         LoginBean.BodyBean.PermissionBean permission = body.getPermission();
                         boolean hasReceive = permission.isHasReceive();
                         boolean hasSave = permission.isHasSave();
-                        boolean hasNextRecord = permission.isHasNextRecord();
+                        String hasNextRecord = permission.isHasNextRecord();
                         Intent intent = new Intent(LoginActivity.this, LoginActivity.class);
 
 
@@ -202,8 +208,8 @@ public class LoginActivity extends AppActivity {
                         SPUtil.saveBoolean(LoginActivity.this, Content.HAS_RECEIVE, hasReceive);
                         SPUtil.saveBoolean(LoginActivity.this, Content.HAS_SAVE, hasSave);
                         SPUtil.saveBoolean(LoginActivity.this, Content.HAS_SIGN, hasSave);
-                        SPUtil.saveString(LoginActivity.this, Content.IS_LOGIN, TimeUtils.getCurTimeString(mFormat));
-                        SPUtil.saveBoolean(LoginActivity.this, Content.HAS_NEXT_RECORD, hasNextRecord);
+                        SPUtil.saveString(LoginActivity.this, Content.LOGIN_TIME, TimeUtils.getCurTimeString(mFormat));
+                        SPUtil.saveString(LoginActivity.this, Content.HAS_NEXT_RECORD, hasNextRecord);
                         //关闭加载动画
                         startActivity(intent);
                         finish();
@@ -283,6 +289,7 @@ public class LoginActivity extends AppActivity {
                         public void onError(Throwable e) {
                             isLogin = false;
                             mAvi.hide();
+                            SPUtil.clear(LoginActivity.this);
                             super.onError(e);
                         }
                         @Override
@@ -296,14 +303,14 @@ public class LoginActivity extends AppActivity {
 
                             boolean hasReceive = permission.isHasReceive();
                             boolean hasSave = permission.isHasSave();
-                            boolean hasNextRecord = permission.isHasNextRecord();
-                            Intent intent = new Intent(LoginActivity.this, LoginActivity.class);
+                            String hasNextRecord = permission.isHasNextRecord();
+                            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                             SPUtil.saveString(LoginActivity.this,Content.USER_ACCOUNT,body.getUser().getAccount());
                             SPUtil.saveBoolean(LoginActivity.this, Content.HAS_RECEIVE, hasReceive);
                             SPUtil.saveBoolean(LoginActivity.this, Content.HAS_SAVE, hasSave);
                             SPUtil.saveBoolean(LoginActivity.this, Content.HAS_SIGN, hasSave);
-                            SPUtil.saveString(LoginActivity.this, Content.IS_LOGIN, TimeUtils.getCurTimeString(mFormat));
-                            SPUtil.saveBoolean(LoginActivity.this, Content.HAS_NEXT_RECORD, hasNextRecord);
+                            SPUtil.saveString(LoginActivity.this, Content.LOGIN_TIME, TimeUtils.getCurTimeString(mFormat));
+                            SPUtil.saveString(LoginActivity.this, Content.HAS_NEXT_RECORD, hasNextRecord);
                             //关闭加载动画
                             mAvi.hide();
                             startActivity(intent);

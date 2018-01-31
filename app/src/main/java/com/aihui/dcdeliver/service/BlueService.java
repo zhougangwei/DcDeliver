@@ -3,7 +3,12 @@ package com.aihui.dcdeliver.service;
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.BitmapFactory;
 import android.os.IBinder;
 import android.os.RemoteException;
@@ -16,8 +21,8 @@ import com.aihui.dcdeliver.http.RetrofitClient;
 import com.aihui.dcdeliver.rxbus.RxBus;
 import com.aihui.dcdeliver.ui.activity.MainActivity;
 import com.aihui.dcdeliver.util.GsonUtil;
-import com.aihui.dcdeliver.util.LogUtil;
 import com.aihui.dcdeliver.util.ToastUtil;
+import com.daoyixun.location.ipsmap.IpsNavigation;
 
 import org.altbeacon.beacon.Beacon;
 import org.altbeacon.beacon.BeaconConsumer;
@@ -30,11 +35,11 @@ import java.util.Collection;
 import java.util.List;
 
 import okhttp3.RequestBody;
-import rx.Observable;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
 import rx.schedulers.Schedulers;
+
+import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
 
 public class BlueService extends Service implements BeaconConsumer, RangeNotifier {
     private static final long DEFAULT_BACKGROUND_SCAN_PERIOD         = 5000L;
@@ -42,11 +47,10 @@ public class BlueService extends Service implements BeaconConsumer, RangeNotifie
 
     private BeaconManager beaconManager = BeaconManager.getInstanceForApplication(this);
     private Subscription mSubscribe;
+    private IpsNavigation ipsNavigation;
 
     public BlueService() {
     }
-
-
     //   private MyBinder mBinder = new MyBinder();
 
     @Override
@@ -116,15 +120,58 @@ public class BlueService extends Service implements BeaconConsumer, RangeNotifie
         startForeground(110, notification);// 开始前台服务
 
         initBeacon();
-        beaconManager.bind(this);
+
+        initBlueTooth();
+
 
         super.onCreate();
     }
 
+    private void initBlueTooth() {
+        BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        //注册蓝牙广播
+        registBluetoothAction();
+        if (!mBluetoothAdapter.isEnabled()) {
+            Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            enableBtIntent.setFlags(FLAG_ACTIVITY_NEW_TASK);
+            this.getApplicationContext().startActivity(enableBtIntent);
+        }
+    }
+
+
+
     private void initBeacon() {
         beaconManager.setBackgroundScanPeriod(DEFAULT_BACKGROUND_SCAN_PERIOD);
         beaconManager.setBackgroundBetweenScanPeriod(DEFAULT_BACKGROUND_BETWEEN_SCAN_PERIOD);
+        beaconManager.bind(this);
+
+
     }
+
+    //蓝牙广播拦截器
+    private void registBluetoothAction(){
+        IntentFilter action_found = new IntentFilter(BluetoothDevice.ACTION_FOUND);
+        registerReceiver(mReceiver, action_found);
+    }
+
+
+
+    //创建广播
+    private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+
+            if (BluetoothDevice.ACTION_FOUND.equals(action)) {
+                    ToastUtil.showToast("扫描成功,请点击连接!");
+            }     else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
+                ToastUtil.showToast("扫描是啊比11111!");
+            }
+        }
+    };
+
+
+
 
     @Override
     public void onDestroy() {
@@ -150,52 +197,21 @@ public class BlueService extends Service implements BeaconConsumer, RangeNotifie
     public void didRangeBeaconsInRegion(Collection<Beacon> collections, Region region) {
         List beacons = new ArrayList<>();
         for (Beacon beacon : collections) {
+
             BeaconBean beaconBean = new BeaconBean(beacon);
             beaconBean.setType(1);
+            beaconBean.setDistance();
             beacons.add(beaconBean);
         }
-        /*Intent intent = new Intent(TestActivity.BEACON_ACTION);
-        intent.putParcelableArrayListExtra("beacon", (ArrayList<? extends Parcelable>) beacons);//因为Beacon继承了Parcelable,
-        sendBroadcast(intent);  */                                                                 // 所以能通过这个方式来传递数据
-       /* RxBus.getInstance()
-                .post(new BlueEvent(beacons));*/
 
         gotoUPdata(beacons);
-
-        /*Subscription subscribe = RxBus.getInstance()
-                .toObservable(BlueEvent.class)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Action1<BlueEvent>() {
-                    @Override
-                    public void call(BlueEvent blueEvent) {
-                        ToastUtil.showToast(blueEvent.getLocation());
-                    }
-                }, new Action1<Throwable>() {
-                    @Override
-                    public void call(Throwable throwable) {
-
-                    }
-                });
-        RxBus.getInstance().addSubscription(this, subscribe);*/
-
 
     }
 
     private void gotoUPdata(final List<Beacon> beacons) {
-
-
-        LogUtil.d("MyBinder1", GsonUtil.parseListToJson(beacons));
-
-        Observable.just(beacons)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Action1<List<Beacon>>() {
-                    @Override
-                    public void call(List<Beacon> beacons) {
-                        ToastUtil.showToast(GsonUtil.parseObjectToJson(beacons));
-                    }
-                });
-
-
+        if (beacons==null||beacons.size()==0){
+            return;
+        }
         //GsonUtil.parseListToJson(beacons)
 
         RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/application/json; charset=utf-8"), GsonUtil.parseListToJson(beacons));
@@ -205,10 +221,7 @@ public class BlueService extends Service implements BeaconConsumer, RangeNotifie
                 .subscribe(new BaseSubscriber<PlaceBackBean>(getApplicationContext()) {
                             @Override
                             public void onNext(PlaceBackBean bean) {
-
-                               // LogUtil.d("MyBinder", GsonUtil.parseObjectToJson(bean));
-                                if (!bean.getBody()) {
-                                   // mSubscribe.unsubscribe();
+                                if (!"0".equals(bean.getBody())) {
                                          stopSelf();
                                 }
                             }

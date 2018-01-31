@@ -14,6 +14,7 @@ import org.altbeacon.beacon.Beacon;
 public class BeaconBean extends Beacon {
     int type = 1;
 
+
     public int getType() {
         return type;
     }
@@ -27,5 +28,9 @@ public class BeaconBean extends Beacon {
         super(otherBeacon);
     }
 
+
+    public void setDistance(){
+          mDistance=null;
+    }
 
 }

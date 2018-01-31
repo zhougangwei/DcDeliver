@@ -22,7 +22,7 @@ import com.aihui.dcdeliver.rxbus.RxBus;
 import com.aihui.dcdeliver.rxbus.event.AddEvent;
 import com.aihui.dcdeliver.rxbus.event.FraEvent;
 import com.aihui.dcdeliver.rxbus.event.ReceiveEvent;
-import com.aihui.dcdeliver.service.BlueService;
+import com.aihui.dcdeliver.service.ServiceFactory;
 import com.aihui.dcdeliver.ui.FragmentFactory;
 import com.aihui.dcdeliver.util.SPUtil;
 
@@ -72,6 +72,7 @@ public class MainActivity extends AppActivity implements DuoMenuView.OnMenuClick
 
     }
 
+
     private void initEventBus() {
 
         Subscription subscribe = RxBus.getInstance().toObservable(AddEvent.class)
@@ -113,7 +114,11 @@ public class MainActivity extends AppActivity implements DuoMenuView.OnMenuClick
 
         View footerView = mViewHolder.mDuoMenuView.getFooterView();
         TextView tvExit = footerView.findViewById(R.id.tv_exit);
+        View llExit = footerView.findViewById(R.id.ll_exit);
+        View llChange = footerView.findViewById(R.id.ll_change);
         TextView tvChange = footerView.findViewById(R.id.tv_change);
+
+
 
         tvExit.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -142,20 +147,20 @@ public class MainActivity extends AppActivity implements DuoMenuView.OnMenuClick
         goToFragment(0, false);
         mMenuAdapter.setViewSelected(0, true);
         setTitle(mTitles.get(0));
-        if (SPUtil.getBoolean(this, Content.HAS_NEXT_RECORD, false)) {
+        if (!"0".equals(SPUtil.getString(this, Content.HAS_NEXT_RECORD, "0"))) {
             startServize();
         }
         boolean hasReceive = SPUtil.getHasReceive(this);
         boolean hasSave = SPUtil.getHasSave(this);
 
         if (hasReceive && hasSave) {
-            footerView.setVisibility(View.VISIBLE);
+            llChange.setVisibility(View.VISIBLE);
             //接收
         } else if (hasReceive) {
-            footerView.setVisibility(View.GONE);
+            llChange.setVisibility(View.INVISIBLE);
             //保存
         } else if (hasSave) {
-            footerView.setVisibility(View.GONE);
+            llChange.setVisibility(View.INVISIBLE);
         }
     }
 
@@ -206,7 +211,7 @@ public class MainActivity extends AppActivity implements DuoMenuView.OnMenuClick
 
     public void startServize() {
 
-        Intent it = new Intent().setClass(this, BlueService.class);
+        Intent it = new Intent().setClass(this, ServiceFactory.getSeviceClass());
         startService(it);
       //  bindService(it, mConnection, BIND_AUTO_CREATE);
 
@@ -346,9 +351,14 @@ public class MainActivity extends AppActivity implements DuoMenuView.OnMenuClick
                             }
                         }
                         FragmentFactory.clearAllFragment();
-                        //SPUtil.saveBoolean(MainActivity.this, Content.IS_LOGIN, false);
+                        //SPUtil.saveBoolean(MainActivity.this, Content.LOGIN_TIME, false);
                         SPUtil.clear(MainActivity.this);
-                        startActivity(new Intent(MainActivity.this, LoginActivity.class));
+                        Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                        intent.putExtra("where",1);
+                        Intent serviceIntent = new Intent(mContext, ServiceFactory.getSeviceClass());
+                        mContext.stopService(serviceIntent);
+
+                        startActivity(intent);
                         finish();
                     }
                 })

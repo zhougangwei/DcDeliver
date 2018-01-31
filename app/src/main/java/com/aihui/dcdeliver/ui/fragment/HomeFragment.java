@@ -52,9 +52,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
 import in.srain.cube.views.ptr.PtrClassicFrameLayout;
+import rx.Observable;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action0;
@@ -119,7 +121,7 @@ public class HomeFragment extends BaseFragment<HomeImpl> implements BaseView, Ta
     public static final String RECEIVE_RECORD = "3";
 
     //自己发送的正在进行的单子
-    private static final String MY_SENDING_RECORD = "4";
+    public static final String MY_SENDING_RECORD = "4";
     //自己发送的已完成的单子
     public static final  String MY_FINISH_RECORED = "5";
 
@@ -176,8 +178,13 @@ public class HomeFragment extends BaseFragment<HomeImpl> implements BaseView, Ta
         } else if (hasSave) {
             mCurrentType = FraEvent.HASSAVE;
         }
-
-        changeFragment(mCurrentType);
+        Observable.timer(200L, TimeUnit.MILLISECONDS)
+                .subscribe(new Action1<Long>() {
+                    @Override
+                    public void call(Long aLong) {
+                        changeFragment(mCurrentType);
+                    }
+                });
     }
 
 
@@ -188,6 +195,8 @@ public class HomeFragment extends BaseFragment<HomeImpl> implements BaseView, Ta
 
     @Override
     protected void initData() {
+
+
         judgeIfAlert();
         initEvent();
     }
@@ -244,18 +253,26 @@ public class HomeFragment extends BaseFragment<HomeImpl> implements BaseView, Ta
             mLocalRecordTwo = RECEIVE_RECORD;
             RxBus.getInstance().post(new AddEvent(false));
         }
+        if( mLocalData.get(mLocalRecordFirst)==null){
+            mLocalData.put(mLocalRecordFirst, new DataMessage());
+        }
 
-        mLocalData.put(mLocalRecordFirst, new DataMessage());
-        mLocalData.put(mLocalRecordTwo, new DataMessage());
+        if( mLocalData.get(mLocalRecordTwo)==null){
+            mLocalData.put(mLocalRecordTwo, new DataMessage());
+        }
+
+
 
         mWaitingBillList.clear();
+        mWaitingAdapter.setNewData(mWaitingBillList);
         mWaitingAdapter.notifyDataSetChanged();
 
 
 
         mReceivingBillList.clear();
+        mWaitingAdapter.setNewData(mWaitingBillList);
+        mReceiAdapter.setNewData(mReceivingBillList);
         mReceiAdapter.notifyDataSetChanged();
-
 
         mPagerAdapter.notifyDataSetChanged();
 
@@ -333,11 +350,11 @@ public class HomeFragment extends BaseFragment<HomeImpl> implements BaseView, Ta
                         * 接收数据失败的话 显示失败页面
                         *
                         * */
-                        mViewList.clear();
-                        FrameLayout inflate = (FrameLayout) View.inflate(mActivity, R.layout.page_error, null);
+                         mViewList.clear();
+                       /*FrameLayout inflate = (FrameLayout) View.inflate(mActivity, R.layout.page_error, null);
                         for (int i = 0; i < mTitleStrings.length; i++) {
                             mViewList.add(inflate);
-                        }
+                        }*/
                         mPagerAdapter.notifyDataSetChanged();
                         mAvi.hide();
                     }
@@ -395,13 +412,16 @@ public class HomeFragment extends BaseFragment<HomeImpl> implements BaseView, Ta
             mDakaDialog = new AlertDialog.Builder(getBaseActivity())
                     .setView(inflate)
                     .create();
+            try{
+                mDakaDialog.show();
+                WindowManager.LayoutParams p = mDakaDialog.getWindow().getAttributes();
+                p.height = (int) (ScreenUtils.getScreenHeight(mActivity) * 0.4);
+                p.width = (int) (ScreenUtils.getScreenWidth(mActivity) * 0.77);
+                mDakaDialog.getWindow().setAttributes(p);
+            }catch (Exception e){
 
-            mDakaDialog.show();
+            }
 
-            WindowManager.LayoutParams p = mDakaDialog.getWindow().getAttributes();
-            p.height = (int) (ScreenUtils.getScreenHeight(mActivity) * 0.4);
-            p.width = (int) (ScreenUtils.getScreenWidth(mActivity) * 0.77);
-            mDakaDialog.getWindow().setAttributes(p);
         }
     }
 
@@ -553,8 +573,11 @@ public class HomeFragment extends BaseFragment<HomeImpl> implements BaseView, Ta
                            @Override
                            public void backResult() {
                                final AVLoadingIndicatorView mavi = (AVLoadingIndicatorView) adapter.getViewByPosition(position, R.id.avi);
-                               mavi.setVisibility(View.VISIBLE);
-                               mavi.show();
+                                if(mavi!=null){
+                                    mavi.setVisibility(View.VISIBLE);
+                                    mavi.show();
+                                }
+
                                RetrofitClient.getInstance().receiveRecord(mWaitingBillList.get(position).getId())
                                        .subscribeOn(Schedulers.io())
                                        .observeOn(AndroidSchedulers.mainThread()).
@@ -562,7 +585,9 @@ public class HomeFragment extends BaseFragment<HomeImpl> implements BaseView, Ta
                                            @Override
                                            public void onNext(ServiceBean bean) {
                                                ToastUtil.showToast("接收成功");
-                                               mavi.hide();
+                                               if(mavi!=null){
+                                                   mavi.hide();
+                                               }
                                                RxBus.getInstance().post(new ReceiveEvent());
                                            }
                                        });

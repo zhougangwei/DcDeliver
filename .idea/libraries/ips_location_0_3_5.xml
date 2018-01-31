@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="ips-location-0.3.5">
+    <CLASSES>
+      <root url="file://$USER_HOME$/.android/build-cache/6f841e67f8be551a745b9c3229f0ed788b636ba9/output/res" />
+      <root url="jar://$USER_HOME$/.android/build-cache/6f841e67f8be551a745b9c3229f0ed788b636ba9/output/jars/classes.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.ipsmap/ips-location/0.3.5/5a65d14b00fa6ea3a4750ebbc9deee6f82008042/ips-location-0.3.5-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

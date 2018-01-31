@@ -95,7 +95,9 @@ public class GsonUtil {
      */
     public static String parseListToJson(List list) {
         try {
-            Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm:ss").create();
+            Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm:ss")
+            .create();
+            //.serializeSpecialFloatingPointValues()
             return gson.toJson(list);
         } catch (Exception e) {
             e.printStackTrace();
